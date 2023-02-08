@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { theme } from '../../styles/theme';
 
 export const Background = styled.div`
@@ -17,6 +17,7 @@ export const Navbar = styled.header`
   display: flex;
   align-items: center;
   white-space: nowrap;
+  min-height: 62px;
 
   > img {
     height: 30px;
@@ -25,16 +26,69 @@ export const Navbar = styled.header`
   }
 `;
 
-export const NavbarButton = styled.header<{ selected: boolean }>`
+export const WebContent = styled.div`
+  display: flex;
+  align-items: center;
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+`;
+
+export const NavbarButtonWeb = styled.header<{ selected: boolean }>`
   padding: ${theme.size.md} ${theme.size.sm};
 
   color: ${theme.color.white};
   font-weight: 500;
 
   transition: 0.25s;
+
+  ${({ selected }) =>
+    selected &&
+    css`
+      background: #f1a7a726;
+    `}
+
   :hover {
-    background: rgba(241, 167, 167, 0.15);
+    background: #f1a7a726;
   }
+`;
+
+export const HamburguerWrapper = styled.div`
+  display: none;
+
+  @media (max-width: 900px) {
+    position: relative;
+    display: block;
+    margin-left: ${theme.size.sm};
+  }
+`;
+
+export const NavbarButtonMobile = styled.header<{ selected: boolean }>`
+  padding: ${theme.size.sm};
+
+  color: ${theme.color.black};
+  font-weight: 500;
+  transition: 0.25s;
+
+  ${({ selected }) =>
+    selected &&
+    css`
+      background: #f1a7a726;
+    `}
+
+  :hover {
+    background: #f1a7a726;
+  }
+`;
+
+export const MobileContent = styled.div`
+  position: absolute;
+  left: 0;
+  top: 43px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 0px 0px 6px 6px;
+  background-color: ${theme.color.white};
 `;
 
 export const AppContent = styled.div`
