@@ -1,0 +1,60 @@
+image: node:16.13.0
+
+stages:
+  - staging_build
+  - production_build
+  - staging_deploy
+  - production_deploy
+
+staging_build:
+  stage: staging_build
+  environment: review/develop
+  script:
+    - printenv
+    - yarn
+    - yarn build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 hour
+  only:
+    - develop
+
+production_build:
+  stage: production_build
+  environment: production
+  script:
+    - yarn
+    - yarn build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 hour
+  only:
+    - master
+
+staging_deploy:
+  stage: staging_deploy
+  environment: review/develop
+  image: python:latest
+  script:
+    - pip install awscli
+    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws s3 rm s3://$S3_BUCKET --recursive
+    - aws s3 sync ./dist s3://$S3_BUCKET --acl public-read
+  only:
+    - develop
+
+production_deploy:
+  stage: production_deploy
+  environment: production
+  image: python:latest
+  script:
+    - pip install awscli
+    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws s3 rm s3://$S3_BUCKET --recursive
+    - aws s3 sync ./dist s3://$S3_BUCKET --acl public-read
+  only:
+    - master
