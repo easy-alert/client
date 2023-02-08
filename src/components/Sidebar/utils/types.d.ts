@@ -1,5 +1,5 @@
 export interface SidebarContentProps {
-  icon: string;
+  name: string;
   url: string;
 }
 

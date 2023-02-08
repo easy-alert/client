@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import { Sidebar } from './components/Sidebar';
-import { MaintenancePlan } from './screens/MaintenancePlan';
+import { MaintenancesPlan } from './screens/MaintenancesPlan';
 import { Informations } from './screens/Informations';
 import { BuildingManagerArea } from './screens/BuildingManagerArea';
 
@@ -11,7 +11,7 @@ const AppRoutes = () => (
         path="*"
         element={
           <Sidebar>
-            <Outlet />
+            <MaintenancesPlan />
           </Sidebar>
         }
       />
@@ -24,9 +24,9 @@ const AppRoutes = () => (
           </Sidebar>
         }
       >
-        <Route path="/maintenance/plan" element={<MaintenancePlan />} />
+        <Route path="/maintenancesplan" element={<MaintenancesPlan />} />
         <Route path="/informations" element={<Informations />} />
-        <Route path="/building/manager" element={<BuildingManagerArea />} />
+        <Route path="/buildingmanager" element={<BuildingManagerArea />} />
       </Route>
     </Routes>
   </BrowserRouter>
