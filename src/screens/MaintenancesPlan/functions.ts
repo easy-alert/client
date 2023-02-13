@@ -10,8 +10,6 @@ export const requestMaintenancesPlan = async ({
 }: IRequestMaintenancesPlan) => {
   await Api.get(`/building/${buildingId}/syndic/${syndicId}`)
     .then((res) => {
-      console.log(res.data.months);
-
       setMaintenancesPlan(res.data.months);
     })
     .catch((err) => {

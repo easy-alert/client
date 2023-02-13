@@ -78,13 +78,14 @@ export const MonthSection = styled.div`
 export const DayWrapper = styled.div`
   display: flex;
   align-items: center;
-  gap: ${theme.size.sm};
 `;
 
 export const DayInfo = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: ${theme.size.xxsm};
+  width: 45px;
 
   > p {
     color: ${theme.color.gray4};
@@ -99,6 +100,8 @@ export const Maintenance = styled.div`
   flex-direction: column;
   border-radius: ${theme.size.xxsm};
   padding: ${theme.size.sm} ${theme.size.sm} ${theme.size.sm} ${theme.size.md};
+
+  //trocar
   background: linear-gradient(
     90deg,
     rgba(52, 181, 58, 1) 0%,
@@ -117,15 +120,12 @@ export const MaintenanceTags = styled.div`
   margin-bottom: ${theme.size.xsm};
 `;
 
-export const MaintenanceDetails = styled.div``;
-
 export const NoMaintenanceCard = styled.div`
-  margin-left: 36px;
+  width: 100%;
   min-height: 62px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: ${theme.size.xsm};
   border-radius: ${theme.size.xxsm};
   padding: ${theme.size.sm} ${theme.size.sm} ${theme.size.sm} ${theme.size.md};
   background: linear-gradient(

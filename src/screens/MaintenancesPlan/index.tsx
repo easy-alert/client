@@ -74,9 +74,12 @@ export const MaintenancesPlan = () => {
                   </Style.DayWrapper>
                 ))
               ) : (
-                <Style.NoMaintenanceCard>
-                  <h6>Sem manutenções</h6>
-                </Style.NoMaintenanceCard>
+                <Style.DayWrapper>
+                  <Style.DayInfo />
+                  <Style.NoMaintenanceCard>
+                    <h6>Sem manutenções</h6>
+                  </Style.NoMaintenanceCard>
+                </Style.DayWrapper>
               )}
             </Style.MonthSection>
           ))}
