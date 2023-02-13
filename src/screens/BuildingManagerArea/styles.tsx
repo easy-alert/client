@@ -38,7 +38,7 @@ export const Kanban = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: ${theme.size.sm};
-  overflow-x: auto;
+  overflow: auto;
   height: 100%;
 
   scrollbar-width: none;
@@ -54,10 +54,11 @@ export const KanbanCard = styled.div`
   background-color: ${theme.color.white};
   padding: ${theme.size.md};
   border-radius: ${theme.size.xxsm};
-  min-width: 340px;
   display: flex;
   flex-direction: column;
   gap: ${theme.size.xsm};
+
+  min-width: 300px;
 
   @media (max-width: 900px) {
     padding: ${theme.size.sm};
