@@ -1,48 +1,35 @@
-// STYLES
+// LIBS
+import { useEffect, useState } from 'react';
+
+// COMPONENTS
 import { Button } from '../../components/Buttons/Button';
 import { EventTag } from '../../components/EventTag';
 import { Select } from '../../components/Inputs/Select';
+import { DotSpinLoading } from '../../components/Loadings/DotSpinLoading';
+import { requestMaintenancesPlan } from './functions';
+
+// STYLES
 import * as Style from './styles';
 
-export const MaintenancesPlan = () => {
-  const months = [
-    {
-      name: 'Janeiro',
-      maintenances: [
-        {
-          dayNumber: '02',
-          dayName: 'Seg',
-          status: 'Concluída',
-        },
-        {
-          dayNumber: '03',
-          dayName: 'Seg',
-          status: 'Concluída',
-        },
-        {
-          dayNumber: '04',
-          dayName: 'Seg',
-          status: 'Concluída',
-        },
-      ],
-    },
-    {
-      name: 'Fevereiro',
-      maintenances: [
-        {
-          dayNumber: '05',
-          dayName: 'Qui',
-          status: 'Concluída',
-        },
-      ],
-    },
-    {
-      name: 'Março',
-      maintenances: [],
-    },
-  ];
+// TYPES
+import { IMaintenancesPlan } from './types';
 
-  return (
+export const MaintenancesPlan = () => {
+  const [maintenancesPlan, setMaintenancesPlan] = useState<IMaintenancesPlan[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    requestMaintenancesPlan({
+      buildingId: 'e24696d4-aaef-442c-b6bd-187717bf1c3d',
+      syndicId: 'f814fd08-1fdb-4876-b066-276606a01fb1',
+      setLoading,
+      setMaintenancesPlan,
+    });
+  }, []);
+
+  return loading ? (
+    <DotSpinLoading />
+  ) : (
     <Style.Container>
       <h2>Monte Ravello</h2>
       <Style.WebBanner
@@ -64,28 +51,25 @@ export const MaintenancesPlan = () => {
           </Style.FilterWrapper>
         </Style.CardHeader>
         <Style.CalendarWrapper>
-          {months.map((e) => (
-            <Style.MonthSection key={e.name}>
-              <h5>{e.name}</h5>
-              {e.maintenances.length > 0 ? (
-                e.maintenances.map((f) => (
-                  <Style.DayWrapper key={f.dayNumber}>
+          {maintenancesPlan.map((month) => (
+            <Style.MonthSection key={month.name}>
+              <h5>{month.name}</h5>
+              {month.dates.length > 0 ? (
+                month.dates.map((maintenance, i: number) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <Style.DayWrapper key={maintenance.activity + i}>
                     <Style.DayInfo>
-                      <p className="p3">{f.dayNumber}</p>
-                      <p className="p3">{f.dayName}</p>
+                      <p className="p3">{maintenance.dateInfos.dayNumber}</p>
+                      <p className="p3">{maintenance.dateInfos.smName}</p>
                     </Style.DayInfo>
                     <Style.Maintenance>
-                      {/* {e.MaintenancesStatus.name === 'overdue' && <EventTag status="completed" />} */}
                       <Style.MaintenanceTags>
-                        <EventTag status="completed" />
-                        <EventTag status="overdue" />
+                        {maintenance.status === 'overdue' && <EventTag status="completed" />}
+                        <EventTag status={maintenance.status} />
                       </Style.MaintenanceTags>
 
-                      <h6>Integridade da cerca</h6>
-                      <p className="p2">
-                        Verificação no perímetro da cerca, buscando uma tentativa de intrusão ou de
-                        crescimento de vegetação
-                      </p>
+                      <h6>{maintenance.activity}</h6>
+                      <p className="p2">{maintenance.element}</p>
                     </Style.Maintenance>
                   </Style.DayWrapper>
                 ))
