@@ -42,6 +42,7 @@ import calendar from './calendar.svg';
 import addImage from './addImage.svg';
 import downloadRedBg from './downloadRedBg.svg';
 import logoFullWhite from './logoFullWhite.svg';
+import trashWithPrimaryBg from './trashWithPrimaryBg.svg';
 
 export const icon = {
   leftArrow,
@@ -88,4 +89,5 @@ export const icon = {
   addImage,
   downloadRedBg,
   logoFullWhite,
+  trashWithPrimaryBg,
 };

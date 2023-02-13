@@ -45,6 +45,14 @@ export const MaintenancesPlan = () => {
   return (
     <Style.Container>
       <h2>Monte Ravello</h2>
+      <Style.WebBanner
+        src="https://larguei.s3.us-west-2.amazonaws.com/Rectangle+600+%281%29-1676307129017.png"
+        alt="Web banner"
+      />
+      <Style.MobileBanner
+        src="https://larguei.s3.us-west-2.amazonaws.com/Rectangle%20604-1676307085432.png"
+        alt="Web banner"
+      />
       <Style.Card>
         <Style.CardHeader>
           <h4>Plano de manutenções</h4>

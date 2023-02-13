@@ -7,10 +7,31 @@ export const Container = styled.div`
   gap: ${theme.size.sm};
 `;
 
+export const WebBanner = styled.img`
+  border-radius: ${theme.size.xxsm};
+
+  @media (max-width: 900px) {
+    display: none;
+  }
+`;
+
+export const MobileBanner = styled.img`
+  border-radius: ${theme.size.xxsm};
+  display: none;
+
+  @media (max-width: 900px) {
+    display: block;
+  }
+`;
+
 export const Card = styled.div`
   background-color: ${theme.color.white};
   border-radius: ${theme.size.xxsm};
   padding: ${theme.size.md};
+
+  @media (max-width: 900px) {
+    padding: ${theme.size.sm};
+  }
 `;
 
 export const CardHeader = styled.div`
@@ -25,7 +46,7 @@ export const FilterWrapper = styled.div`
   grid-template-columns: repeat(4, 1fr);
   align-items: flex-end;
   gap: ${theme.size.xsm};
-  max-width: 60%;
+  max-width: 65%;
 
   > :last-child {
     margin-left: ${theme.size.xsm};
