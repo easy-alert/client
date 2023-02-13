@@ -1,5 +1,6 @@
 // STYLES
 import { Button } from '../../components/Buttons/Button';
+import { EventTag } from '../../components/EventTag';
 import { Select } from '../../components/Inputs/Select';
 import * as Style from './styles';
 
@@ -14,12 +15,12 @@ export const MaintenancesPlan = () => {
           status: 'Concluída',
         },
         {
-          dayNumber: '02',
+          dayNumber: '03',
           dayName: 'Seg',
           status: 'Concluída',
         },
         {
-          dayNumber: '02',
+          dayNumber: '04',
           dayName: 'Seg',
           status: 'Concluída',
         },
@@ -29,7 +30,7 @@ export const MaintenancesPlan = () => {
       name: 'Fevereiro',
       maintenances: [
         {
-          dayNumber: '02',
+          dayNumber: '05',
           dayName: 'Qui',
           status: 'Concluída',
         },
@@ -65,7 +66,19 @@ export const MaintenancesPlan = () => {
                       <p className="p3">{f.dayNumber}</p>
                       <p className="p3">{f.dayName}</p>
                     </Style.DayInfo>
-                    <Style.MaintenanceInfo>{f.dayNumber}</Style.MaintenanceInfo>
+                    <Style.Maintenance>
+                      {/* {e.MaintenancesStatus.name === 'overdue' && <EventTag status="completed" />} */}
+                      <Style.MaintenanceTags>
+                        <EventTag status="completed" />
+                        <EventTag status="overdue" />
+                      </Style.MaintenanceTags>
+
+                      <h6>Integridade da cerca</h6>
+                      <p className="p2">
+                        Verificação no perímetro da cerca, buscando uma tentativa de intrusão ou de
+                        crescimento de vegetação
+                      </p>
+                    </Style.Maintenance>
                   </Style.DayWrapper>
                 ))
               ) : (

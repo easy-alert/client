@@ -71,15 +71,13 @@ export const DayInfo = styled.div`
   }
 `;
 
-export const MaintenanceInfo = styled.div`
+export const Maintenance = styled.div`
   min-height: 62px;
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: ${theme.size.xsm};
   border-radius: ${theme.size.xxsm};
-  padding: ${theme.size.sm} ${theme.size.sm} ${theme.size.sm} 23px;
+  padding: ${theme.size.sm} ${theme.size.sm} ${theme.size.sm} ${theme.size.md};
   background: linear-gradient(
     90deg,
     rgba(52, 181, 58, 1) 0%,
@@ -89,16 +87,26 @@ export const MaintenanceInfo = styled.div`
   );
 `;
 
+export const MaintenanceTags = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${theme.size.xsm};
+  flex-wrap: wrap;
+
+  margin-bottom: ${theme.size.xsm};
+`;
+
+export const MaintenanceDetails = styled.div``;
+
 export const NoMaintenanceCard = styled.div`
   margin-left: 36px;
   min-height: 62px;
-  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: ${theme.size.xsm};
   border-radius: ${theme.size.xxsm};
-  padding: ${theme.size.sm} ${theme.size.sm} ${theme.size.sm} 23px;
+  padding: ${theme.size.sm} ${theme.size.sm} ${theme.size.sm} ${theme.size.md};
   background: linear-gradient(
     90deg,
     rgb(217, 217, 217) 0%,
