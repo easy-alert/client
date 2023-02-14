@@ -10,11 +10,14 @@ export const requestMainContactInformations = async ({
   await Api.get(`/building/informations/${buildingId}`)
     .then((res) => {
       setInformations(res.data);
+      setLoading(false);
     })
     .catch((err) => {
-      catchHandler(err);
-    })
-    .finally(() => {
-      setLoading(false);
+      if (err.response.status === 404) {
+        window.open('https://easyalert.com.br/', '_self');
+      } else {
+        catchHandler(err);
+        setLoading(false);
+      }
     });
 };

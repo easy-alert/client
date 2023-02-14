@@ -12,11 +12,14 @@ export const requestMaintenancesPlan = async ({
     .then((res) => {
       setMaintenancesPlan(res.data.months);
       setBuilding(res.data.building);
+      setLoading(false);
     })
     .catch((err) => {
-      catchHandler(err);
-    })
-    .finally(() => {
-      setLoading(false);
+      if (err.response.status === 404) {
+        window.open('https://easyalert.com.br/', '_self');
+      } else {
+        catchHandler(err);
+        setLoading(false);
+      }
     });
 };
