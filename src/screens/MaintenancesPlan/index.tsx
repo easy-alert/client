@@ -48,11 +48,14 @@ export const MaintenancesPlan = () => {
         (banner) =>
           banner.type === 'Web' && (
             <Style.WebBanner
+              redirectUrl={banner.redirectUrl}
               key={banner.id}
               src={banner.url}
               alt="Web banner"
               onClick={() => {
-                window.open(banner.redirectUrl, '_blank');
+                if (banner.redirectUrl) {
+                  window.open(banner.redirectUrl, '_blank');
+                }
               }}
             />
           ),
@@ -66,7 +69,9 @@ export const MaintenancesPlan = () => {
               src={banner.url}
               alt="Mobile banner"
               onClick={() => {
-                window.open(banner.redirectUrl, '_blank');
+                if (banner.redirectUrl) {
+                  window.open(banner.redirectUrl, '_blank');
+                }
               }}
             />
           ),

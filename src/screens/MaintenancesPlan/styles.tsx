@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { theme } from '../../styles/theme';
 
 export const Container = styled.div`
@@ -7,11 +7,19 @@ export const Container = styled.div`
   gap: ${theme.size.sm};
 `;
 
-export const WebBanner = styled.img`
-  cursor: pointer;
+export const WebBanner = styled.img<{ redirectUrl: string }>`
   border-radius: ${theme.size.xxsm};
   max-height: 280px;
   object-fit: contain;
+  transition: 0.25s;
+  ${({ redirectUrl }) =>
+    redirectUrl &&
+    css`
+      cursor: pointer;
+      :hover {
+        opacity: 0.9;
+      }
+    `}
 
   @media (max-width: 900px) {
     display: none;
@@ -23,7 +31,7 @@ export const MobileBanner = styled.img`
 
   @media (max-width: 900px) {
     display: block;
-    cursor: pointer;
+    transition: 0.25s;
     border-radius: ${theme.size.xxsm};
     max-height: 160px;
     object-fit: contain;
