@@ -81,22 +81,28 @@ export const Informations = () => {
 
           <Style.Row>
             <h6>Anexos</h6>
-            <Style.AnnexesRow>
-              {informations.annexes.map((annex) => (
-                <Style.Tag key={annex.url}>
-                  <a
-                    title={annex.originalName}
-                    href={annex.url}
-                    download
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <p className="p3">{annex.name}</p>
-                    <Image size="16px" img={icon.download} />
-                  </a>
-                </Style.Tag>
-              ))}
-            </Style.AnnexesRow>
+            {informations.annexes.length > 0 ? (
+              <Style.AnnexesRow>
+                {informations.annexes.map((annex) => (
+                  <Style.Tag key={annex.url}>
+                    <a
+                      title={annex.originalName}
+                      href={annex.url}
+                      download
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <p className="p3">{annex.name}</p>
+                      <Image size="16px" img={icon.download} />
+                    </a>
+                  </Style.Tag>
+                ))}
+              </Style.AnnexesRow>
+            ) : (
+              <p className="p4" style={{ opacity: 0.7 }}>
+                Nenhum anexo cadastrado.
+              </p>
+            )}
           </Style.Row>
         </Style.RowWrapper>
       </Style.Card>

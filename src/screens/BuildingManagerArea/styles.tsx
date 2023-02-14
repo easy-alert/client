@@ -49,6 +49,7 @@ export const Kanban = styled.div`
   height: 100%;
   scrollbar-width: none;
   scrollbar-color: transparent;
+  scroll-snap-type: x mandatory;
 
   ::-webkit-scrollbar {
     width: 0;
@@ -63,6 +64,7 @@ export const KanbanCard = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${theme.size.xsm};
+  scroll-snap-align: start;
 
   min-width: 300px;
 
