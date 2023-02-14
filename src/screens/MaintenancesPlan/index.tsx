@@ -102,12 +102,12 @@ export const MaintenancesPlan = () => {
                   </Style.DayWrapper>
                 ))
               ) : (
-                <Style.DayWrapper>
+                <Style.NoDataDayWrapper>
                   <Style.DayInfo />
                   <Style.NoMaintenanceCard>
                     <h6>Sem manutenções</h6>
                   </Style.NoMaintenanceCard>
-                </Style.DayWrapper>
+                </Style.NoDataDayWrapper>
               )}
             </Style.MonthSection>
           ))}

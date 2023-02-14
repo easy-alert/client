@@ -84,6 +84,18 @@ export const MonthSection = styled.div`
 export const DayWrapper = styled.div`
   display: flex;
   align-items: center;
+  transition: 0.25s;
+
+  :hover {
+    opacity: 0.7;
+    cursor: pointer;
+  }
+`;
+
+export const NoDataDayWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  transition: 0.25s;
 `;
 
 export const DayInfo = styled.div`

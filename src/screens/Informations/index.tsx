@@ -43,32 +43,42 @@ export const Informations = () => {
       <Style.Card>
         <h2>Dados do responsável</h2>
         <Style.RowWrapper>
-          <Style.Row>
-            <h6>Nome</h6>
-            <p className="p4">{informations.mainContact.name}</p>
-          </Style.Row>
-          <Style.Line />
-          <Style.Row>
-            <h6>E-mail</h6>
-            <p className="p4">{informations.mainContact.email}</p>
-          </Style.Row>
-          <Style.Line />
+          {informations.mainContact ? (
+            <>
+              <Style.Row>
+                <h6>Nome</h6>
+                <p className="p4">{informations.mainContact.name}</p>
+              </Style.Row>
+              <Style.Line />
+              <Style.Row>
+                <h6>E-mail</h6>
+                <p className="p4">{informations.mainContact.email ?? '-'}</p>
+              </Style.Row>
+              <Style.Line />
 
-          <Style.Row>
-            <h6>WhatsApp</h6>
-            <p className="p4">
-              {informations.mainContact.contactNumber
-                ? applyMask({ mask: 'TEL', value: informations.mainContact.contactNumber }).value
-                : '-'}
+              <Style.Row>
+                <h6>WhatsApp</h6>
+                <p className="p4">
+                  {informations.mainContact.contactNumber
+                    ? applyMask({ mask: 'TEL', value: informations.mainContact.contactNumber })
+                        .value
+                    : '-'}
+                </p>
+              </Style.Row>
+
+              <Style.Line />
+              <Style.Row>
+                <h6>Função</h6>
+                <p className="p4">{informations.mainContact.role}</p>
+              </Style.Row>
+              <Style.Line />
+            </>
+          ) : (
+            <p className="p1" style={{ opacity: 0.7 }}>
+              Responsável não cadastrado.
             </p>
-          </Style.Row>
+          )}
 
-          <Style.Line />
-          <Style.Row>
-            <h6>Função</h6>
-            <p className="p4">{informations.mainContact.role}</p>
-          </Style.Row>
-          <Style.Line />
           <Style.Row>
             <h6>Anexos</h6>
             <Style.AnnexesRow>
