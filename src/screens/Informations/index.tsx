@@ -1,55 +1,87 @@
 // COMPONENTS
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Image } from '../../components/Image';
+import { DotSpinLoading } from '../../components/Loadings/DotSpinLoading';
 
 // STYLES
 import * as Style from './styles';
 import { icon } from '../../assets/icons';
 
-export const Informations = () => {
-  const teste = Array.from(Array(20).keys());
+// FUNCTIONS
+import { requestMainContactInformations } from './functions';
 
-  return (
+// TYPES
+import { IInformations } from './types';
+import { applyMask } from '../../utils/functions';
+
+export const Informations = () => {
+  const { buildingId } = useParams() as { buildingId: string };
+
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const [informations, setInformations] = useState<IInformations>({
+    annexes: [],
+    mainContact: { contactNumber: '', email: '', name: '', role: '' },
+    buildingName: '',
+  });
+
+  useEffect(() => {
+    requestMainContactInformations({
+      buildingId,
+      setLoading,
+      setInformations,
+    });
+  }, []);
+
+  return loading ? (
+    <DotSpinLoading />
+  ) : (
     <Style.Container>
-      <h2>Informações</h2>
+      <h2>{informations.buildingName}</h2>
 
       <Style.Card>
         <h2>Dados do responsável</h2>
         <Style.RowWrapper>
           <Style.Row>
             <h6>Nome</h6>
-            <p className="p4">Augusto Mandelli</p>
+            <p className="p4">{informations.mainContact.name}</p>
           </Style.Row>
           <Style.Line />
           <Style.Row>
             <h6>E-mail</h6>
-            <p className="p4">augusto.mandelli@easyalert.com</p>
+            <p className="p4">{informations.mainContact.email}</p>
           </Style.Row>
           <Style.Line />
 
           <Style.Row>
             <h6>WhatsApp</h6>
-            <p className="p4">48 99689-3086</p>
+            <p className="p4">
+              {informations.mainContact.contactNumber
+                ? applyMask({ mask: 'TEL', value: informations.mainContact.contactNumber }).value
+                : '-'}
+            </p>
           </Style.Row>
 
           <Style.Line />
           <Style.Row>
             <h6>Função</h6>
-            <p className="p4">Síndico</p>
+            <p className="p4">{informations.mainContact.role}</p>
           </Style.Row>
           <Style.Line />
           <Style.Row>
             <h6>Anexos</h6>
             <Style.AnnexesRow>
-              {teste.map((e) => (
-                <Style.Tag key={e}>
+              {informations.annexes.map((annex) => (
+                <Style.Tag key={annex.url}>
                   <a
-                    title="https://larguei.s3.us-west-2.amazonaws.com/Rectangle%20600-1676305848576.png"
-                    href="https://larguei.s3.us-west-2.amazonaws.com/Rectangle%20600-1676305848576.png"
+                    title={annex.originalName}
+                    href={annex.url}
                     download
                     target="_blank"
                     rel="noreferrer"
                   >
-                    <p className="p3">quadro</p>
+                    <p className="p3">{annex.name}</p>
                     <Image size="16px" img={icon.download} />
                   </a>
                 </Style.Tag>

@@ -1,5 +1,6 @@
 // LIBS
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 // COMPONENTS
 import { Button } from '../../components/Buttons/Button';
@@ -12,18 +13,21 @@ import { requestMaintenancesPlan } from './functions';
 import * as Style from './styles';
 
 // TYPES
-import { IMaintenancesPlan } from './types';
+import { IBuilding, IMaintenancesPlan } from './types';
 
 export const MaintenancesPlan = () => {
+  const { buildingId } = useParams() as { buildingId: string };
   const [maintenancesPlan, setMaintenancesPlan] = useState<IMaintenancesPlan[]>([]);
+  const [building, setBuilding] = useState<IBuilding>({ Banners: [], name: '' });
+
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     requestMaintenancesPlan({
-      buildingId: 'e24696d4-aaef-442c-b6bd-187717bf1c3d',
-      syndicId: 'f814fd08-1fdb-4876-b066-276606a01fb1',
+      buildingId,
       setLoading,
       setMaintenancesPlan,
+      setBuilding,
     });
   }, []);
 
@@ -31,15 +35,34 @@ export const MaintenancesPlan = () => {
     <DotSpinLoading />
   ) : (
     <Style.Container>
-      <h2>Monte Ravello</h2>
-      <Style.WebBanner
-        src="https://larguei.s3.us-west-2.amazonaws.com/Rectangle+600+%281%29-1676307129017.png"
-        alt="Web banner"
-      />
-      <Style.MobileBanner
-        src="https://larguei.s3.us-west-2.amazonaws.com/Rectangle%20604-1676307085432.png"
-        alt="Mobile banner"
-      />
+      <h2>{building.name}</h2>
+      {building.Banners.map(
+        (banner) =>
+          banner.type === 'Web' && (
+            <Style.WebBanner
+              key={banner.id}
+              src={banner.url}
+              alt="Web banner"
+              onClick={() => {
+                window.open(banner.redirectUrl, '_blank');
+              }}
+            />
+          ),
+      )}
+
+      {building.Banners.map(
+        (banner) =>
+          banner.type === 'Mobile' && (
+            <Style.MobileBanner
+              key={banner.id}
+              src={banner.url}
+              alt="Mobile banner"
+              onClick={() => {
+                window.open(banner.redirectUrl, '_blank');
+              }}
+            />
+          ),
+      )}
       <Style.Card>
         <Style.CardHeader>
           <h4>Plano de manutenções</h4>

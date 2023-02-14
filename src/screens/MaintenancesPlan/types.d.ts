@@ -16,9 +16,21 @@ export interface IMaintenancesPlan {
   dates: Date[];
 }
 
+export interface IBuilding {
+  name: string;
+  Banners: {
+    bannerName: string;
+    id: string;
+    originalName: string;
+    redirectUrl: string;
+    type: 'Web' | 'Mobile';
+    url: string;
+  }[];
+}
+
 export interface IRequestMaintenancesPlan {
-  syndicId: string;
   buildingId: string;
   setMaintenancesPlan: React.Dispatch<React.SetStateAction<IMaintenancesPlan[]>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setBuilding: React.Dispatch<React.SetStateAction<IBuilding>>;
 }

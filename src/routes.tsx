@@ -24,9 +24,9 @@ const AppRoutes = () => (
           </Sidebar>
         }
       >
-        <Route path="/maintenancesplan" element={<MaintenancesPlan />} />
-        <Route path="/informations" element={<Informations />} />
-        <Route path="/buildingmanager" element={<BuildingManagerArea />} />
+        <Route path="/maintenancesplan/:buildingId" element={<MaintenancesPlan />} />
+        <Route path="/informations/:buildingId" element={<Informations />} />
+        <Route path="/buildingmanager/:buildingId" element={<BuildingManagerArea />} />
       </Route>
     </Routes>
   </BrowserRouter>

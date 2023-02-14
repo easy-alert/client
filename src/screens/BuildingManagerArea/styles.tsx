@@ -47,7 +47,6 @@ export const Kanban = styled.div`
   gap: ${theme.size.sm};
   overflow: auto;
   height: 100%;
-
   scrollbar-width: none;
   scrollbar-color: transparent;
 

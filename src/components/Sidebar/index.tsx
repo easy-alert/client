@@ -1,6 +1,6 @@
 // LIBS
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 // STYLES
 import * as Style from './styles';
@@ -15,12 +15,14 @@ import { ISidebar, SidebarContentProps } from './utils/types';
 export const Sidebar = ({ children }: ISidebar) => {
   const [showNavbarMenu, setShowNavbarMenu] = useState<boolean>(false);
 
+  const { buildingId } = useParams() as { buildingId: string };
+
   const navigate = useNavigate();
 
   const SidebarContent: SidebarContentProps[] = [
-    { name: 'Plano de manutenções', url: '/maintenancesplan' },
-    { name: 'Informações', url: '/informations' },
-    { name: 'Área do síndico', url: '/buildingmanager' },
+    { name: 'Plano de manutenções', url: `/maintenancesplan/${buildingId}` },
+    { name: 'Informações', url: `/informations/${buildingId}` },
+    { name: 'Área do síndico', url: `/buildingmanager/${buildingId}` },
   ];
 
   useEffect(() => {

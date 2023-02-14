@@ -4,13 +4,14 @@ import { IRequestMaintenancesPlan } from './types';
 
 export const requestMaintenancesPlan = async ({
   setMaintenancesPlan,
-  syndicId,
   buildingId,
   setLoading,
+  setBuilding,
 }: IRequestMaintenancesPlan) => {
-  await Api.get(`/building/${buildingId}/syndic/${syndicId}`)
+  await Api.get(`/building/${buildingId}`)
     .then((res) => {
       setMaintenancesPlan(res.data.months);
+      setBuilding(res.data.building);
     })
     .catch((err) => {
       catchHandler(err);

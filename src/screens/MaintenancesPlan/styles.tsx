@@ -8,7 +8,10 @@ export const Container = styled.div`
 `;
 
 export const WebBanner = styled.img`
+  cursor: pointer;
   border-radius: ${theme.size.xxsm};
+  max-height: 304px;
+  object-fit: contain;
 
   @media (max-width: 900px) {
     display: none;
@@ -16,11 +19,14 @@ export const WebBanner = styled.img`
 `;
 
 export const MobileBanner = styled.img`
-  border-radius: ${theme.size.xxsm};
   display: none;
 
   @media (max-width: 900px) {
     display: block;
+    cursor: pointer;
+    border-radius: ${theme.size.xxsm};
+    max-height: 170px;
+    object-fit: contain;
   }
 `;
 
