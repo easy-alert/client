@@ -30,6 +30,12 @@ export const MobileBanner = styled.img`
   }
 `;
 
+export const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
 export const Card = styled.div`
   background-color: ${theme.color.white};
   border-radius: ${theme.size.xxsm};

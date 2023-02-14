@@ -1,23 +1,31 @@
 // LIBS
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { icon } from '../../assets/icons';
 
 // COMPONENTS
 import { Button } from '../../components/Buttons/Button';
+import { IconButton } from '../../components/Buttons/IconButton';
 import { EventTag } from '../../components/EventTag';
 import { Select } from '../../components/Inputs/Select';
 import { DotSpinLoading } from '../../components/Loadings/DotSpinLoading';
-import { requestMaintenancesPlan } from './functions';
 
 // STYLES
 import * as Style from './styles';
+import { theme } from '../../styles/theme';
 
 // TYPES
 import { IBuilding, IMaintenancesPlan } from './types';
 
+// FUNCTIONS
+import { requestMaintenancesPlan } from './functions';
+
 export const MaintenancesPlan = () => {
   const { buildingId } = useParams() as { buildingId: string };
   const [maintenancesPlan, setMaintenancesPlan] = useState<IMaintenancesPlan[]>([]);
+
+  const [showFilter, setShowFilter] = useState<boolean>(false);
+
   const [building, setBuilding] = useState<IBuilding>({ Banners: [], name: '' });
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -65,13 +73,26 @@ export const MaintenancesPlan = () => {
       )}
       <Style.Card>
         <Style.CardHeader>
-          <h4>Plano de manutenções</h4>
-          <Style.FilterWrapper>
-            <Select label="Ano" />
-            <Select label="Mês" />
-            <Select label="Status" />
-            <Button type="button" label="Filtrar" />
-          </Style.FilterWrapper>
+          <Style.Header>
+            <h4>Plano de manutenções</h4>
+            <IconButton
+              icon={icon.filter}
+              size="16px"
+              label="Filtrar"
+              color={theme.color.gray5}
+              onClick={() => {
+                setShowFilter(!showFilter);
+              }}
+            />
+          </Style.Header>
+          {showFilter && (
+            <Style.FilterWrapper>
+              <Select label="Ano" />
+              <Select label="Mês" />
+              <Select label="Status" />
+              <Button type="button" label="Filtrar" />
+            </Style.FilterWrapper>
+          )}
         </Style.CardHeader>
         <Style.CalendarWrapper>
           {maintenancesPlan.map((month) => (
