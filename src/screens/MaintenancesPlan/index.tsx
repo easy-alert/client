@@ -38,7 +38,7 @@ export const MaintenancesPlan = () => {
       />
       <Style.MobileBanner
         src="https://larguei.s3.us-west-2.amazonaws.com/Rectangle%20604-1676307085432.png"
-        alt="Web banner"
+        alt="Mobile banner"
       />
       <Style.Card>
         <Style.CardHeader>
@@ -52,7 +52,12 @@ export const MaintenancesPlan = () => {
         </Style.CardHeader>
         <Style.CalendarWrapper>
           {maintenancesPlan.map((month) => (
-            <Style.MonthSection key={month.name}>
+            <Style.MonthSection
+              key={month.name}
+              onClick={() => {
+                // abrir modal
+              }}
+            >
               <h5>{month.name}</h5>
               {month.dates.length > 0 ? (
                 month.dates.map((maintenance, i: number) => (

@@ -8,6 +8,13 @@ export const Container = styled.div`
   height: 100%;
 `;
 
+export const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: ${theme.size.sm};
+`;
+
 export const FilterWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
