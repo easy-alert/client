@@ -24,7 +24,7 @@ export const Sidebar = ({ children }: ISidebar) => {
   const SidebarContent: SidebarContentProps[] = [
     { name: 'Plano de manutenções', url: `/maintenancesplan/${buildingId}` },
     { name: 'Informações', url: `/informations/${buildingId}` },
-    { name: 'Área do síndico', url: `/buildingmanager/${buildingId}` },
+    { name: 'Área do síndico', url: `/syndicarea/${buildingId}` },
   ];
 
   useEffect(() => {

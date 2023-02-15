@@ -8,7 +8,7 @@ import { Select } from '../../components/Inputs/Select';
 import { theme } from '../../styles/theme';
 import * as Style from './styles';
 
-export const BuildingManagerArea = () => {
+export const SyndicArea = () => {
   const [showFilter, setShowFilter] = useState<boolean>(false);
 
   return (

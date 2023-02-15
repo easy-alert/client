@@ -15,7 +15,7 @@ import * as Style from './styles';
 import { theme } from '../../styles/theme';
 
 // TYPES
-import { IBuilding, IFilterOptions, IMaintenancesPlan } from './types';
+import { IBuilding, IFilter, IFilterOptions, IMaintenancesPlan } from './types';
 
 // FUNCTIONS
 import { requestMaintenancesPlan } from './functions';
@@ -37,6 +37,12 @@ export const MaintenancesPlan = () => {
     years: [],
   });
 
+  const [filter, setFilter] = useState<IFilter>({
+    months: '',
+    status: '',
+    years: String(new Date().getFullYear()),
+  });
+
   useEffect(() => {
     requestMaintenancesPlan({
       buildingId,
@@ -44,6 +50,7 @@ export const MaintenancesPlan = () => {
       setMaintenancesPlan,
       setBuilding,
       setFilterOptions,
+      filter,
     });
   }, []);
 
@@ -100,21 +107,55 @@ export const MaintenancesPlan = () => {
           </Style.Header>
           {showFilter && (
             <Style.FilterWrapper>
-              <Select label="Ano">
+              <Select
+                selectPlaceholderValue={' '}
+                label="Ano"
+                value={filter.years}
+                onChange={(e) => {
+                  setFilter((prevState) => {
+                    const newState = { ...prevState };
+                    newState.years = e.target.value;
+                    return newState;
+                  });
+                }}
+              >
                 {filterOptions.years.map((option) => (
                   <option key={option} value={option}>
                     {option}
                   </option>
                 ))}
               </Select>
-              <Select label="Mês">
+              <Select
+                selectPlaceholderValue={' '}
+                label="Mês"
+                value={filter.months}
+                onChange={(e) => {
+                  setFilter((prevState) => {
+                    const newState = { ...prevState };
+                    newState.months = e.target.value;
+                    return newState;
+                  });
+                }}
+              >
+                <option value="">Todos</option>
                 {filterOptions.months.map((option) => (
                   <option key={option.monthNumber} value={option.monthNumber}>
                     {capitalizeFirstLetter(option.label)}
                   </option>
                 ))}
               </Select>
-              <Select label="Status">
+              <Select
+                selectPlaceholderValue={' '}
+                label="Status"
+                value={filter.status}
+                onChange={(e) => {
+                  setFilter((prevState) => {
+                    const newState = { ...prevState };
+                    newState.status = e.target.value;
+                    return newState;
+                  });
+                }}
+              >
                 <option value="">Todas</option>
                 {filterOptions.status.map((option) => (
                   <option key={option.name} value={option.name}>
@@ -122,7 +163,20 @@ export const MaintenancesPlan = () => {
                   </option>
                 ))}
               </Select>
-              <Button type="button" label="Filtrar" />
+              <Button
+                type="button"
+                label="Filtrar"
+                onClick={() => {
+                  requestMaintenancesPlan({
+                    buildingId,
+                    setLoading,
+                    setMaintenancesPlan,
+                    setBuilding,
+                    setFilterOptions,
+                    filter,
+                  });
+                }}
+              />
             </Style.FilterWrapper>
           )}
         </Style.CardHeader>
