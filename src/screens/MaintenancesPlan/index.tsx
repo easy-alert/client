@@ -197,7 +197,7 @@ export const MaintenancesPlan = () => {
                       <p className="p3">{maintenance.dateInfos.dayNumber}</p>
                       <p className="p3">{maintenance.dateInfos.smName}</p>
                     </Style.DayInfo>
-                    <Style.Maintenance>
+                    <Style.Maintenance status={maintenance.status}>
                       <Style.MaintenanceTags>
                         {maintenance.status === 'overdue' && <EventTag status="completed" />}
                         <EventTag status={maintenance.status} />

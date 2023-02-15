@@ -125,7 +125,7 @@ export const DayInfo = styled.div`
   }
 `;
 
-export const Maintenance = styled.div`
+export const Maintenance = styled.div<{ status: 'expired' | 'pending' | 'completed' | 'overdue' }>`
   min-height: 62px;
   width: 100%;
   display: flex;
@@ -133,14 +133,41 @@ export const Maintenance = styled.div`
   border-radius: ${theme.size.xxsm};
   padding: ${theme.size.sm} ${theme.size.sm} ${theme.size.sm} ${theme.size.md};
 
-  //trocar
-  background: linear-gradient(
-    90deg,
-    rgba(52, 181, 58, 1) 0%,
-    rgba(52, 181, 58, 1) 7px,
-    rgba(250, 250, 250, 1) 7px,
-    rgba(250, 250, 250, 1) 100%
-  );
+  ${({ status }) =>
+    (status === 'completed' || status === 'overdue') &&
+    css`
+      background: linear-gradient(
+        90deg,
+        rgba(52, 181, 58, 1) 0%,
+        rgba(52, 181, 58, 1) 7px,
+        rgba(250, 250, 250, 1) 7px,
+        rgba(250, 250, 250, 1) 100%
+      );
+    `}
+
+  ${({ status }) =>
+    status === 'expired' &&
+    css`
+      background: linear-gradient(
+        90deg,
+        rgba(255, 53, 8, 1) 0%,
+        rgba(255, 53, 8, 1) 6px,
+        rgba(250, 250, 250, 1) 6px,
+        rgba(250, 250, 250, 1) 100%
+      );
+    `}
+
+    ${({ status }) =>
+    status === 'pending' &&
+    css`
+      background: linear-gradient(
+        90deg,
+        rgba(255, 178, 0, 1) 0%,
+        rgba(255, 178, 0, 1) 6px,
+        rgba(250, 250, 250, 1) 6px,
+        rgba(250, 250, 250, 1) 100%
+      );
+    `}
 `;
 
 export const MaintenanceTags = styled.div`
