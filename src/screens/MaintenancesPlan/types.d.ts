@@ -28,9 +28,22 @@ export interface IBuilding {
   }[];
 }
 
+export interface IFilterOptions {
+  months: {
+    monthNumber: string;
+    label: string;
+  }[];
+  status: {
+    name: string;
+    label: string;
+  }[];
+  years: string[];
+}
+
 export interface IRequestMaintenancesPlan {
   buildingId: string;
   setMaintenancesPlan: React.Dispatch<React.SetStateAction<IMaintenancesPlan[]>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setBuilding: React.Dispatch<React.SetStateAction<IBuilding>>;
+  setFilterOptions: React.Dispatch<React.SetStateAction<IFilterOptions>>;
 }

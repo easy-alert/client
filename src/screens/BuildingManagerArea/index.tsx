@@ -35,7 +35,9 @@ export const BuildingManagerArea = () => {
       )}
       <Style.Kanban>
         <Style.KanbanCard>
-          <h5>Pendentes</h5>
+          <Style.KanbanHeader>
+            <h5>Pendentes</h5>
+          </Style.KanbanHeader>
           <Style.MaintenanceInfo>
             <h6>Sistemas Hidrossanitários</h6>
             <p className="p2">
@@ -87,7 +89,9 @@ export const BuildingManagerArea = () => {
         </Style.KanbanCard>
 
         <Style.KanbanCard>
-          <h5>Vencidas</h5>
+          <Style.KanbanHeader>
+            <h5>Vencidas</h5>
+          </Style.KanbanHeader>
           <Style.MaintenanceInfo>
             <h6>Sistemas Hidrossanitários</h6>
             <p className="p2">
@@ -126,7 +130,9 @@ export const BuildingManagerArea = () => {
         </Style.KanbanCard>
 
         <Style.KanbanCard>
-          <h5>Concluídas</h5>
+          <Style.KanbanHeader>
+            <h5>Concluídas</h5>
+          </Style.KanbanHeader>
           <Style.MaintenanceInfo>
             <span>
               <h6>Sistemas Hidrossanitáriosdsada da</h6>

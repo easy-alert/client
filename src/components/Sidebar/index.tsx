@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 // LIBS
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -36,6 +38,7 @@ export const Sidebar = ({ children }: ISidebar) => {
       <Style.Navbar>
         <Style.HamburguerWrapper>
           <IconButton
+            size="32px"
             icon={showNavbarMenu ? icon.xWhite : icon.list}
             onClick={() => {
               setShowNavbarMenu(!showNavbarMenu);
@@ -62,7 +65,14 @@ export const Sidebar = ({ children }: ISidebar) => {
           )}
         </Style.HamburguerWrapper>
 
-        <img src={icon.logoFullWhite} alt="Logo EasyAlert" />
+        <img
+          src={icon.logoFullWhite}
+          alt="Logo EasyAlert"
+          onClick={() => {
+            window.open('https://easyalert.com.br/', '_blank');
+          }}
+          style={{ cursor: 'pointer' }}
+        />
 
         <Style.WebContent>
           {SidebarContent.map((element) => (

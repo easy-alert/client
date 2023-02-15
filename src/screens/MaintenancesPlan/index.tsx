@@ -15,10 +15,11 @@ import * as Style from './styles';
 import { theme } from '../../styles/theme';
 
 // TYPES
-import { IBuilding, IMaintenancesPlan } from './types';
+import { IBuilding, IFilterOptions, IMaintenancesPlan } from './types';
 
 // FUNCTIONS
 import { requestMaintenancesPlan } from './functions';
+import { capitalizeFirstLetter } from '../../utils/functions';
 
 export const MaintenancesPlan = () => {
   const { buildingId } = useParams() as { buildingId: string };
@@ -30,12 +31,19 @@ export const MaintenancesPlan = () => {
 
   const [loading, setLoading] = useState<boolean>(true);
 
+  const [filterOptions, setFilterOptions] = useState<IFilterOptions>({
+    months: [],
+    status: [],
+    years: [],
+  });
+
   useEffect(() => {
     requestMaintenancesPlan({
       buildingId,
       setLoading,
       setMaintenancesPlan,
       setBuilding,
+      setFilterOptions,
     });
   }, []);
 
@@ -92,9 +100,28 @@ export const MaintenancesPlan = () => {
           </Style.Header>
           {showFilter && (
             <Style.FilterWrapper>
-              <Select label="Ano" />
-              <Select label="Mês" />
-              <Select label="Status" />
+              <Select label="Ano">
+                {filterOptions.years.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </Select>
+              <Select label="Mês">
+                {filterOptions.months.map((option) => (
+                  <option key={option.monthNumber} value={option.monthNumber}>
+                    {capitalizeFirstLetter(option.label)}
+                  </option>
+                ))}
+              </Select>
+              <Select label="Status">
+                <option value="">Todas</option>
+                {filterOptions.status.map((option) => (
+                  <option key={option.name} value={option.name}>
+                    {capitalizeFirstLetter(option.label)}
+                  </option>
+                ))}
+              </Select>
               <Button type="button" label="Filtrar" />
             </Style.FilterWrapper>
           )}

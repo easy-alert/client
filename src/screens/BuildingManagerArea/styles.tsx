@@ -64,13 +64,14 @@ export const KanbanCard = styled.div`
   flex-direction: column;
   gap: ${theme.size.xsm};
   scroll-snap-align: start;
-
   min-width: 300px;
 
   @media (max-width: 900px) {
     padding: ${theme.size.sm};
   }
 `;
+
+export const KanbanHeader = styled.div``;
 
 export const MaintenanceInfo = styled.div`
   padding: ${theme.size.sm};

@@ -13,7 +13,7 @@ export const requestMainContactInformations = async ({
       setLoading(false);
     })
     .catch((err) => {
-      if (err.response.status === 404) {
+      if (err.response && err.response.status === 404) {
         window.open('https://easyalert.com.br/', '_self');
       } else {
         catchHandler(err);
