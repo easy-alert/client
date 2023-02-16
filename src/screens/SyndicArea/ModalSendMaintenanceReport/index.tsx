@@ -31,6 +31,12 @@ import { requestSendReport } from './functions';
 export const ModalSendMaintenanceReport = ({
   setModal,
   maintenanceHistoryId,
+  filter,
+  setBuildingName,
+  setFilterOptions,
+  setKanban,
+  setLoading,
+  syndicId,
 }: IModalSendMaintenanceReport) => {
   const [maintenance, setMaintenance] = useState<IMaintenance>({} as IMaintenance);
 
@@ -260,6 +266,12 @@ export const ModalSendMaintenanceReport = ({
                 maintenanceReport,
                 setModal,
                 setOnQuery,
+                filter,
+                setBuildingName,
+                setFilterOptions,
+                setKanban,
+                setLoading,
+                syndicId,
               });
             }}
           />

@@ -22,6 +22,7 @@ import { icon } from '../../assets/icons';
 import { theme } from '../../styles/theme';
 import * as Style from './styles';
 import { ModalMaintenanceDetails } from '../MaintenancesPlan/ModalMaintenanceDetails';
+import { Skeleton } from '../../components/Skeleton';
 
 export const SyndicArea = () => {
   const [showFilter, setShowFilter] = useState<boolean>(false);
@@ -74,6 +75,12 @@ export const SyndicArea = () => {
         <ModalSendMaintenanceReport
           maintenanceHistoryId={selectedMaintenanceHistoryId}
           setModal={setModalSendReportOpen}
+          filter={filter}
+          setBuildingName={setBuildingName}
+          setFilterOptions={setFilterOptions}
+          setKanban={setKanban}
+          setLoading={setLoading}
+          syndicId={syndicId}
         />
       )}
       {modalMaintenanceDetailsOpen && (
@@ -182,39 +189,49 @@ export const SyndicArea = () => {
           </Style.FilterWrapper>
         )}
         <Style.Kanban>
-          {kanban.map((card) => (
+          {kanban.map((card, i: number) => (
             <Style.KanbanCard key={card.status}>
               <Style.KanbanHeader>
                 <h5>{card.status}</h5>
               </Style.KanbanHeader>
 
-              {card.maintenances.length > 0 ? (
-                card.maintenances.map((maintenance, i: number) => (
-                  <Style.MaintenanceInfo
-                    key={maintenance.id + i}
-                    status={maintenance.status}
-                    onClick={() => {
-                      setSelectedMaintenanceHistoryId(maintenance.id);
-                      if (maintenance.status === 'pending' || maintenance.status === 'expired') {
-                        setModalSendReportOpen(true);
-                      } else {
-                        setModalMaintenanceDetailsOpen(true);
-                      }
-                    }}
-                  >
-                    <span>
-                      <h6>{maintenance.element}</h6>
-                      {maintenance.status === 'overdue' && <EventTag status="overdue" />}
-                    </span>
-                    <p className="p2">{maintenance.activity}</p>
-                    <p className="p3">{maintenance.label}</p>
-                  </Style.MaintenanceInfo>
-                ))
-              ) : (
-                <Style.NoDataContainer>
-                  <h4>Nenhuma manutenção encontrada.</h4>
-                </Style.NoDataContainer>
+              {onQuery && (
+                <>
+                  {(i === 0 || i === 1 || i === 2) && <Skeleton />}
+                  {(i === 0 || i === 1 || i === 2) && <Skeleton />}
+                  {(i === 0 || i === 2) && <Skeleton />}
+                  {i === 2 && <Skeleton />}
+                </>
               )}
+
+              {!onQuery &&
+                (card.maintenances.length > 0 ? (
+                  card.maintenances.map((maintenance, j: number) => (
+                    <Style.MaintenanceInfo
+                      key={maintenance.id + j}
+                      status={maintenance.status}
+                      onClick={() => {
+                        setSelectedMaintenanceHistoryId(maintenance.id);
+                        if (maintenance.status === 'pending' || maintenance.status === 'expired') {
+                          setModalSendReportOpen(true);
+                        } else {
+                          setModalMaintenanceDetailsOpen(true);
+                        }
+                      }}
+                    >
+                      <span>
+                        <h6>{maintenance.element}</h6>
+                        {maintenance.status === 'overdue' && <EventTag status="overdue" />}
+                      </span>
+                      <p className="p2">{maintenance.activity}</p>
+                      <p className="p3">{maintenance.label}</p>
+                    </Style.MaintenanceInfo>
+                  ))
+                ) : (
+                  <Style.NoDataContainer>
+                    <h4>Nenhuma manutenção encontrada.</h4>
+                  </Style.NoDataContainer>
+                ))}
             </Style.KanbanCard>
           ))}
         </Style.Kanban>

@@ -1,8 +1,15 @@
 import { AnnexesAndImages } from '../../types';
+import { IFilterOptions, IKanban } from '../types';
 
 export interface IModalSendMaintenanceReport {
   setModal: (setModal: boolean) => void;
   maintenanceHistoryId: string;
+  syndicId: string;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setFilterOptions: React.Dispatch<React.SetStateAction<IFilterOptions>>;
+  filter: IFilter;
+  setKanban: React.Dispatch<React.SetStateAction<IKanban[]>>;
+  setBuildingName: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export interface IMaintenanceReport {
@@ -16,5 +23,11 @@ export interface IRequestSendReport {
   maintenanceHistoryId: string;
   files: AnnexesAndImages[];
   images: AnnexesAndImages[];
-  setOnQuery: (setOnQuery: boolean) => void;
+  syndicId: string;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setFilterOptions: React.Dispatch<React.SetStateAction<IFilterOptions>>;
+  setOnQuery: React.Dispatch<React.SetStateAction<boolean>>;
+  filter: IFilter;
+  setKanban: React.Dispatch<React.SetStateAction<IKanban[]>>;
+  setBuildingName: React.Dispatch<React.SetStateAction<string>>;
 }

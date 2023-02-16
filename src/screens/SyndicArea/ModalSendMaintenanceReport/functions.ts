@@ -1,6 +1,7 @@
 import { toast } from 'react-toastify';
 import { Api } from '../../../services/api';
 import { catchHandler, unMaskBRL } from '../../../utils/functions';
+import { requestSyndicKanban } from '../functions';
 import { IRequestSendReport } from './types';
 
 export const requestSendReport = async ({
@@ -10,6 +11,12 @@ export const requestSendReport = async ({
   files,
   images,
   setOnQuery,
+  filter,
+  setBuildingName,
+  setFilterOptions,
+  setKanban,
+  setLoading,
+  syndicId,
 }: IRequestSendReport) => {
   setOnQuery(true);
 
@@ -22,6 +29,15 @@ export const requestSendReport = async ({
   })
     .then((res) => {
       toast.success(res.data.ServerMessage.message);
+      requestSyndicKanban({
+        setLoading,
+        syndicId,
+        setFilterOptions,
+        filter,
+        setOnQuery,
+        setKanban,
+        setBuildingName,
+      });
       setModal(false);
     })
     .catch((err) => {
