@@ -13,6 +13,7 @@ import { IconButton } from '../Buttons/IconButton';
 
 // TYPES
 import { ISidebar, SidebarContentProps } from './utils/types';
+import { query } from '../../utils/functions';
 
 export const Sidebar = ({ children }: ISidebar) => {
   const { buildingId } = useParams() as { buildingId: string };
@@ -22,10 +23,19 @@ export const Sidebar = ({ children }: ISidebar) => {
   const SidebarContent: SidebarContentProps[] = [
     {
       name: 'Plano de manutenções',
-      url: `/maintenancesplan/${buildingId}`,
+      url: `/maintenancesplan/${buildingId}${window.location.search}`,
+      restricted: false,
     },
-    { name: 'Informações', url: `/informations/${buildingId}` },
-    { name: 'Área do síndico', url: `/syndicarea/${buildingId}` },
+    {
+      name: 'Informações',
+      url: `/informations/${buildingId}${window.location.search}`,
+      restricted: false,
+    },
+    {
+      name: 'Área do síndico',
+      url: `/syndicarea/${buildingId}${window.location.search}`,
+      restricted: true,
+    },
   ];
 
   useEffect(() => {
@@ -47,21 +57,29 @@ export const Sidebar = ({ children }: ISidebar) => {
           />
           {showNavbarMenu && (
             <Style.MobileContent>
-              {SidebarContent.map((element) => (
-                <Link
-                  key={element.url}
-                  to={element.url}
-                  onClick={() => {
-                    setShowNavbarMenu(false);
-                  }}
-                >
-                  <Style.NavbarButtonMobile
-                    selected={window.location.pathname.startsWith(element.url)}
+              {SidebarContent.map((element) => {
+                if (!query.get('syndicId') && element.restricted) {
+                  return null;
+                }
+
+                return (
+                  <Link
+                    key={element.url}
+                    to={element.url}
+                    onClick={() => {
+                      setShowNavbarMenu(false);
+                    }}
                   >
-                    {element.name}
-                  </Style.NavbarButtonMobile>
-                </Link>
-              ))}
+                    <Style.NavbarButtonMobile
+                      selected={
+                        window.location.pathname.split('/')[1] === element.url.split('/')[1]
+                      }
+                    >
+                      {element.name}
+                    </Style.NavbarButtonMobile>
+                  </Link>
+                );
+              })}
             </Style.MobileContent>
           )}
         </Style.HamburguerWrapper>
@@ -76,13 +94,20 @@ export const Sidebar = ({ children }: ISidebar) => {
         />
 
         <Style.WebContent>
-          {SidebarContent.map((element) => (
-            <Link className="p3" to={element.url} key={element.url}>
-              <Style.NavbarButtonWeb selected={window.location.pathname.startsWith(element.url)}>
-                {element.name}
-              </Style.NavbarButtonWeb>
-            </Link>
-          ))}
+          {SidebarContent.map((element) => {
+            if (!query.get('syndicId') && element.restricted) {
+              return null;
+            }
+            return (
+              <Link className="p3" to={element.url} key={element.url}>
+                <Style.NavbarButtonWeb
+                  selected={window.location.pathname.split('/')[1] === element.url.split('/')[1]}
+                >
+                  {element.name}
+                </Style.NavbarButtonWeb>
+              </Link>
+            );
+          })}
         </Style.WebContent>
       </Style.Navbar>
       <Style.AppContent>{children}</Style.AppContent>

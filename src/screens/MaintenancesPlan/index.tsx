@@ -40,7 +40,7 @@ export const MaintenancesPlan = () => {
   });
 
   const [filter, setFilter] = useState<IFilter>({
-    months: '',
+    months: '02', // arrumar arrumar arrumar
     status: '',
     years: String(new Date().getFullYear()),
   });
@@ -101,7 +101,7 @@ export const MaintenancesPlan = () => {
             <IconButton
               icon={icon.filter}
               size="16px"
-              label={showFilter ? 'Ocultar filtro' : 'Filtrar'}
+              label={showFilter ? 'Ocultar filtros' : 'Filtrar'}
               color={theme.color.gray5}
               onClick={() => {
                 setShowFilter(!showFilter);
