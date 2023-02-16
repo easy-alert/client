@@ -75,6 +75,11 @@ export const SyndicArea = () => {
               setFilter((prevState) => {
                 const newState = { ...prevState };
                 newState.years = e.target.value;
+
+                if (prevState.months !== '' && newState.years === '') {
+                  newState.months = '';
+                }
+
                 return newState;
               });
             }}
@@ -87,7 +92,7 @@ export const SyndicArea = () => {
             ))}
           </Select>
           <Select
-            disabled={onQuery}
+            disabled={onQuery || filter.years === ''}
             selectPlaceholderValue={' '}
             label="Mês"
             value={filter.months}
