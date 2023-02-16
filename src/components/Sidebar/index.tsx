@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 // LIBS
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 // STYLES
 import * as Style from './styles';
@@ -15,24 +15,22 @@ import { IconButton } from '../Buttons/IconButton';
 import { ISidebar, SidebarContentProps } from './utils/types';
 
 export const Sidebar = ({ children }: ISidebar) => {
-  const [showNavbarMenu, setShowNavbarMenu] = useState<boolean>(false);
-
   const { buildingId } = useParams() as { buildingId: string };
 
-  const navigate = useNavigate();
+  const [showNavbarMenu, setShowNavbarMenu] = useState<boolean>(false);
 
   const SidebarContent: SidebarContentProps[] = [
     {
       name: 'Plano de manutenções',
-      url: `/maintenancesplan/${buildingId}${window.location.search}`,
+      url: `/maintenancesplan/${buildingId}`,
     },
-    { name: 'Informações', url: `/informations/${buildingId}${window.location.search}` },
-    { name: 'Área do síndico', url: `/syndicarea/${buildingId}${window.location.search}` },
+    { name: 'Informações', url: `/informations/${buildingId}` },
+    { name: 'Área do síndico', url: `/syndicarea/${buildingId}` },
   ];
 
   useEffect(() => {
     if (window.location.href.endsWith('/')) {
-      navigate('/maintenancesplan');
+      window.open('https://easyalert.com.br/', '_self');
     }
   }, []);
 

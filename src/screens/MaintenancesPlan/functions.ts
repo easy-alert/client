@@ -12,8 +12,10 @@ export const requestMaintenancesPlan = async ({
   filter,
 }: IRequestMaintenancesPlan) => {
   setOnQuery(true);
-  // &month=${filter.months}
-  await Api.get(`/building/${buildingId}?year=${filter.years}&status=${filter.status}`)
+
+  await Api.get(
+    `/building/${buildingId}?year=${filter.years}&month=${filter.months}&status=${filter.status}`,
+  )
     .then((res) => {
       setFilterOptions(res.data.Filters);
       setMaintenancesPlan(res.data.months);

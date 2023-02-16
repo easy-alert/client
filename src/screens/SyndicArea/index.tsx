@@ -18,7 +18,7 @@ export const SyndicArea = () => {
         <IconButton
           icon={icon.filter}
           size="16px"
-          label="Filtrar"
+          label={showFilter ? 'Ocultar filtro' : 'Filtrar'}
           color={theme.color.gray5}
           onClick={() => {
             setShowFilter(!showFilter);

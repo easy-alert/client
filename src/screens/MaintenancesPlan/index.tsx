@@ -101,7 +101,7 @@ export const MaintenancesPlan = () => {
             <IconButton
               icon={icon.filter}
               size="16px"
-              label="Filtrar"
+              label={showFilter ? 'Ocultar filtro' : 'Filtrar'}
               color={theme.color.gray5}
               onClick={() => {
                 setShowFilter(!showFilter);
@@ -111,6 +111,7 @@ export const MaintenancesPlan = () => {
           {showFilter && (
             <Style.FilterWrapper>
               <Select
+                disabled={onQuery}
                 selectPlaceholderValue={' '}
                 label="Ano"
                 value={filter.years}
@@ -129,6 +130,7 @@ export const MaintenancesPlan = () => {
                 ))}
               </Select>
               <Select
+                disabled={onQuery}
                 selectPlaceholderValue={' '}
                 label="Mês"
                 value={filter.months}
@@ -148,6 +150,7 @@ export const MaintenancesPlan = () => {
                 ))}
               </Select>
               <Select
+                disabled={onQuery}
                 selectPlaceholderValue={' '}
                 label="Status"
                 value={filter.status}
@@ -169,7 +172,7 @@ export const MaintenancesPlan = () => {
               <Button
                 type="button"
                 label="Filtrar"
-                loading={onQuery}
+                disable={onQuery}
                 onClick={() => {
                   requestMaintenancesPlan({
                     buildingId,
