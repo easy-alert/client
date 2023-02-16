@@ -31,6 +31,8 @@ export const MaintenancesPlan = () => {
 
   const [loading, setLoading] = useState<boolean>(true);
 
+  const [onQuery, setOnQuery] = useState<boolean>(false);
+
   const [filterOptions, setFilterOptions] = useState<IFilterOptions>({
     months: [],
     status: [],
@@ -51,6 +53,7 @@ export const MaintenancesPlan = () => {
       setBuilding,
       setFilterOptions,
       filter,
+      setOnQuery,
     });
   }, []);
 
@@ -166,6 +169,7 @@ export const MaintenancesPlan = () => {
               <Button
                 type="button"
                 label="Filtrar"
+                loading={onQuery}
                 onClick={() => {
                   requestMaintenancesPlan({
                     buildingId,
@@ -174,6 +178,7 @@ export const MaintenancesPlan = () => {
                     setBuilding,
                     setFilterOptions,
                     filter,
+                    setOnQuery,
                   });
                 }}
               />
@@ -181,43 +186,49 @@ export const MaintenancesPlan = () => {
           )}
         </Style.CardHeader>
         <Style.CalendarWrapper>
-          {maintenancesPlan.map((month) => (
-            <Style.MonthSection
-              key={month.name}
-              onClick={() => {
-                // abrir modal
-              }}
-            >
-              <h5>{month.name}</h5>
-              {month.dates.length > 0 ? (
-                month.dates.map((maintenance, i: number) => (
-                  // eslint-disable-next-line react/no-array-index-key
-                  <Style.DayWrapper key={maintenance.activity + i}>
-                    <Style.DayInfo>
-                      <p className="p3">{maintenance.dateInfos.dayNumber}</p>
-                      <p className="p3">{maintenance.dateInfos.smName}</p>
-                    </Style.DayInfo>
-                    <Style.Maintenance status={maintenance.status}>
-                      <Style.MaintenanceTags>
-                        {maintenance.status === 'overdue' && <EventTag status="completed" />}
-                        <EventTag status={maintenance.status} />
-                      </Style.MaintenanceTags>
+          {onQuery ? (
+            <Style.LoadingContainer>
+              <DotSpinLoading />
+            </Style.LoadingContainer>
+          ) : (
+            maintenancesPlan.map((month) => (
+              <Style.MonthSection
+                key={month.name}
+                onClick={() => {
+                  // abrir modal
+                }}
+              >
+                <h5>{month.name}</h5>
+                {month.dates.length > 0 ? (
+                  month.dates.map((maintenance, i: number) => (
+                    // eslint-disable-next-line react/no-array-index-key
+                    <Style.DayWrapper key={maintenance.activity + i}>
+                      <Style.DayInfo>
+                        <p className="p3">{maintenance.dateInfos.dayNumber}</p>
+                        <p className="p3">{maintenance.dateInfos.smName}</p>
+                      </Style.DayInfo>
+                      <Style.Maintenance status={maintenance.status}>
+                        <Style.MaintenanceTags>
+                          {maintenance.status === 'overdue' && <EventTag status="completed" />}
+                          <EventTag status={maintenance.status} />
+                        </Style.MaintenanceTags>
 
-                      <h6>{maintenance.activity}</h6>
-                      <p className="p2">{maintenance.element}</p>
-                    </Style.Maintenance>
-                  </Style.DayWrapper>
-                ))
-              ) : (
-                <Style.NoDataDayWrapper>
-                  <Style.DayInfo />
-                  <Style.NoMaintenanceCard>
-                    <h6>Sem manutenções</h6>
-                  </Style.NoMaintenanceCard>
-                </Style.NoDataDayWrapper>
-              )}
-            </Style.MonthSection>
-          ))}
+                        <h6>{maintenance.activity}</h6>
+                        <p className="p2">{maintenance.element}</p>
+                      </Style.Maintenance>
+                    </Style.DayWrapper>
+                  ))
+                ) : (
+                  <Style.NoDataDayWrapper>
+                    <Style.DayInfo />
+                    <Style.NoMaintenanceCard>
+                      <h6>Sem manutenções</h6>
+                    </Style.NoMaintenanceCard>
+                  </Style.NoDataDayWrapper>
+                )}
+              </Style.MonthSection>
+            ))
+          )}
         </Style.CalendarWrapper>
       </Style.Card>
     </Style.Container>

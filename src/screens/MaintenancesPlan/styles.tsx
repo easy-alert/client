@@ -195,3 +195,10 @@ export const NoMaintenanceCard = styled.div`
     rgba(250, 250, 250, 1) 100%
   );
 `;
+
+export const LoadingContainer = styled.div`
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;

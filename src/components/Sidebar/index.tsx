@@ -22,9 +22,12 @@ export const Sidebar = ({ children }: ISidebar) => {
   const navigate = useNavigate();
 
   const SidebarContent: SidebarContentProps[] = [
-    { name: 'Plano de manutenções', url: `/maintenancesplan/${buildingId}` },
-    { name: 'Informações', url: `/informations/${buildingId}` },
-    { name: 'Área do síndico', url: `/syndicarea/${buildingId}` },
+    {
+      name: 'Plano de manutenções',
+      url: `/maintenancesplan/${buildingId}${window.location.search}`,
+    },
+    { name: 'Informações', url: `/informations/${buildingId}${window.location.search}` },
+    { name: 'Área do síndico', url: `/syndicarea/${buildingId}${window.location.search}` },
   ];
 
   useEffect(() => {
