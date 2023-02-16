@@ -9,6 +9,7 @@ export const requestSyndicKanban = async ({
   setKanban,
   setOnQuery,
   filter,
+  setBuildingName,
 }: IRequestSyndicKanban) => {
   setOnQuery(true);
 
@@ -17,6 +18,7 @@ export const requestSyndicKanban = async ({
   )
     .then((res) => {
       setKanban(res.data.kanban);
+      setBuildingName(res.data.buildingName);
       setFilterOptions(res.data.Filters);
       setLoading(false);
     })

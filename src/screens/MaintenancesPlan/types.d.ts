@@ -9,6 +9,7 @@ export interface Date {
   activity: string;
   status: 'expired' | 'pending' | 'completed' | 'overdue';
   dateInfos: DateInfos;
+  id: string;
 }
 
 export interface IMaintenancesPlan {

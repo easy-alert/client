@@ -21,6 +21,7 @@ import { IFilter, IFilterOptions, IKanban } from './types';
 import { icon } from '../../assets/icons';
 import { theme } from '../../styles/theme';
 import * as Style from './styles';
+import { ModalMaintenanceDetails } from '../MaintenancesPlan/ModalMaintenanceDetails';
 
 export const SyndicArea = () => {
   const [showFilter, setShowFilter] = useState<boolean>(false);
@@ -31,7 +32,13 @@ export const SyndicArea = () => {
 
   const [modalSendReportOpen, setModalSendReportOpen] = useState<boolean>(false);
 
+  const [modalMaintenanceDetailsOpen, setModalMaintenanceDetailsOpen] = useState<boolean>(false);
+
   const [kanban, setKanban] = useState<IKanban[]>([]);
+
+  const [buildingName, setBuildingName] = useState<string>('');
+
+  const [selectedMaintenanceHistoryId, setSelectedMaintenanceHistoryId] = useState<string>('');
 
   const [filterOptions, setFilterOptions] = useState<IFilterOptions>({
     months: [],
@@ -40,7 +47,7 @@ export const SyndicArea = () => {
   });
 
   const [filter, setFilter] = useState<IFilter>({
-    months: `0${String(new Date().getMonth() + 1)}`, // arrumar arrumar arrumar
+    months: '',
     status: '',
     years: String(new Date().getFullYear()),
   });
@@ -48,7 +55,15 @@ export const SyndicArea = () => {
   const syndicId = query.get('syndicId') ?? '';
 
   useEffect(() => {
-    requestSyndicKanban({ setLoading, syndicId, setFilterOptions, filter, setOnQuery, setKanban });
+    requestSyndicKanban({
+      setLoading,
+      syndicId,
+      setFilterOptions,
+      filter,
+      setOnQuery,
+      setKanban,
+      setBuildingName,
+    });
   }, []);
 
   return loading ? (
@@ -57,14 +72,20 @@ export const SyndicArea = () => {
     <>
       {modalSendReportOpen && (
         <ModalSendMaintenanceReport
-          maintenanceHistoryId="blabla"
+          maintenanceHistoryId={selectedMaintenanceHistoryId}
           setModal={setModalSendReportOpen}
+        />
+      )}
+      {modalMaintenanceDetailsOpen && (
+        <ModalMaintenanceDetails
+          setModal={setModalMaintenanceDetailsOpen}
+          maintenanceHistoryId={selectedMaintenanceHistoryId}
         />
       )}
 
       <Style.Container>
         <Style.Header>
-          <h2>req</h2>
+          <h2>{buildingName}</h2>
           <IconButton
             icon={icon.filter}
             size="16px"
@@ -154,6 +175,7 @@ export const SyndicArea = () => {
                   filter,
                   setOnQuery,
                   setKanban,
+                  setBuildingName,
                 });
               }}
             />
@@ -172,7 +194,12 @@ export const SyndicArea = () => {
                     key={maintenance.id + i}
                     status={maintenance.status}
                     onClick={() => {
-                      setModalSendReportOpen(true);
+                      setSelectedMaintenanceHistoryId(maintenance.id);
+                      if (maintenance.status === 'pending' || maintenance.status === 'expired') {
+                        setModalSendReportOpen(true);
+                      } else {
+                        setModalMaintenanceDetailsOpen(true);
+                      }
                     }}
                   >
                     <span>

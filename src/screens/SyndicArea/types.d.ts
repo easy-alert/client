@@ -37,4 +37,5 @@ export interface IRequestSyndicKanban {
   setOnQuery: React.Dispatch<React.SetStateAction<boolean>>;
   filter: IFilter;
   setKanban: React.Dispatch<React.SetStateAction<IKanban[]>>;
+  setBuildingName: React.Dispatch<React.SetStateAction<string>>;
 }

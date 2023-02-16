@@ -7,7 +7,7 @@ export const requestMaintenanceDetails = async ({
   setMaintenance,
   setModalLoading,
 }: IRequestMaintenanceDetails) => {
-  await Api.get(`**************************${maintenanceHistoryId}`)
+  await Api.get(`maintenances/list/details/${maintenanceHistoryId}`)
     .then((res) => {
       setMaintenance(res.data);
     })
@@ -15,7 +15,6 @@ export const requestMaintenanceDetails = async ({
       catchHandler(err);
     })
     .finally(() => {
-      setModalLoading(true);
-      // botar false;
+      setModalLoading(false);
     });
 };

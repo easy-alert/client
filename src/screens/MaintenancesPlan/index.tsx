@@ -36,6 +36,8 @@ export const MaintenancesPlan = () => {
 
   const [onQuery, setOnQuery] = useState<boolean>(false);
 
+  const [selectedMaintenanceHistoryId, setSelectedMaintenanceHistoryId] = useState<string>('');
+
   const [filterOptions, setFilterOptions] = useState<IFilterOptions>({
     months: [],
     status: [],
@@ -43,7 +45,7 @@ export const MaintenancesPlan = () => {
   });
 
   const [filter, setFilter] = useState<IFilter>({
-    months: '', // arrumar arrumar arrumar
+    months: '',
     status: '',
     years: String(new Date().getFullYear()),
   });
@@ -69,7 +71,7 @@ export const MaintenancesPlan = () => {
       {modalMaintenanceDetailsOpen && (
         <ModalMaintenanceDetails
           setModal={setModalMaintenanceDetailsOpen}
-          maintenanceHistoryId="706f7543-cd5d-496e-b404-3af46c0ea736"
+          maintenanceHistoryId={selectedMaintenanceHistoryId}
         />
       )}
       <Style.Container>
@@ -217,6 +219,7 @@ export const MaintenancesPlan = () => {
                       <Style.DayWrapper
                         key={maintenance.activity + i}
                         onClick={() => {
+                          setSelectedMaintenanceHistoryId(maintenance.id);
                           setModalMaintenanceDetailsOpen(true);
                         }}
                       >
