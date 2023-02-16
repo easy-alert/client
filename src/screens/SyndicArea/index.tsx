@@ -37,7 +37,7 @@ export const SyndicArea = () => {
   });
 
   const [filter, setFilter] = useState<IFilter>({
-    months: '02', // arrumar arrumar arrumar
+    months: `0${String(new Date().getMonth() + 1)}`, // arrumar arrumar arrumar
     status: '',
     years: String(new Date().getFullYear()),
   });
@@ -79,6 +79,7 @@ export const SyndicArea = () => {
               });
             }}
           >
+            <option value="">Todos</option>
             {filterOptions.years.map((option) => (
               <option key={option} value={option}>
                 {option}
@@ -161,7 +162,9 @@ export const SyndicArea = () => {
                 </Style.MaintenanceInfo>
               ))
             ) : (
-              <Style.NoDataContainer>nao tem</Style.NoDataContainer>
+              <Style.NoDataContainer>
+                <h4>Nenhuma manutenção encontrada.</h4>
+              </Style.NoDataContainer>
             )}
           </Style.KanbanCard>
         ))}

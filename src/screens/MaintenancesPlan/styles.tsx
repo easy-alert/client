@@ -202,3 +202,12 @@ export const LoadingContainer = styled.div`
   align-items: center;
   justify-content: center;
 `;
+
+export const NoDataContainer = styled.div`
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: ${theme.color.gray4};
+`;

@@ -130,4 +130,6 @@ export const NoDataContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  color: ${theme.color.gray4};
 `;
