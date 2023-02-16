@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 // LIBS
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -209,17 +210,16 @@ export const MaintenancesPlan = () => {
             {maintenancesPlan.length > 0 &&
               !onQuery &&
               maintenancesPlan.map((month) => (
-                <Style.MonthSection
-                  key={month.name}
-                  onClick={() => {
-                    setModalMaintenanceDetailsOpen(true);
-                  }}
-                >
+                <Style.MonthSection key={month.name}>
                   <h5>{month.name}</h5>
                   {month.dates.length > 0 ? (
                     month.dates.map((maintenance, i: number) => (
-                      // eslint-disable-next-line react/no-array-index-key
-                      <Style.DayWrapper key={maintenance.activity + i}>
+                      <Style.DayWrapper
+                        key={maintenance.activity + i}
+                        onClick={() => {
+                          setModalMaintenanceDetailsOpen(true);
+                        }}
+                      >
                         <Style.DayInfo>
                           <p className="p3">{maintenance.dateInfos.dayNumber}</p>
                           <p className="p3">{maintenance.dateInfos.smName}</p>

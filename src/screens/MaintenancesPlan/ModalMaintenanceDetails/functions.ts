@@ -15,6 +15,7 @@ export const requestMaintenanceDetails = async ({
       catchHandler(err);
     })
     .finally(() => {
-      setModalLoading(false);
+      setModalLoading(true);
+      // trocar;
     });
 };

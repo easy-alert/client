@@ -58,7 +58,7 @@ export const Kanban = styled.div`
 
 export const KanbanCard = styled.div`
   background-color: ${theme.color.white};
-  padding: ${theme.size.md};
+  padding: 0 ${theme.size.md} ${theme.size.md} ${theme.size.md};
   border-radius: ${theme.size.xxsm};
   display: flex;
   flex-direction: column;
@@ -67,21 +67,33 @@ export const KanbanCard = styled.div`
   min-width: 300px;
 
   @media (max-width: 900px) {
-    padding: ${theme.size.sm};
+    padding: 0 ${theme.size.sm} ${theme.size.sm} ${theme.size.sm};
   }
 `;
 
-export const KanbanHeader = styled.div``;
+export const KanbanHeader = styled.div`
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  top: 0;
+  padding: ${theme.size.md} 0 ${theme.size.xsm} 0;
+  background-color: ${theme.color.white};
+
+  @media (max-width: 900px) {
+    padding: ${theme.size.sm} 0 ${theme.size.xsm} 0;
+  }
+`;
 
 export const MaintenanceInfo = styled.div<{
   status: 'expired' | 'pending' | 'completed' | 'overdue';
 }>`
   padding: ${theme.size.sm};
   background-color: ${theme.color.gray0};
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.08);
+
   display: flex;
   flex-direction: column;
   gap: ${theme.size.xsm};
+  border-radius: ${theme.size.xxsm};
 
   h6 {
     word-break: break-word;
