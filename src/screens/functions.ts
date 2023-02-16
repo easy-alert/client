@@ -1,5 +1,5 @@
-import { Api } from '../../../services/api';
-import { catchHandler } from '../../../utils/functions';
+import { Api } from '../services/api';
+import { catchHandler } from '../utils/functions';
 import { IRequestMaintenanceDetails } from './types';
 
 export const requestMaintenanceDetails = async ({

@@ -13,10 +13,11 @@ import * as Style from './styles';
 import { icon } from '../../../assets/icons';
 
 // TYPES
-import { IMaintenance, IModalMaintenanceDetails } from './types';
+import { IModalMaintenanceDetails } from './types';
+import { IMaintenance } from '../../types';
 
 // FUNCTIONS
-import { requestMaintenanceDetails } from './functions';
+import { requestMaintenanceDetails } from '../../functions';
 import { applyMask } from '../../../utils/functions';
 import { ImagePreview } from '../../../components/ImagePreview';
 

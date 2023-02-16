@@ -95,6 +95,13 @@ export const MaintenanceInfo = styled.div<{
   gap: ${theme.size.xsm};
   border-radius: ${theme.size.xxsm};
 
+  transition: 0.25s;
+
+  :hover {
+    opacity: 0.7;
+    cursor: pointer;
+  }
+
   h6 {
     word-break: break-word;
   }
