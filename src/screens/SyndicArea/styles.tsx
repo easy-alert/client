@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { theme } from '../../styles/theme';
 
 export const Container = styled.div`
@@ -73,7 +73,9 @@ export const KanbanCard = styled.div`
 
 export const KanbanHeader = styled.div``;
 
-export const MaintenanceInfo = styled.div`
+export const MaintenanceInfo = styled.div<{
+  status: 'expired' | 'pending' | 'completed' | 'overdue';
+}>`
   padding: ${theme.size.sm};
   background-color: ${theme.color.gray0};
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.04);
@@ -94,4 +96,38 @@ export const MaintenanceInfo = styled.div`
       max-width: calc(100% - 82px);
     }
   }
+
+  ${({ status }) =>
+    status === 'pending' &&
+    css`
+      p.p3 {
+        color: ${theme.color.warning};
+        font-weight: 500;
+      }
+    `}
+
+  ${({ status }) =>
+    status === 'expired' &&
+    css`
+      p.p3 {
+        color: ${theme.color.actionDanger};
+        font-weight: 500;
+      }
+    `}
+
+    ${({ status }) =>
+    status === 'overdue' &&
+    css`
+      p.p3 {
+        color: ${theme.color.primaryM};
+        font-weight: 500;
+      }
+    `}
+`;
+
+export const NoDataContainer = styled.div`
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;

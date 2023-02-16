@@ -7,8 +7,14 @@ export const requestSyndicKanban = async ({
   syndicId,
   setFilterOptions,
   setKanban,
+  setOnQuery,
+  filter,
 }: IRequestSyndicKanban) => {
-  await Api.get(`/syndic/${syndicId}`)
+  setOnQuery(true);
+
+  await Api.get(
+    `/syndic/${syndicId}?year=${filter.years}&month=${filter.months}&status=${filter.status}`,
+  )
     .then((res) => {
       setKanban(res.data.kanban);
       setFilterOptions(res.data.Filters);
@@ -21,5 +27,8 @@ export const requestSyndicKanban = async ({
         catchHandler(err);
         setLoading(false);
       }
+    })
+    .finally(() => {
+      setOnQuery(false);
     });
 };

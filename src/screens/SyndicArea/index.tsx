@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 // LIBS
 import { useState, useEffect } from 'react';
 
@@ -28,7 +29,6 @@ export const SyndicArea = () => {
   const [onQuery, setOnQuery] = useState<boolean>(false);
 
   const [kanban, setKanban] = useState<IKanban[]>([]);
-  console.log('kanban', kanban);
 
   const [filterOptions, setFilterOptions] = useState<IFilterOptions>({
     months: [],
@@ -53,7 +53,7 @@ export const SyndicArea = () => {
   ) : (
     <Style.Container>
       <Style.Header>
-        <h2>Monte Ravello</h2>
+        <h2>req</h2>
         <IconButton
           icon={icon.filter}
           size="16px"
@@ -143,141 +143,28 @@ export const SyndicArea = () => {
         </Style.FilterWrapper>
       )}
       <Style.Kanban>
-        <Style.KanbanCard>
-          <Style.KanbanHeader>
-            <h5>Pendentes</h5>
-          </Style.KanbanHeader>
-          <Style.MaintenanceInfo>
-            <h6>Sistemas Hidrossanitários</h6>
-            <p className="p2">
-              Verificar as tubulações de água potável e servida para detectar obstruções, falhas,
-              entupimentos e problemas de fixação. Reconstruir a sua integridade, se necessário.
-            </p>
-            <p className="p2">tagzinha</p>
-          </Style.MaintenanceInfo>
-          <Style.MaintenanceInfo>
-            <h6>Sistemas Hidrossanitários</h6>
-            <p className="p2">
-              Verificar as tubulações de água potável e servida para detectar obstruções, falhas,
-              entupimentos e problemas de fixação. Reconstruir a sua integridade, se necessário.
-            </p>
-            <p className="p2">tagzinha</p>
-          </Style.MaintenanceInfo>
-          <Style.MaintenanceInfo>
-            <h6>Sistemas Hidrossanitários</h6>
-            <p className="p2">
-              Verificar as tubulações de água potável e servida para detectar obstruções, falhas,
-              entupimentos e problemas de fixação. Reconstruir a sua integridade, se necessário.
-            </p>
-            <p className="p2">tagzinha</p>
-          </Style.MaintenanceInfo>
-          <Style.MaintenanceInfo>
-            <h6>Sistemas Hidrossanitários</h6>
-            <p className="p2">
-              Verificar as tubulações de água potável e servida para detectar obstruções, falhas,
-              entupimentos e problemas de fixação. Reconstruir a sua integridade, se necessário.
-            </p>
-            <p className="p2">tagzinha</p>
-          </Style.MaintenanceInfo>
-          <Style.MaintenanceInfo>
-            <h6>Sistemas Hidrossanitários</h6>
-            <p className="p2">
-              Verificar as tubulações de água potável e servida para detectar obstruções, falhas,
-              entupimentos e problemas de fixação. Reconstruir a sua integridade, se necessário.
-            </p>
-            <p className="p2">tagzinha</p>
-          </Style.MaintenanceInfo>
-          <Style.MaintenanceInfo>
-            <h6>Sistemas Hidrossanitários</h6>
-            <p className="p2">
-              Verificar as tubulações de água potável e servida para detectar obstruções, falhas,
-              entupimentos e problemas de fixação. Reconstruir a sua integridade, se necessário.
-            </p>
-            <p className="p2">tagzinha</p>
-          </Style.MaintenanceInfo>
-        </Style.KanbanCard>
+        {kanban.map((card) => (
+          <Style.KanbanCard key={card.status}>
+            <Style.KanbanHeader>
+              <h5>{card.status}</h5>
+            </Style.KanbanHeader>
 
-        <Style.KanbanCard>
-          <Style.KanbanHeader>
-            <h5>Vencidas</h5>
-          </Style.KanbanHeader>
-          <Style.MaintenanceInfo>
-            <h6>Sistemas Hidrossanitários</h6>
-            <p className="p2">
-              Verificar as tubulações de água potável e servida para detectar obstruções, falhas,
-              entupimentos e problemas de fixação. Reconstruir a sua integridade, se necessário.
-            </p>
-            <p className="p2">tagzinha</p>
-          </Style.MaintenanceInfo>
-          <Style.MaintenanceInfo>
-            <h6>Sistemas Hidrossanitários</h6>
-            <p className="p2">
-              Verificar as tubulações de água potável e servida para detectar obstruções, falhas,
-              entupimentos e problemas de fixação. Reconstruir a sua integridade, se necessário.
-            </p>
-            <p className="p2">tagzinha</p>
-          </Style.MaintenanceInfo>
-          <Style.MaintenanceInfo>
-            <h6>Sistemas Hidrossanitários</h6>
-            <p className="p2">
-              Verificar as tubulações de água potável e servida para detectar obstruções, falhas,
-              entupimentos e problemas de fixação. Reconstruir a sua integridade, se necessário.
-            </p>
-            <p className="p2">tagzinha</p>
-          </Style.MaintenanceInfo>
-          <Style.MaintenanceInfo>
-            <h6>
-              Sistemas Hidrossanitários Hidrossanitários Hidrossanitários Hidrossanitários
-              HidrossanitáriosHidrossanitários
-            </h6>
-            <p className="p2">
-              Verificar as tubulações de água potável e servida para detectar obstruções, falhas,
-              entupimentos e problemas de fixação. Reconstruir a sua integridade, se necessário.
-            </p>
-            <p className="p2">tagzinha</p>
-          </Style.MaintenanceInfo>
-        </Style.KanbanCard>
-
-        <Style.KanbanCard>
-          <Style.KanbanHeader>
-            <h5>Concluídas</h5>
-          </Style.KanbanHeader>
-          <Style.MaintenanceInfo>
-            <span>
-              <h6>Sistemas Hidrossanitáriosdsada da</h6>
-              <EventTag status="overdue" />
-            </span>
-            <p className="p2">
-              Verificar as tubulações de água potável e servida para detectar obstruções, falhas,
-              entupimentos e problemas de fixação. Reconstruir a sua integridade, se necessário.
-            </p>
-            <p className="p2">tagzinha</p>
-          </Style.MaintenanceInfo>
-          <Style.MaintenanceInfo>
-            <h6>Sistemas Hidrossanitários</h6>
-            <p className="p2">
-              Verificar as tubulações de água potável e servida para detectar obstruções, falhas,
-              entupimentos e problemas de fixação. Reconstruir a sua integridade, se necessário.
-            </p>
-            <p className="p2">tagzinha</p>
-          </Style.MaintenanceInfo>
-          <Style.MaintenanceInfo>
-            <h6>Sistemas Hidrossanitários</h6>
-            <p className="p2">
-              Verificar as tubulações de água potável e servida para detectar obstruções, falhas,
-              entupimentos e problemas de fixação. Reconstruir a sua integridade, se necessário.
-            </p>
-            <p className="p2">tagzinha</p>
-          </Style.MaintenanceInfo>
-          <Style.MaintenanceInfo>
-            <h6>Sistemas Hidrossanitários</h6>
-            <p className="p2">
-              Verificar as tubulações de água potável e servida para detectar obstruções, falhas,
-              entupimentos e problemas de fixação. Reconstruir a sua integridade, se necessário.
-            </p>
-            <p className="p2">tagzinha</p>
-          </Style.MaintenanceInfo>
-        </Style.KanbanCard>
+            {card.maintenances.length > 0 ? (
+              card.maintenances.map((maintenance, i: number) => (
+                <Style.MaintenanceInfo key={maintenance.id + i} status={maintenance.status}>
+                  <span>
+                    <h6>{maintenance.element}</h6>
+                    {maintenance.status === 'overdue' && <EventTag status="overdue" />}
+                  </span>
+                  <p className="p2">{maintenance.activity}</p>
+                  <p className="p3">{maintenance.label}</p>
+                </Style.MaintenanceInfo>
+              ))
+            ) : (
+              <Style.NoDataContainer>nao tem</Style.NoDataContainer>
+            )}
+          </Style.KanbanCard>
+        ))}
       </Style.Kanban>
     </Style.Container>
   );

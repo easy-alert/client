@@ -1,5 +1,15 @@
+export interface MaintenanceKanban {
+  id: string;
+  element: string;
+  activity: string;
+  status: 'expired' | 'pending' | 'completed' | 'overdue';
+  date: Date;
+  label: string;
+}
+
 export interface IKanban {
-  buildingName: string;
+  status: string;
+  maintenances: MaintenanceKanban[];
 }
 
 export interface IFilterOptions {
