@@ -1,9 +1,8 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import { Sidebar } from './components/Sidebar';
 import { MaintenancesPlan } from './screens/MaintenancesPlan';
 import { Informations } from './screens/Informations';
-import { BuildingManagerArea } from './screens/BuildingManagerArea';
-import { TokenValidator } from './auth/tokenValidator';
+import { SyndicArea } from './screens/SyndicArea';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -12,7 +11,7 @@ const AppRoutes = () => (
         path="*"
         element={
           <Sidebar>
-            <TokenValidator />
+            <MaintenancesPlan />
           </Sidebar>
         }
       />
@@ -21,13 +20,13 @@ const AppRoutes = () => (
         path="/"
         element={
           <Sidebar>
-            <TokenValidator />
+            <Outlet />
           </Sidebar>
         }
       >
-        <Route path="/maintenancesplan" element={<MaintenancesPlan />} />
-        <Route path="/informations" element={<Informations />} />
-        <Route path="/buildingmanager" element={<BuildingManagerArea />} />
+        <Route path="/maintenancesplan/:buildingId" element={<MaintenancesPlan />} />
+        <Route path="/informations/:buildingId" element={<Informations />} />
+        <Route path="/syndicarea/:buildingId" element={<SyndicArea />} />
       </Route>
     </Routes>
   </BrowserRouter>

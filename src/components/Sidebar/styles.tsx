@@ -56,11 +56,12 @@ export const NavbarButtonWeb = styled.header<{ selected: boolean }>`
 
 export const HamburguerWrapper = styled.div`
   display: none;
+  z-index: 5;
 
   @media (max-width: 900px) {
     position: relative;
     display: block;
-    margin-left: ${theme.size.sm};
+    margin: 0 ${theme.size.sm};
   }
 `;
 
@@ -85,7 +86,7 @@ export const NavbarButtonMobile = styled.header<{ selected: boolean }>`
 export const MobileContent = styled.div`
   position: absolute;
   left: 0;
-  top: 43px;
+  top: 47px;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
   border-radius: 0px 0px 6px 6px;
   background-color: ${theme.color.white};

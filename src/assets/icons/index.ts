@@ -43,6 +43,7 @@ import addImage from './addImage.svg';
 import downloadRedBg from './downloadRedBg.svg';
 import logoFullWhite from './logoFullWhite.svg';
 import trashWithPrimaryBg from './trashWithPrimaryBg.svg';
+import filter from './filter.svg';
 
 export const icon = {
   leftArrow,
@@ -90,4 +91,5 @@ export const icon = {
   downloadRedBg,
   logoFullWhite,
   trashWithPrimaryBg,
+  filter,
 };

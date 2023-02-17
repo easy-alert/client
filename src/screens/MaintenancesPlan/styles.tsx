@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { theme } from '../../styles/theme';
 
 export const Container = styled.div`
@@ -7,8 +7,19 @@ export const Container = styled.div`
   gap: ${theme.size.sm};
 `;
 
-export const WebBanner = styled.img`
+export const WebBanner = styled.img<{ redirectUrl: string }>`
   border-radius: ${theme.size.xxsm};
+  max-height: 280px;
+  object-fit: contain;
+  transition: 0.25s;
+  ${({ redirectUrl }) =>
+    redirectUrl &&
+    css`
+      cursor: pointer;
+      :hover {
+        opacity: 0.9;
+      }
+    `}
 
   @media (max-width: 900px) {
     display: none;
@@ -16,12 +27,21 @@ export const WebBanner = styled.img`
 `;
 
 export const MobileBanner = styled.img`
-  border-radius: ${theme.size.xxsm};
   display: none;
 
   @media (max-width: 900px) {
     display: block;
+    transition: 0.25s;
+    border-radius: ${theme.size.xxsm};
+    max-height: 160px;
+    object-fit: contain;
   }
+`;
+
+export const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 export const Card = styled.div`
@@ -43,7 +63,7 @@ export const CardHeader = styled.div`
 
 export const FilterWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr 1.2fr 1.7fr 1fr;
   align-items: flex-end;
   gap: ${theme.size.xsm};
   max-width: 65%;
@@ -78,13 +98,26 @@ export const MonthSection = styled.div`
 export const DayWrapper = styled.div`
   display: flex;
   align-items: center;
-  gap: ${theme.size.sm};
+  transition: 0.25s;
+
+  :hover {
+    opacity: 0.7;
+    cursor: pointer;
+  }
+`;
+
+export const NoDataDayWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  transition: 0.25s;
 `;
 
 export const DayInfo = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: ${theme.size.xxsm};
+  width: 45px;
 
   > p {
     color: ${theme.color.gray4};
@@ -92,20 +125,49 @@ export const DayInfo = styled.div`
   }
 `;
 
-export const Maintenance = styled.div`
+export const Maintenance = styled.div<{ status: 'expired' | 'pending' | 'completed' | 'overdue' }>`
   min-height: 62px;
   width: 100%;
   display: flex;
   flex-direction: column;
   border-radius: ${theme.size.xxsm};
   padding: ${theme.size.sm} ${theme.size.sm} ${theme.size.sm} ${theme.size.md};
-  background: linear-gradient(
-    90deg,
-    rgba(52, 181, 58, 1) 0%,
-    rgba(52, 181, 58, 1) 7px,
-    rgba(250, 250, 250, 1) 7px,
-    rgba(250, 250, 250, 1) 100%
-  );
+
+  ${({ status }) =>
+    (status === 'completed' || status === 'overdue') &&
+    css`
+      background: linear-gradient(
+        90deg,
+        rgba(52, 181, 58, 1) 0%,
+        rgba(52, 181, 58, 1) 7px,
+        rgba(250, 250, 250, 1) 7px,
+        rgba(250, 250, 250, 1) 100%
+      );
+    `}
+
+  ${({ status }) =>
+    status === 'expired' &&
+    css`
+      background: linear-gradient(
+        90deg,
+        rgba(255, 53, 8, 1) 0%,
+        rgba(255, 53, 8, 1) 6px,
+        rgba(250, 250, 250, 1) 6px,
+        rgba(250, 250, 250, 1) 100%
+      );
+    `}
+
+    ${({ status }) =>
+    status === 'pending' &&
+    css`
+      background: linear-gradient(
+        90deg,
+        rgba(255, 178, 0, 1) 0%,
+        rgba(255, 178, 0, 1) 6px,
+        rgba(250, 250, 250, 1) 6px,
+        rgba(250, 250, 250, 1) 100%
+      );
+    `}
 `;
 
 export const MaintenanceTags = styled.div`
@@ -117,15 +179,12 @@ export const MaintenanceTags = styled.div`
   margin-bottom: ${theme.size.xsm};
 `;
 
-export const MaintenanceDetails = styled.div``;
-
 export const NoMaintenanceCard = styled.div`
-  margin-left: 36px;
+  width: 100%;
   min-height: 62px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: ${theme.size.xsm};
   border-radius: ${theme.size.xxsm};
   padding: ${theme.size.sm} ${theme.size.sm} ${theme.size.sm} ${theme.size.md};
   background: linear-gradient(
@@ -135,4 +194,20 @@ export const NoMaintenanceCard = styled.div`
     rgba(250, 250, 250, 1) 7px,
     rgba(250, 250, 250, 1) 100%
   );
+`;
+
+export const LoadingContainer = styled.div`
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const NoDataContainer = styled.div`
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: ${theme.color.gray4};
 `;
