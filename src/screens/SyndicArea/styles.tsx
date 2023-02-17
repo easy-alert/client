@@ -16,7 +16,8 @@ export const Header = styled.div`
 
 export const FilterWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr 1.2fr 1.7fr 1fr;
+
   align-items: flex-end;
   gap: ${theme.size.xsm};
   max-width: 65%;

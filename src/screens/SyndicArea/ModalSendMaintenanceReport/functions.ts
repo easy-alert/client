@@ -26,6 +26,7 @@ export const requestSendReport = async ({
     observation: maintenanceReport.observation !== '' ? maintenanceReport.observation : null,
     ReportAnnexes: files,
     ReportImages: images,
+    responsibleSyndicId: syndicId,
   })
     .then((res) => {
       toast.success(res.data.ServerMessage.message);
