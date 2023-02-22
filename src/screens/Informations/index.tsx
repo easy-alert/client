@@ -1,8 +1,9 @@
+/* eslint-disable no-nested-ternary */
 // COMPONENTS
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Image } from '../../components/Image';
-import { DotSpinLoading } from '../../components/Loadings/DotSpinLoading';
+import { Skeleton } from '../../components/Skeleton';
 
 // STYLES
 import * as Style from './styles';
@@ -34,9 +35,7 @@ export const Informations = () => {
     });
   }, []);
 
-  return loading ? (
-    <DotSpinLoading />
-  ) : (
+  return (
     <Style.Container>
       <h2>{informations.buildingName}</h2>
 
@@ -47,29 +46,45 @@ export const Informations = () => {
             <>
               <Style.Row>
                 <h6>Nome</h6>
-                <p className="p4">{informations.mainContact.name}</p>
+                {loading ? (
+                  <Skeleton height="14px" width="200px" />
+                ) : (
+                  <p className="p4">{informations.mainContact.name}</p>
+                )}
               </Style.Row>
               <Style.Line />
               <Style.Row>
                 <h6>E-mail</h6>
-                <p className="p4">{informations.mainContact.email ?? '-'}</p>
+                {loading ? (
+                  <Skeleton height="14px" width="200px" />
+                ) : (
+                  <p className="p4">{informations.mainContact.email ?? '-'}</p>
+                )}
               </Style.Row>
               <Style.Line />
 
               <Style.Row>
                 <h6>WhatsApp</h6>
-                <p className="p4">
-                  {informations.mainContact.contactNumber
-                    ? applyMask({ mask: 'TEL', value: informations.mainContact.contactNumber })
-                        .value
-                    : '-'}
-                </p>
+                {loading ? (
+                  <Skeleton height="14px" width="200px" />
+                ) : (
+                  <p className="p4">
+                    {informations.mainContact.contactNumber
+                      ? applyMask({ mask: 'TEL', value: informations.mainContact.contactNumber })
+                          .value
+                      : '-'}
+                  </p>
+                )}
               </Style.Row>
 
               <Style.Line />
               <Style.Row>
                 <h6>Função</h6>
-                <p className="p4">{informations.mainContact.role}</p>
+                {loading ? (
+                  <Skeleton height="14px" width="200px" />
+                ) : (
+                  <p className="p4">{informations.mainContact.role}</p>
+                )}
               </Style.Row>
               <Style.Line />
             </>
@@ -81,7 +96,14 @@ export const Informations = () => {
 
           <Style.Row>
             <h6>Anexos</h6>
-            {informations.annexes.length > 0 ? (
+            {loading ? (
+              <Style.AnnexesRow>
+                <Skeleton height="24px" width="100px" />
+                <Skeleton height="24px" width="100px" />
+                <Skeleton height="24px" width="100px" />
+                <Skeleton height="24px" width="100px" />
+              </Style.AnnexesRow>
+            ) : informations.annexes.length > 0 ? (
               <Style.AnnexesRow>
                 {informations.annexes.map((annex) => (
                   <Style.Tag key={annex.url}>

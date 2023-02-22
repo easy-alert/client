@@ -1,9 +1,10 @@
 import styled from 'styled-components';
 import { theme } from '../../styles/theme';
+import { ISkeleton } from './types';
 
-export const Container = styled.div`
-  width: 100%;
-  height: 125px;
+export const Container = styled.div<ISkeleton>`
+  width: ${({ width }) => width};
+  height: ${({ height }) => height};
   border-radius: ${theme.size.xxsm};
   background: linear-gradient(-90deg, #ededed 0%, #fafafa 50%, #ededed 100%);
   background-size: 400% 400%;
