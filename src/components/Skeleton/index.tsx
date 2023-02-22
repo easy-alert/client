@@ -1,5 +1,9 @@
 // COMPONENTS
 import * as Style from './styles';
 
-// ajustar pra ser dinâmico
-export const Skeleton = () => <Style.Container />;
+// TYPES
+import { ISkeleton } from './types';
+
+export const Skeleton = ({ height = '125px', width = '100%' }: ISkeleton) => (
+  <Style.Container width={width} height={height} />
+);
