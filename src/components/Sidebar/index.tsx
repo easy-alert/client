@@ -1,123 +1,115 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 // LIBS
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
 // STYLES
 import * as Style from './styles';
-import { icon } from '../../assets/icons/index';
+import { icon } from '../../assets/icons';
 
 // COMPONENTS
-import { Image } from '../Image';
 import { IconButton } from '../Buttons/IconButton';
 
 // TYPES
 import { ISidebar, SidebarContentProps } from './utils/types';
+import { query } from '../../utils/functions';
 
 export const Sidebar = ({ children }: ISidebar) => {
-  const navigate = useNavigate();
+  const { buildingId } = useParams() as { buildingId: string };
 
-  const [openSidebar, setOpenSidebar] = useState<boolean>(false);
-  const [animate, setAnimate] = useState<boolean>(true);
+  const [showNavbarMenu, setShowNavbarMenu] = useState<boolean>(false);
 
   const SidebarContent: SidebarContentProps[] = [
-    { icon: icon.calendar, url: '/calendar' },
-    { icon: icon.maintenances, url: '/maintenances' },
-    { icon: icon.building, url: '/buildings' },
-    { icon: icon.gear, url: '/account' },
-    { icon: icon.power, url: '/login' },
+    {
+      name: 'Plano de manutenções',
+      url: `/maintenancesplan/${buildingId}${window.location.search}`,
+      restricted: false,
+    },
+    {
+      name: 'Informações',
+      url: `/informations/${buildingId}${window.location.search}`,
+      restricted: false,
+    },
+    {
+      name: 'Área do síndico',
+      url: `/syndicarea/${buildingId}${window.location.search}`,
+      restricted: true,
+    },
   ];
 
   useEffect(() => {
     if (window.location.href.endsWith('/')) {
-      navigate('/account');
+      window.open('https://easyalert.com.br/', '_self');
     }
   }, []);
 
   return (
     <Style.Background>
-      <Style.SidebarBodyMobile>
-        <IconButton
-          labelPos="bottom"
-          icon={icon.list}
-          onClick={() => {
-            setAnimate(true);
-            setOpenSidebar(true);
-          }}
-        />
-        <Style.ImageMobile>
-          <Image width="44px" height="48px" radius="0px" img={icon.logoWhite} />
-        </Style.ImageMobile>
-      </Style.SidebarBodyMobile>
-
-      <Style.SidebarBody openSidebar={openSidebar}>
-        <Style.CloseButtonMobile>
+      <Style.Navbar>
+        <Style.HamburguerWrapper>
           <IconButton
-            labelPos="bottom"
-            icon={icon.xWhite}
+            size="32px"
+            icon={showNavbarMenu ? icon.xWhite : icon.list}
             onClick={() => {
-              setAnimate(false);
-              setTimeout(() => {
-                setOpenSidebar(false);
-              }, 125);
+              setShowNavbarMenu(!showNavbarMenu);
             }}
           />
-        </Style.CloseButtonMobile>
-
-        <Style.ImageContainer>
-          <Image width="44px" height="48px" radius="0px" img={icon.logoWhite} />
-        </Style.ImageContainer>
-
-        <Style.Hr />
-
-        {SidebarContent.map((element, i: number) => (
-          <React.Fragment key={element.url}>
-            {i === SidebarContent.length - 1 && <Style.Spacer />}
-            <IconButton
-              opacity="0.5"
-              icon={element.icon}
-              onClick={() => {
-                const checkKeyPress = window.event as KeyboardEvent;
-                if (checkKeyPress?.ctrlKey) {
-                  window.open(element.url, '_blank');
-                } else if (openSidebar) {
-                  setAnimate(false);
-                  setTimeout(() => {
-                    setOpenSidebar(false);
-                    navigate(element.url);
-                  }, 125);
-                } else {
-                  navigate(element.url);
+          {showNavbarMenu && (
+            <Style.MobileContent>
+              {SidebarContent.map((element) => {
+                if (!query.get('syndicId') && element.restricted) {
+                  return null;
                 }
-              }}
-              onAuxClick={() => {
-                if (openSidebar) {
-                  setAnimate(false);
-                  setTimeout(() => {
-                    setOpenSidebar(false);
-                    window.open(element.url, '_blank');
-                  }, 125);
-                } else {
-                  window.open(element.url, '_blank');
-                }
-              }}
-              selected={window.location.pathname.startsWith(element.url)}
-            />
-          </React.Fragment>
-        ))}
-      </Style.SidebarBody>
 
-      {openSidebar && (
-        <Style.MobileBackground
-          animate={animate}
+                return (
+                  <Link
+                    key={element.url}
+                    to={element.url}
+                    onClick={() => {
+                      setShowNavbarMenu(false);
+                    }}
+                  >
+                    <Style.NavbarButtonMobile
+                      selected={
+                        window.location.pathname.split('/')[1] === element.url.split('/')[1]
+                      }
+                    >
+                      {element.name}
+                    </Style.NavbarButtonMobile>
+                  </Link>
+                );
+              })}
+            </Style.MobileContent>
+          )}
+        </Style.HamburguerWrapper>
+
+        <img
+          src={icon.logoFullWhite}
+          alt="Logo EasyAlert"
           onClick={() => {
-            setAnimate(false);
-            setTimeout(() => {
-              setOpenSidebar(false);
-            }, 125);
+            window.open('https://easyalert.com.br/', '_blank');
           }}
+          style={{ cursor: 'pointer' }}
         />
-      )}
 
+        <Style.WebContent>
+          {SidebarContent.map((element) => {
+            if (!query.get('syndicId') && element.restricted) {
+              return null;
+            }
+            return (
+              <Link className="p3" to={element.url} key={element.url}>
+                <Style.NavbarButtonWeb
+                  selected={window.location.pathname.split('/')[1] === element.url.split('/')[1]}
+                >
+                  {element.name}
+                </Style.NavbarButtonWeb>
+              </Link>
+            );
+          })}
+        </Style.WebContent>
+      </Style.Navbar>
       <Style.AppContent>{children}</Style.AppContent>
     </Style.Background>
   );

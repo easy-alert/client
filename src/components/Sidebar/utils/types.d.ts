@@ -1,6 +1,7 @@
 export interface SidebarContentProps {
-  icon: string;
+  name: string;
   url: string;
+  restricted: boolean;
 }
 
 export interface ISidebar {
