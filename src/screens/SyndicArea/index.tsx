@@ -207,25 +207,29 @@ export const SyndicArea = () => {
               {!onQuery &&
                 (card.maintenances.length > 0 ? (
                   card.maintenances.map((maintenance, j: number) => (
-                    <Style.MaintenanceInfo
-                      key={maintenance.id + j}
-                      status={maintenance.status}
-                      onClick={() => {
-                        setSelectedMaintenanceHistoryId(maintenance.id);
-                        if (maintenance.status === 'pending' || maintenance.status === 'expired') {
-                          setModalSendReportOpen(true);
-                        } else {
-                          setModalMaintenanceDetailsOpen(true);
-                        }
-                      }}
-                    >
-                      <span>
-                        <h6>{maintenance.element}</h6>
-                        {maintenance.status === 'overdue' && <EventTag status="overdue" />}
-                      </span>
-                      <p className="p2">{maintenance.activity}</p>
-                      <p className="p3">{maintenance.label}</p>
-                    </Style.MaintenanceInfo>
+                    <Style.MaintenanceWrapper key={maintenance.id + j}>
+                      <Style.MaintenanceInfo
+                        status={maintenance.status}
+                        onClick={() => {
+                          setSelectedMaintenanceHistoryId(maintenance.id);
+                          if (
+                            maintenance.status === 'pending' ||
+                            maintenance.status === 'expired'
+                          ) {
+                            setModalSendReportOpen(true);
+                          } else {
+                            setModalMaintenanceDetailsOpen(true);
+                          }
+                        }}
+                      >
+                        <span>
+                          <h6>{maintenance.element}</h6>
+                          {maintenance.status === 'overdue' && <EventTag status="overdue" />}
+                        </span>
+                        <p className="p2">{maintenance.activity}</p>
+                        <p className="p3">{maintenance.label}</p>
+                      </Style.MaintenanceInfo>
+                    </Style.MaintenanceWrapper>
                   ))
                 ) : (
                   <Style.NoDataContainer>

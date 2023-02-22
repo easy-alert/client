@@ -56,7 +56,7 @@ export const NavbarButtonWeb = styled.header<{ selected: boolean }>`
 
 export const HamburguerWrapper = styled.div`
   display: none;
-  z-index: 5;
+  z-index: 10;
 
   @media (max-width: 900px) {
     position: relative;

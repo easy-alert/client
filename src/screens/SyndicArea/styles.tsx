@@ -59,16 +59,21 @@ export const Kanban = styled.div`
 
 export const KanbanCard = styled.div`
   background-color: ${theme.color.white};
-  padding: 0 ${theme.size.md} ${theme.size.md} ${theme.size.md};
   border-radius: ${theme.size.xxsm};
   display: flex;
   flex-direction: column;
   gap: ${theme.size.xsm};
   scroll-snap-align: start;
   min-width: 300px;
+  overflow: auto;
+  padding-bottom: ${theme.size.sm};
 
-  @media (max-width: 900px) {
-    padding: 0 ${theme.size.sm} ${theme.size.sm} ${theme.size.sm};
+  scrollbar-width: none;
+  scrollbar-color: transparent;
+
+  ::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
   }
 `;
 
@@ -76,12 +81,15 @@ export const KanbanHeader = styled.div`
   position: -webkit-sticky; /* Safari */
   position: sticky;
   top: 0;
-  padding: ${theme.size.md} 0 ${theme.size.xsm} 0;
+  width: 100%;
   background-color: ${theme.color.white};
+  z-index: 9;
+  padding: ${theme.size.sm} ${theme.size.sm} ${theme.size.xsm} ${theme.size.sm};
+  border-radius: ${theme.size.xxsm};
+`;
 
-  @media (max-width: 900px) {
-    padding: ${theme.size.sm} 0 ${theme.size.xsm} 0;
-  }
+export const MaintenanceWrapper = styled.div`
+  padding: 0 ${theme.size.sm} 0 ${theme.size.sm};
 `;
 
 export const MaintenanceInfo = styled.div<{
@@ -96,10 +104,8 @@ export const MaintenanceInfo = styled.div<{
   gap: ${theme.size.xsm};
   border-radius: ${theme.size.xxsm};
 
-  transition: 0.25s;
-
   :hover {
-    opacity: 0.7;
+    opacity: 0.8;
     cursor: pointer;
   }
 
@@ -152,4 +158,5 @@ export const NoDataContainer = styled.div`
   justify-content: center;
   text-align: center;
   color: ${theme.color.gray4};
+  padding: 0 ${theme.size.sm} 0 ${theme.size.sm};
 `;
