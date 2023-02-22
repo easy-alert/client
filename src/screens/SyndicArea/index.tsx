@@ -197,10 +197,26 @@ export const SyndicArea = () => {
 
               {onQuery && (
                 <>
-                  {(i === 0 || i === 1 || i === 2) && <Skeleton />}
-                  {(i === 0 || i === 1 || i === 2) && <Skeleton />}
-                  {(i === 0 || i === 2) && <Skeleton />}
-                  {i === 2 && <Skeleton />}
+                  {(i === 0 || i === 1 || i === 2) && (
+                    <Style.MaintenanceWrapper>
+                      <Skeleton />
+                    </Style.MaintenanceWrapper>
+                  )}
+                  {(i === 0 || i === 1 || i === 2) && (
+                    <Style.MaintenanceWrapper>
+                      <Skeleton />
+                    </Style.MaintenanceWrapper>
+                  )}
+                  {(i === 0 || i === 2) && (
+                    <Style.MaintenanceWrapper>
+                      <Skeleton />
+                    </Style.MaintenanceWrapper>
+                  )}
+                  {i === 2 && (
+                    <Style.MaintenanceWrapper>
+                      <Skeleton />
+                    </Style.MaintenanceWrapper>
+                  )}
                 </>
               )}
 
