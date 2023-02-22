@@ -10,7 +10,7 @@ export const requestMainContactInformations = async ({
   await Api.get(`/building/informations/${buildingId}`)
     .then((res) => {
       setInformations(res.data);
-      // setLoading(false);
+      setLoading(false);
     })
     .catch((err) => {
       if (err.response && err.response.status === 404) {

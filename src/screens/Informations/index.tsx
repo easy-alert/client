@@ -47,7 +47,7 @@ export const Informations = () => {
               <Style.Row>
                 <h6>Nome</h6>
                 {loading ? (
-                  <Skeleton height="14px" width="200px" />
+                  <Skeleton height="14px" width="180px" />
                 ) : (
                   <p className="p4">{informations.mainContact.name}</p>
                 )}
@@ -66,7 +66,7 @@ export const Informations = () => {
               <Style.Row>
                 <h6>WhatsApp</h6>
                 {loading ? (
-                  <Skeleton height="14px" width="200px" />
+                  <Skeleton height="14px" width="100px" />
                 ) : (
                   <p className="p4">
                     {informations.mainContact.contactNumber
@@ -81,7 +81,7 @@ export const Informations = () => {
               <Style.Row>
                 <h6>Função</h6>
                 {loading ? (
-                  <Skeleton height="14px" width="200px" />
+                  <Skeleton height="14px" width="120px" />
                 ) : (
                   <p className="p4">{informations.mainContact.role}</p>
                 )}
