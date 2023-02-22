@@ -1,3 +1,4 @@
 export interface ISkeleton {
-  isInvalid: boolean;
+  height?: string;
+  width?: string;
 }
