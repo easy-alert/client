@@ -73,7 +73,18 @@ export const MaintenancesPlan = () => {
       filtered = filtered.filter((maintenance) => maintenance.monthNumber === filter.months);
     }
 
-    setFilteredMaintenancesPlan(filtered);
+    const filteredStatus: IMaintenancesPlan[] = [];
+
+    if (filter.status !== '') {
+      filtered.forEach((maintenance) => {
+        filteredStatus.push({
+          ...maintenance,
+          dates: maintenance.dates.filter((date) => date.status === filter.status),
+        });
+      });
+    }
+
+    setFilteredMaintenancesPlan(filteredStatus.length ? filteredStatus : filtered);
   };
 
   useEffect(() => {
@@ -88,6 +99,7 @@ export const MaintenancesPlan = () => {
       setOnQuery,
       currentYear,
       month: filter.months,
+      status: filter.status,
     });
   }, []);
 
@@ -230,6 +242,7 @@ export const MaintenancesPlan = () => {
                         setOnQuery,
                         currentYear,
                         month: filter.months,
+                        status: filter.status,
                       });
                     } else {
                       filterFunction();

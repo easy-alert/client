@@ -13,6 +13,7 @@ export const requestMaintenancesPlan = async ({
   year,
   currentYear,
   month,
+  status,
 }: IRequestMaintenancesPlan) => {
   setOnQuery(true);
 
@@ -33,7 +34,18 @@ export const requestMaintenancesPlan = async ({
         filtered = filtered.filter((maintenance) => maintenance.monthNumber === month);
       }
 
-      setFilteredMaintenancesPlan(filtered);
+      const filteredStatus: IMaintenancesPlan[] = [];
+
+      if (status !== '') {
+        filtered.forEach((maintenance) => {
+          filteredStatus.push({
+            ...maintenance,
+            dates: maintenance.dates.filter((date) => date.status === status),
+          });
+        });
+      }
+
+      setFilteredMaintenancesPlan(filteredStatus.length ? filteredStatus : filtered);
       setMaintenancesPlan(res.data.months);
       setFilterOptions(res.data.Filters);
       setBuilding(res.data.building);

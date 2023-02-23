@@ -125,7 +125,9 @@ export const DayInfo = styled.div`
   }
 `;
 
-export const Maintenance = styled.div<{ status: 'expired' | 'pending' | 'completed' | 'overdue' }>`
+export const Maintenance = styled.div<{
+  status: 'expired' | 'pending' | 'completed' | 'overdue' | string;
+}>`
   min-height: 62px;
   width: 100%;
   display: flex;
@@ -151,8 +153,8 @@ export const Maintenance = styled.div<{ status: 'expired' | 'pending' | 'complet
       background: linear-gradient(
         90deg,
         rgba(255, 53, 8, 1) 0%,
-        rgba(255, 53, 8, 1) 6px,
-        rgba(250, 250, 250, 1) 6px,
+        rgba(255, 53, 8, 1) 7px,
+        rgba(250, 250, 250, 1) 7px,
         rgba(250, 250, 250, 1) 100%
       );
     `}
@@ -163,8 +165,8 @@ export const Maintenance = styled.div<{ status: 'expired' | 'pending' | 'complet
       background: linear-gradient(
         90deg,
         rgba(255, 178, 0, 1) 0%,
-        rgba(255, 178, 0, 1) 6px,
-        rgba(250, 250, 250, 1) 6px,
+        rgba(255, 178, 0, 1) 7px,
+        rgba(250, 250, 250, 1) 7px,
         rgba(250, 250, 250, 1) 100%
       );
     `}

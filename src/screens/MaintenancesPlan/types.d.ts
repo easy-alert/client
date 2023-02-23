@@ -8,7 +8,8 @@ export interface DateInfos {
 export interface Date {
   element: string;
   activity: string;
-  status: 'expired' | 'pending' | 'completed' | 'overdue';
+  status: 'expired' | 'pending' | 'completed' | 'overdue' | string;
+
   dateInfos: DateInfos;
   id: string;
 }
@@ -37,7 +38,7 @@ export interface IFilterOptions {
     label: string;
   }[];
   status: {
-    name: string;
+    name: 'expired' | 'pending' | 'completed' | 'overdue' | string;
     label: string;
   }[];
   years: string[];
@@ -45,7 +46,7 @@ export interface IFilterOptions {
 
 export interface IFilter {
   months: string;
-  status: string;
+  status: 'expired' | 'pending' | 'completed' | 'overdue' | string;
   years: string;
 }
 
@@ -59,5 +60,6 @@ export interface IRequestMaintenancesPlan {
   setFilterOptions: React.Dispatch<React.SetStateAction<IFilterOptions>>;
   year: string;
   month: string;
+  status: 'expired' | 'pending' | 'completed' | 'overdue' | string;
   currentYear: number;
 }
