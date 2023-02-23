@@ -1,9 +1,10 @@
 import { Api } from '../../services/api';
 import { catchHandler } from '../../utils/functions';
-import { IRequestMaintenancesPlan } from './types';
+import { IMaintenancesPlan, IRequestMaintenancesPlan } from './types';
 
 export const requestMaintenancesPlan = async ({
   setMaintenancesPlan,
+  setFilteredMaintenancesPlan,
   buildingId,
   setLoading,
   setOnQuery,
@@ -15,6 +16,18 @@ export const requestMaintenancesPlan = async ({
 
   await Api.get(`/building/${buildingId}?year=${year}`)
     .then((res) => {
+      const filtered: IMaintenancesPlan[] = [];
+
+      res.data.months.forEach((maintenance: IMaintenancesPlan) => {
+        filtered.push({
+          ...maintenance,
+          dates: maintenance.dates.filter(
+            (date) => date.dateInfos.year === new Date().getFullYear(),
+          ),
+        });
+      });
+
+      setFilteredMaintenancesPlan(filtered);
       setFilterOptions(res.data.Filters);
       setMaintenancesPlan(res.data.months);
       setBuilding(res.data.building);

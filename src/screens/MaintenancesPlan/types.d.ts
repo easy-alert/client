@@ -52,6 +52,7 @@ export interface IFilter {
 export interface IRequestMaintenancesPlan {
   buildingId: string;
   setMaintenancesPlan: React.Dispatch<React.SetStateAction<IMaintenancesPlan[]>>;
+  setFilteredMaintenancesPlan: React.Dispatch<React.SetStateAction<IMaintenancesPlan[]>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setOnQuery: React.Dispatch<React.SetStateAction<boolean>>;
   setBuilding: React.Dispatch<React.SetStateAction<IBuilding>>;

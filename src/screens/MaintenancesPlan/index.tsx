@@ -29,6 +29,8 @@ export const MaintenancesPlan = () => {
 
   const [maintenancesPlan, setMaintenancesPlan] = useState<IMaintenancesPlan[]>([]);
 
+  const [filteredMaintenancesPlan, setFilteredMaintenancesPlan] = useState<IMaintenancesPlan[]>([]);
+
   const [showFilter, setShowFilter] = useState<boolean>(false);
 
   const [building, setBuilding] = useState<IBuilding>({ Banners: [], name: '' });
@@ -57,11 +59,29 @@ export const MaintenancesPlan = () => {
 
   const prevFilter = usePrevious(filter);
 
+  const filterFunction = () => {
+    let filtered: IMaintenancesPlan[] = [];
+
+    maintenancesPlan.forEach((maintenance) => {
+      filtered.push({
+        ...maintenance,
+        dates: maintenance.dates.filter((date) => date.dateInfos.year === Number(filter.years)),
+      });
+    });
+
+    if (filter.months !== '') {
+      filtered = filtered.filter((maintenance) => maintenance.monthNumber === filter.months);
+    }
+
+    setFilteredMaintenancesPlan(filtered);
+  };
+
   useEffect(() => {
     requestMaintenancesPlan({
       buildingId,
       setLoading,
       setMaintenancesPlan,
+      setFilteredMaintenancesPlan,
       setBuilding,
       setFilterOptions,
       year: String(currentYear),
@@ -201,11 +221,17 @@ export const MaintenancesPlan = () => {
                         buildingId,
                         setLoading,
                         setMaintenancesPlan,
+                        setFilteredMaintenancesPlan,
                         setBuilding,
                         setFilterOptions,
-                        year: filter.years,
+                        year:
+                          Number(filter.years) > currentYear
+                            ? String(currentYear)
+                            : String(filter.years),
                         setOnQuery,
                       });
+                    } else {
+                      filterFunction();
                     }
                   }}
                 />
@@ -219,9 +245,9 @@ export const MaintenancesPlan = () => {
               </Style.LoadingContainer>
             )}
 
-            {maintenancesPlan.length > 0 &&
+            {filteredMaintenancesPlan.length > 0 &&
               !onQuery &&
-              maintenancesPlan.map((month) => (
+              filteredMaintenancesPlan.map((month) => (
                 <Style.MonthSection key={month.name}>
                   <h5>{month.name}</h5>
                   {month.dates.length > 0 ? (
@@ -259,7 +285,7 @@ export const MaintenancesPlan = () => {
                 </Style.MonthSection>
               ))}
 
-            {maintenancesPlan.length === 0 && !onQuery && (
+            {filteredMaintenancesPlan.length === 0 && !onQuery && (
               <Style.NoDataContainer>
                 <h4>Nenhuma manutenção encontrada.</h4>
               </Style.NoDataContainer>
