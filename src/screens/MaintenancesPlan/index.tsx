@@ -215,7 +215,7 @@ export const MaintenancesPlan = () => {
                     });
                   }}
                 >
-                  <option value="">Todas</option>
+                  <option value="">Todos</option>
                   {filterOptions.status.map((option) => (
                     <option key={option.name} value={option.name}>
                       {capitalizeFirstLetter(option.label)}
