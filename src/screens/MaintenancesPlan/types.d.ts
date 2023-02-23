@@ -2,6 +2,7 @@ export interface DateInfos {
   dayNumber: number;
   name: string;
   smName: string;
+  year: number;
 }
 
 export interface Date {
@@ -14,6 +15,7 @@ export interface Date {
 
 export interface IMaintenancesPlan {
   name: string;
+  monthNumber: string;
   dates: Date[];
 }
 
@@ -54,5 +56,5 @@ export interface IRequestMaintenancesPlan {
   setOnQuery: React.Dispatch<React.SetStateAction<boolean>>;
   setBuilding: React.Dispatch<React.SetStateAction<IBuilding>>;
   setFilterOptions: React.Dispatch<React.SetStateAction<IFilterOptions>>;
-  filter: IFilter;
+  year: string;
 }

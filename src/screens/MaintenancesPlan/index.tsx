@@ -2,6 +2,7 @@
 // LIBS
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { usePrevious } from 'react-use';
 import { icon } from '../../assets/icons';
 
 // COMPONENTS
@@ -44,13 +45,17 @@ export const MaintenancesPlan = () => {
     years: [],
   });
 
+  const currentYear = new Date().getFullYear();
+
   const [filter, setFilter] = useState<IFilter>({
     months: '',
     status: '',
-    years: String(new Date().getFullYear()),
+    years: String(currentYear),
   });
 
   const [modalMaintenanceDetailsOpen, setModalMaintenanceDetailsOpen] = useState<boolean>(false);
+
+  const prevFilter = usePrevious(filter);
 
   useEffect(() => {
     requestMaintenancesPlan({
@@ -59,7 +64,7 @@ export const MaintenancesPlan = () => {
       setMaintenancesPlan,
       setBuilding,
       setFilterOptions,
-      filter,
+      year: String(currentYear),
       setOnQuery,
     });
   }, []);
@@ -188,15 +193,20 @@ export const MaintenancesPlan = () => {
                   label="Filtrar"
                   disable={onQuery}
                   onClick={() => {
-                    requestMaintenancesPlan({
-                      buildingId,
-                      setLoading,
-                      setMaintenancesPlan,
-                      setBuilding,
-                      setFilterOptions,
-                      filter,
-                      setOnQuery,
-                    });
+                    if (
+                      Number(filter.years) < currentYear ||
+                      Number(prevFilter?.years) < currentYear
+                    ) {
+                      requestMaintenancesPlan({
+                        buildingId,
+                        setLoading,
+                        setMaintenancesPlan,
+                        setBuilding,
+                        setFilterOptions,
+                        year: filter.years,
+                        setOnQuery,
+                      });
+                    }
                   }}
                 />
               </Style.FilterWrapper>
