@@ -58,4 +58,6 @@ export interface IRequestMaintenancesPlan {
   setBuilding: React.Dispatch<React.SetStateAction<IBuilding>>;
   setFilterOptions: React.Dispatch<React.SetStateAction<IFilterOptions>>;
   year: string;
+  month: string;
+  currentYear: number;
 }

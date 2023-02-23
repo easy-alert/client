@@ -11,25 +11,31 @@ export const requestMaintenancesPlan = async ({
   setBuilding,
   setFilterOptions,
   year,
+  currentYear,
+  month,
 }: IRequestMaintenancesPlan) => {
   setOnQuery(true);
 
-  await Api.get(`/building/${buildingId}?year=${year}`)
+  await Api.get(
+    `/building/${buildingId}?year=${String(currentYear) < year ? String(currentYear) : year}`,
+  )
     .then((res) => {
-      const filtered: IMaintenancesPlan[] = [];
+      let filtered: IMaintenancesPlan[] = [];
 
       res.data.months.forEach((maintenance: IMaintenancesPlan) => {
         filtered.push({
           ...maintenance,
-          dates: maintenance.dates.filter(
-            (date) => date.dateInfos.year === new Date().getFullYear(),
-          ),
+          dates: maintenance.dates.filter((date) => date.dateInfos.year === Number(year)),
         });
       });
 
+      if (month !== '') {
+        filtered = filtered.filter((maintenance) => maintenance.monthNumber === month);
+      }
+
       setFilteredMaintenancesPlan(filtered);
-      setFilterOptions(res.data.Filters);
       setMaintenancesPlan(res.data.months);
+      setFilterOptions(res.data.Filters);
       setBuilding(res.data.building);
       setLoading(false);
     })

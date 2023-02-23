@@ -86,6 +86,8 @@ export const MaintenancesPlan = () => {
       setFilterOptions,
       year: String(currentYear),
       setOnQuery,
+      currentYear,
+      month: filter.months,
     });
   }, []);
 
@@ -224,11 +226,10 @@ export const MaintenancesPlan = () => {
                         setFilteredMaintenancesPlan,
                         setBuilding,
                         setFilterOptions,
-                        year:
-                          Number(filter.years) > currentYear
-                            ? String(currentYear)
-                            : String(filter.years),
+                        year: filter.years,
                         setOnQuery,
+                        currentYear,
+                        month: filter.months,
                       });
                     } else {
                       filterFunction();
