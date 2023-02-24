@@ -9,7 +9,7 @@ export const Container = styled.div`
 
 export const WebBanner = styled.img<{ redirectUrl: string }>`
   border-radius: ${theme.size.xxsm};
-  max-height: 280px;
+  width: 100%;
   object-fit: contain;
   transition: 0.25s;
   ${({ redirectUrl }) =>
@@ -33,7 +33,7 @@ export const MobileBanner = styled.img`
     display: block;
     transition: 0.25s;
     border-radius: ${theme.size.xxsm};
-    max-height: 160px;
+    width: 100%;
     object-fit: contain;
   }
 `;
