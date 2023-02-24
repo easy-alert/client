@@ -283,8 +283,8 @@ export const MaintenancesPlan = () => {
                             <EventTag status={maintenance.status} />
                           </Style.MaintenanceTags>
 
-                          <h6>{maintenance.activity}</h6>
-                          <p className="p2">{maintenance.element}</p>
+                          <h6>{maintenance.element}</h6>
+                          <p className="p2">{maintenance.activity}</p>
                         </Style.Maintenance>
                       </Style.DayWrapper>
                     ))
