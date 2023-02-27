@@ -9,7 +9,8 @@ export const Container = styled.div`
 
 export const WebBanner = styled.img<{ redirectUrl: string }>`
   border-radius: ${theme.size.xxsm};
-  max-height: 280px;
+  width: 100%;
+  max-height: 430px;
   object-fit: contain;
   transition: 0.25s;
   ${({ redirectUrl }) =>
@@ -33,7 +34,8 @@ export const MobileBanner = styled.img`
     display: block;
     transition: 0.25s;
     border-radius: ${theme.size.xxsm};
-    max-height: 160px;
+    width: 100%;
+    max-height: 230px;
     object-fit: contain;
   }
 `;
@@ -125,7 +127,9 @@ export const DayInfo = styled.div`
   }
 `;
 
-export const Maintenance = styled.div<{ status: 'expired' | 'pending' | 'completed' | 'overdue' }>`
+export const Maintenance = styled.div<{
+  status: 'expired' | 'pending' | 'completed' | 'overdue' | string;
+}>`
   min-height: 62px;
   width: 100%;
   display: flex;
@@ -151,8 +155,8 @@ export const Maintenance = styled.div<{ status: 'expired' | 'pending' | 'complet
       background: linear-gradient(
         90deg,
         rgba(255, 53, 8, 1) 0%,
-        rgba(255, 53, 8, 1) 6px,
-        rgba(250, 250, 250, 1) 6px,
+        rgba(255, 53, 8, 1) 7px,
+        rgba(250, 250, 250, 1) 7px,
         rgba(250, 250, 250, 1) 100%
       );
     `}
@@ -163,8 +167,8 @@ export const Maintenance = styled.div<{ status: 'expired' | 'pending' | 'complet
       background: linear-gradient(
         90deg,
         rgba(255, 178, 0, 1) 0%,
-        rgba(255, 178, 0, 1) 6px,
-        rgba(250, 250, 250, 1) 6px,
+        rgba(255, 178, 0, 1) 7px,
+        rgba(250, 250, 250, 1) 7px,
         rgba(250, 250, 250, 1) 100%
       );
     `}

@@ -2,6 +2,7 @@
 // LIBS
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { usePrevious } from 'react-use';
 import { icon } from '../../assets/icons';
 
 // COMPONENTS
@@ -28,6 +29,8 @@ export const MaintenancesPlan = () => {
 
   const [maintenancesPlan, setMaintenancesPlan] = useState<IMaintenancesPlan[]>([]);
 
+  const [filteredMaintenancesPlan, setFilteredMaintenancesPlan] = useState<IMaintenancesPlan[]>([]);
+
   const [showFilter, setShowFilter] = useState<boolean>(false);
 
   const [building, setBuilding] = useState<IBuilding>({ Banners: [], name: '' });
@@ -44,23 +47,59 @@ export const MaintenancesPlan = () => {
     years: [],
   });
 
+  const currentYear = new Date().getFullYear();
+
   const [filter, setFilter] = useState<IFilter>({
     months: '',
     status: '',
-    years: String(new Date().getFullYear()),
+    years: String(currentYear),
   });
 
   const [modalMaintenanceDetailsOpen, setModalMaintenanceDetailsOpen] = useState<boolean>(false);
+
+  const prevFilter = usePrevious(filter);
+
+  const filterFunction = () => {
+    let filtered: IMaintenancesPlan[] = [];
+
+    maintenancesPlan.forEach((maintenance) => {
+      filtered.push({
+        ...maintenance,
+        dates: maintenance.dates.filter((date) => date.dateInfos.year === Number(filter.years)),
+      });
+    });
+
+    if (filter.months !== '') {
+      filtered = filtered.filter((maintenance) => maintenance.monthNumber === filter.months);
+    }
+
+    const filteredStatus: IMaintenancesPlan[] = [];
+
+    if (filter.status !== '') {
+      filtered.forEach((maintenance) => {
+        filteredStatus.push({
+          ...maintenance,
+          dates: maintenance.dates.filter((date) => date.status === filter.status),
+        });
+      });
+    }
+
+    setFilteredMaintenancesPlan(filteredStatus.length ? filteredStatus : filtered);
+  };
 
   useEffect(() => {
     requestMaintenancesPlan({
       buildingId,
       setLoading,
       setMaintenancesPlan,
+      setFilteredMaintenancesPlan,
       setBuilding,
       setFilterOptions,
-      filter,
+      year: String(currentYear),
       setOnQuery,
+      currentYear,
+      month: filter.months,
+      status: filter.status,
     });
   }, []);
 
@@ -176,7 +215,7 @@ export const MaintenancesPlan = () => {
                     });
                   }}
                 >
-                  <option value="">Todas</option>
+                  <option value="">Todos</option>
                   {filterOptions.status.map((option) => (
                     <option key={option.name} value={option.name}>
                       {capitalizeFirstLetter(option.label)}
@@ -188,15 +227,26 @@ export const MaintenancesPlan = () => {
                   label="Filtrar"
                   disable={onQuery}
                   onClick={() => {
-                    requestMaintenancesPlan({
-                      buildingId,
-                      setLoading,
-                      setMaintenancesPlan,
-                      setBuilding,
-                      setFilterOptions,
-                      filter,
-                      setOnQuery,
-                    });
+                    if (
+                      Number(filter.years) < currentYear ||
+                      Number(prevFilter?.years) < currentYear
+                    ) {
+                      requestMaintenancesPlan({
+                        buildingId,
+                        setLoading,
+                        setMaintenancesPlan,
+                        setFilteredMaintenancesPlan,
+                        setBuilding,
+                        setFilterOptions,
+                        year: filter.years,
+                        setOnQuery,
+                        currentYear,
+                        month: filter.months,
+                        status: filter.status,
+                      });
+                    } else {
+                      filterFunction();
+                    }
                   }}
                 />
               </Style.FilterWrapper>
@@ -209,9 +259,9 @@ export const MaintenancesPlan = () => {
               </Style.LoadingContainer>
             )}
 
-            {maintenancesPlan.length > 0 &&
+            {filteredMaintenancesPlan.length > 0 &&
               !onQuery &&
-              maintenancesPlan.map((month) => (
+              filteredMaintenancesPlan.map((month) => (
                 <Style.MonthSection key={month.name}>
                   <h5>{month.name}</h5>
                   {month.dates.length > 0 ? (
@@ -233,8 +283,8 @@ export const MaintenancesPlan = () => {
                             <EventTag status={maintenance.status} />
                           </Style.MaintenanceTags>
 
-                          <h6>{maintenance.activity}</h6>
-                          <p className="p2">{maintenance.element}</p>
+                          <h6>{maintenance.element}</h6>
+                          <p className="p2">{maintenance.activity}</p>
                         </Style.Maintenance>
                       </Style.DayWrapper>
                     ))
@@ -249,7 +299,7 @@ export const MaintenancesPlan = () => {
                 </Style.MonthSection>
               ))}
 
-            {maintenancesPlan.length === 0 && !onQuery && (
+            {filteredMaintenancesPlan.length === 0 && !onQuery && (
               <Style.NoDataContainer>
                 <h4>Nenhuma manutenção encontrada.</h4>
               </Style.NoDataContainer>

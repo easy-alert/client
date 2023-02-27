@@ -2,18 +2,21 @@ export interface DateInfos {
   dayNumber: number;
   name: string;
   smName: string;
+  year: number;
 }
 
 export interface Date {
   element: string;
   activity: string;
-  status: 'expired' | 'pending' | 'completed' | 'overdue';
+  status: 'expired' | 'pending' | 'completed' | 'overdue' | string;
+
   dateInfos: DateInfos;
   id: string;
 }
 
 export interface IMaintenancesPlan {
   name: string;
+  monthNumber: string;
   dates: Date[];
 }
 
@@ -35,7 +38,7 @@ export interface IFilterOptions {
     label: string;
   }[];
   status: {
-    name: string;
+    name: 'expired' | 'pending' | 'completed' | 'overdue' | string;
     label: string;
   }[];
   years: string[];
@@ -43,16 +46,20 @@ export interface IFilterOptions {
 
 export interface IFilter {
   months: string;
-  status: string;
+  status: 'expired' | 'pending' | 'completed' | 'overdue' | string;
   years: string;
 }
 
 export interface IRequestMaintenancesPlan {
   buildingId: string;
   setMaintenancesPlan: React.Dispatch<React.SetStateAction<IMaintenancesPlan[]>>;
+  setFilteredMaintenancesPlan: React.Dispatch<React.SetStateAction<IMaintenancesPlan[]>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setOnQuery: React.Dispatch<React.SetStateAction<boolean>>;
   setBuilding: React.Dispatch<React.SetStateAction<IBuilding>>;
   setFilterOptions: React.Dispatch<React.SetStateAction<IFilterOptions>>;
-  filter: IFilter;
+  year: string;
+  month: string;
+  status: 'expired' | 'pending' | 'completed' | 'overdue' | string;
+  currentYear: number;
 }

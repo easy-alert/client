@@ -1,24 +1,53 @@
 import { Api } from '../../services/api';
 import { catchHandler } from '../../utils/functions';
-import { IRequestMaintenancesPlan } from './types';
+import { IMaintenancesPlan, IRequestMaintenancesPlan } from './types';
 
 export const requestMaintenancesPlan = async ({
   setMaintenancesPlan,
+  setFilteredMaintenancesPlan,
   buildingId,
   setLoading,
   setOnQuery,
   setBuilding,
   setFilterOptions,
-  filter,
+  year,
+  currentYear,
+  month,
+  status,
 }: IRequestMaintenancesPlan) => {
   setOnQuery(true);
 
   await Api.get(
-    `/building/${buildingId}?year=${filter.years}&month=${filter.months}&status=${filter.status}`,
+    `/building/${buildingId}?year=${String(currentYear) < year ? String(currentYear) : year}`,
   )
     .then((res) => {
-      setFilterOptions(res.data.Filters);
+      let filtered: IMaintenancesPlan[] = [];
+
+      res.data.months.forEach((maintenance: IMaintenancesPlan) => {
+        filtered.push({
+          ...maintenance,
+          dates: maintenance.dates.filter((date) => date.dateInfos.year === Number(year)),
+        });
+      });
+
+      if (month !== '') {
+        filtered = filtered.filter((maintenance) => maintenance.monthNumber === month);
+      }
+
+      const filteredStatus: IMaintenancesPlan[] = [];
+
+      if (status !== '') {
+        filtered.forEach((maintenance) => {
+          filteredStatus.push({
+            ...maintenance,
+            dates: maintenance.dates.filter((date) => date.status === status),
+          });
+        });
+      }
+
+      setFilteredMaintenancesPlan(filteredStatus.length ? filteredStatus : filtered);
       setMaintenancesPlan(res.data.months);
+      setFilterOptions(res.data.Filters);
       setBuilding(res.data.building);
       setLoading(false);
     })

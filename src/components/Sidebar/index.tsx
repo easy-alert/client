@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 // LIBS
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
@@ -12,13 +10,18 @@ import { icon } from '../../assets/icons';
 import { IconButton } from '../Buttons/IconButton';
 
 // TYPES
-import { ISidebar, SidebarContentProps } from './utils/types';
+import { ISidebar, SidebarContentProps } from './types';
+
+// FUNCTIONS
 import { query } from '../../utils/functions';
+import { requestCompanyLogo } from './functions';
 
 export const Sidebar = ({ children }: ISidebar) => {
   const { buildingId } = useParams() as { buildingId: string };
 
   const [showNavbarMenu, setShowNavbarMenu] = useState<boolean>(false);
+
+  const [companyLogo, setCompanyLogo] = useState<string | null>(null);
 
   const SidebarContent: SidebarContentProps[] = [
     {
@@ -41,6 +44,8 @@ export const Sidebar = ({ children }: ISidebar) => {
   useEffect(() => {
     if (window.location.href.endsWith('/')) {
       window.open('https://easyalert.com.br/', '_self');
+    } else {
+      requestCompanyLogo({ setCompanyLogo, buildingId });
     }
   }, []);
 
@@ -50,7 +55,7 @@ export const Sidebar = ({ children }: ISidebar) => {
         <Style.HamburguerWrapper>
           <IconButton
             size="32px"
-            icon={showNavbarMenu ? icon.xWhite : icon.list}
+            icon={showNavbarMenu ? icon.x : icon.list}
             onClick={() => {
               setShowNavbarMenu(!showNavbarMenu);
             }}
@@ -84,14 +89,9 @@ export const Sidebar = ({ children }: ISidebar) => {
           )}
         </Style.HamburguerWrapper>
 
-        <img
-          src={icon.logoFullWhite}
-          alt="Logo EasyAlert"
-          onClick={() => {
-            window.open('https://easyalert.com.br/', '_blank');
-          }}
-          style={{ cursor: 'pointer' }}
-        />
+        <Style.CompanyLogo>
+          <img src={companyLogo ?? icon.logoTextBlack} alt="Logo Empresa" />
+        </Style.CompanyLogo>
 
         <Style.WebContent>
           {SidebarContent.map((element) => {
