@@ -12,12 +12,6 @@ export const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  @media (max-width: 900px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: ${theme.size.xsm};
-  }
 `;
 
 export const FilterWrapper = styled.div`
