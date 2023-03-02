@@ -41,7 +41,12 @@ export const Row = styled.div<{ disabled?: boolean }>`
 `;
 
 export const DragAndDropZoneFile = styled.div`
-  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 136px;
+  min-width: 132px;
+
   border: 1px dashed ${theme.color.gray4};
   border-radius: ${theme.size.xxsm};
   padding: ${theme.size.sm} ${theme.size.md};
@@ -52,15 +57,12 @@ export const DragAndDropZoneFile = styled.div`
     opacity: 0.7;
   }
 `;
-export const DragAndDropFileContent = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: ${theme.size.sm};
 
-  > p {
-    color: ${theme.color.gray4};
-  }
+export const FileRow = styled.div`
+  display: flex;
+  gap: ${theme.size.xsm};
+  justify-content: flex-start;
+  align-items: flex-start;
 `;
 
 export const FileAndImageRow = styled.div`
@@ -97,6 +99,7 @@ export const FileLoadingTag = styled.div`
   background-color: ${theme.color.primaryL};
   border-radius: ${theme.size.xxsm};
   width: 130px;
+  height: 24px;
 `;
 
 export const ImageLoadingTag = styled.div`
