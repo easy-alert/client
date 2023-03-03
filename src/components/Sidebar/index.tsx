@@ -40,7 +40,7 @@ export const Sidebar = ({ children }: ISidebar) => {
       restricted: false,
     },
     {
-      name: 'Área do síndico',
+      name: 'Área do responsável',
       url: `/syndicarea/${buildingId}${window.location.search}`,
       restricted: true,
     },
