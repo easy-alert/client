@@ -109,9 +109,7 @@ export const MaintenanceInfo = styled.div<{
     cursor: pointer;
   }
 
-  h6 {
-    word-break: break-word;
-  }
+  word-break: break-word;
 
   > span {
     display: flex;
