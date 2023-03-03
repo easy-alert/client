@@ -111,16 +111,6 @@ export const MaintenanceInfo = styled.div<{
 
   word-break: break-word;
 
-  > span {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-
-    > h6 {
-      max-width: calc(100% - 82px);
-    }
-  }
-
   ${({ status }) =>
     status === 'pending' &&
     css`

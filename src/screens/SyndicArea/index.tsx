@@ -238,10 +238,8 @@ export const SyndicArea = () => {
                           }
                         }}
                       >
-                        <span>
-                          <h6>{maintenance.element}</h6>
-                          {maintenance.status === 'overdue' && <EventTag status="overdue" />}
-                        </span>
+                        {maintenance.status === 'overdue' && <EventTag status="overdue" />}
+                        <h6>{maintenance.element}</h6>
                         <p className="p2">{maintenance.activity}</p>
                         <p className="p3">{maintenance.label}</p>
                       </Style.MaintenanceInfo>
