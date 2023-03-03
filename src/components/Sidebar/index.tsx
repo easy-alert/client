@@ -24,6 +24,11 @@ export const Sidebar = ({ children }: ISidebar) => {
   const [companyLogo, setCompanyLogo] = useState<string | null>(null);
 
   const SidebarContent: SidebarContentProps[] = [
+    // {
+    //   name: 'Home',
+    //   url: `/home/${buildingId}${window.location.search}`,
+    //   restricted: false,
+    // },
     {
       name: 'Plano de manutenções',
       url: `/maintenancesplan/${buildingId}${window.location.search}`,
