@@ -109,19 +109,7 @@ export const MaintenanceInfo = styled.div<{
     cursor: pointer;
   }
 
-  h6 {
-    word-break: break-word;
-  }
-
-  > span {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-
-    > h6 {
-      max-width: calc(100% - 82px);
-    }
-  }
+  word-break: break-word;
 
   ${({ status }) =>
     status === 'pending' &&
