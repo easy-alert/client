@@ -21,6 +21,8 @@ export const requestMaintenancesPlan = async ({
     `/building/${buildingId}?year=${String(currentYear) < year ? String(currentYear) : year}`,
   )
     .then((res) => {
+      console.log(res.data.months);
+
       let filtered: IMaintenancesPlan[] = [];
 
       res.data.months.forEach((maintenance: IMaintenancesPlan) => {
@@ -36,7 +38,7 @@ export const requestMaintenancesPlan = async ({
 
       const filteredStatus: IMaintenancesPlan[] = [];
 
-      if (status.length > 0) {
+      if (status !== '') {
         filtered.forEach((maintenance) => {
           filteredStatus.push({
             ...maintenance,

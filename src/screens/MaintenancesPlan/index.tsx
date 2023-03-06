@@ -283,9 +283,9 @@ export const MaintenancesPlan = () => {
                         onClick={() => {
                           setModalAdditionalInformations({
                             id: maintenance.id,
-                            expectedNotificationDate: maintenance.expectedNotificationDate,
+                            expectedNotificationDate: maintenance.expectedNotificationDate ?? null,
                             isFuture: maintenance.isFuture,
-                            expectedDueDate: maintenance.expectedDueDate,
+                            expectedDueDate: maintenance.expectedDueDate ?? null,
                           });
                           setModalMaintenanceDetailsOpen(true);
                         }}
