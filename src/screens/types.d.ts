@@ -26,19 +26,24 @@ export interface Category {
 
 export interface Maintenance {
   Category: Category;
-  element: string;
   activity: string;
+  element: string;
+  observation: string;
   responsible: string;
+  source: string;
 }
 
 export interface IMaintenance {
   id: string;
   dueDate: string;
+  resolutionDate: string;
+  notificationDate: string;
   MaintenanceReport: MaintenanceReport[];
   MaintenancesStatus: MaintenancesStatus;
   Building: Building;
   Maintenance: Maintenance;
 }
+
 export interface IRequestMaintenanceDetails {
   maintenanceHistoryId: string;
   setModalLoading: React.Dispatch<React.SetStateAction<boolean>>;
