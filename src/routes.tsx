@@ -3,6 +3,7 @@ import { Sidebar } from './components/Sidebar';
 import { MaintenancesPlan } from './screens/MaintenancesPlan';
 import { Informations } from './screens/Informations';
 import { SyndicArea } from './screens/SyndicArea';
+import { Home } from './screens/Home';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -24,6 +25,7 @@ const AppRoutes = () => (
           </Sidebar>
         }
       >
+        <Route path="/home/:buildingId" element={<Home />} />
         <Route path="/maintenancesplan/:buildingId" element={<MaintenancesPlan />} />
         <Route path="/informations/:buildingId" element={<Informations />} />
         <Route path="/syndicarea/:buildingId" element={<SyndicArea />} />

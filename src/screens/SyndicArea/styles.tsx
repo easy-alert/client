@@ -12,12 +12,6 @@ export const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  @media (max-width: 900px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: ${theme.size.xsm};
-  }
 `;
 
 export const FilterWrapper = styled.div`
@@ -101,7 +95,7 @@ export const MaintenanceWrapper = styled.div`
 export const MaintenanceInfo = styled.div<{
   status: 'expired' | 'pending' | 'completed' | 'overdue';
 }>`
-  padding: ${theme.size.sm};
+  padding: ${theme.size.sm} ${theme.size.sm} ${theme.size.sm} 23px;
   background-color: ${theme.color.gray0};
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.08);
 
@@ -115,19 +109,7 @@ export const MaintenanceInfo = styled.div<{
     cursor: pointer;
   }
 
-  h6 {
-    word-break: break-word;
-  }
-
-  > span {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-
-    > h6 {
-      max-width: calc(100% - 82px);
-    }
-  }
+  word-break: break-word;
 
   ${({ status }) =>
     status === 'pending' &&
@@ -136,6 +118,13 @@ export const MaintenanceInfo = styled.div<{
         color: ${theme.color.warning};
         font-weight: 500;
       }
+      background: linear-gradient(
+        90deg,
+        rgba(255, 178, 0, 1) 0%,
+        rgba(255, 178, 0, 1) 7px,
+        rgba(250, 250, 250, 1) 7px,
+        rgba(250, 250, 250, 1) 100%
+      );
     `}
 
   ${({ status }) =>
@@ -145,6 +134,13 @@ export const MaintenanceInfo = styled.div<{
         color: ${theme.color.actionDanger};
         font-weight: 500;
       }
+      background: linear-gradient(
+        90deg,
+        rgba(255, 53, 8, 1) 0%,
+        rgba(255, 53, 8, 1) 7px,
+        rgba(250, 250, 250, 1) 7px,
+        rgba(250, 250, 250, 1) 100%
+      );
     `}
 
     ${({ status }) =>
@@ -154,6 +150,18 @@ export const MaintenanceInfo = styled.div<{
         color: ${theme.color.primaryM};
         font-weight: 500;
       }
+    `}
+
+    ${({ status }) =>
+    (status === 'completed' || status === 'overdue') &&
+    css`
+      background: linear-gradient(
+        90deg,
+        rgba(52, 181, 58, 1) 0%,
+        rgba(52, 181, 58, 1) 7px,
+        rgba(250, 250, 250, 1) 7px,
+        rgba(250, 250, 250, 1) 100%
+      );
     `}
 `;
 

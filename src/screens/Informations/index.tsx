@@ -11,10 +11,10 @@ import { icon } from '../../assets/icons';
 
 // FUNCTIONS
 import { requestMainContactInformations } from './functions';
+import { applyMask } from '../../utils/functions';
 
 // TYPES
 import { IInformations } from './types';
-import { applyMask } from '../../utils/functions';
 
 export const Informations = () => {
   const { buildingId } = useParams() as { buildingId: string };
@@ -37,7 +37,7 @@ export const Informations = () => {
 
   return (
     <Style.Container>
-      <h2>{informations.buildingName}</h2>
+      {loading ? <Skeleton height="24px" width="248px" /> : <h2>{informations.buildingName}</h2>}
 
       <Style.Card>
         <h2>Dados do responsável</h2>

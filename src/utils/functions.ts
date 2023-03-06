@@ -38,7 +38,7 @@ export async function uploadFile(file: any) {
 
 // #region ERRORS
 export const handleError = async ({ error }: { error: Error }) => {
-  if (process.env.NODE_ENV !== 'development') {
+  if (import.meta.env.PROD) {
     axios.post('https://ada-logs.herokuapp.com/api/logs/create', {
       projectName: 'EasyAlert',
       environment: window.location.host.includes('sandbox') ? 'Sandbox' : 'Production',
@@ -257,7 +257,7 @@ export const requestListIntervals = async ({ setTimeIntervals }: IRequestListInt
     });
 };
 
-export const requestBuldingTypes = async ({ setBuildingTypes }: IRequestBuildingTypes) => {
+export const requestBuildingTypes = async ({ setBuildingTypes }: IRequestBuildingTypes) => {
   await Api.get('/buildings/types/list')
     .then((res) => {
       setBuildingTypes(res.data);
