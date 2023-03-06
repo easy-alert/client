@@ -36,7 +36,7 @@ export const requestMaintenancesPlan = async ({
 
       const filteredStatus: IMaintenancesPlan[] = [];
 
-      if (status !== '') {
+      if (status.length > 0) {
         filtered.forEach((maintenance) => {
           filteredStatus.push({
             ...maintenance,

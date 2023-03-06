@@ -9,9 +9,11 @@ export interface Date {
   element: string;
   activity: string;
   status: 'expired' | 'pending' | 'completed' | 'overdue' | string;
-
   dateInfos: DateInfos;
+  isFuture: boolean;
   id: string;
+  expectedNotificationDate: string;
+  expectedDueDate: string;
 }
 
 export interface IMaintenancesPlan {
@@ -48,6 +50,13 @@ export interface IFilter {
   months: string;
   status: 'expired' | 'pending' | 'completed' | 'overdue' | string;
   years: string;
+}
+
+export interface IModalAdditionalInformations {
+  id: string;
+  isFuture: boolean;
+  expectedNotificationDate: string;
+  expectedDueDate: string;
 }
 
 export interface IRequestMaintenancesPlan {
