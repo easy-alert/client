@@ -30,7 +30,7 @@ import { requestSendReport } from './functions';
 
 export const ModalSendMaintenanceReport = ({
   setModal,
-  maintenanceHistoryId,
+  modalAdditionalInformations,
   filter,
   setBuildingName,
   setFilterOptions,
@@ -115,7 +115,11 @@ export const ModalSendMaintenanceReport = ({
   }, [acceptedImages]);
 
   useEffect(() => {
-    requestMaintenanceDetails({ maintenanceHistoryId, setMaintenance, setModalLoading });
+    requestMaintenanceDetails({
+      maintenanceHistoryId: modalAdditionalInformations.id,
+      setMaintenance,
+      setModalLoading,
+    });
   }, []);
 
   return (
@@ -148,6 +152,22 @@ export const ModalSendMaintenanceReport = ({
               <h6>Responsável</h6>
               <p className="p2">{maintenance.Maintenance.responsible}</p>
             </Style.Row>
+
+            <Style.Row>
+              <h6>Fonte</h6>
+              <p className="p2">{maintenance.Maintenance.source}</p>
+            </Style.Row>
+
+            <Style.Row>
+              <h6>Observação da manutenção</h6>
+              <p className="p2">{maintenance.Maintenance.observation}</p>
+            </Style.Row>
+
+            <Style.Row>
+              <h6>Data de notificação</h6>
+              <p className="p2">{dateFormatter(maintenance.notificationDate)}</p>
+            </Style.Row>
+
             <Style.Row>
               <h6>Data de vencimento</h6>
               <p className="p2">{dateFormatter(maintenance.dueDate)}</p>
@@ -168,7 +188,7 @@ export const ModalSendMaintenanceReport = ({
             />
 
             <TextArea
-              label="Observações"
+              label="Observação do relato"
               placeholder="Digite aqui"
               maxLength={300}
               value={maintenanceReport.observation}
@@ -261,7 +281,7 @@ export const ModalSendMaintenanceReport = ({
               requestSendReport({
                 files,
                 images,
-                maintenanceHistoryId,
+                maintenanceHistoryId: modalAdditionalInformations.id,
                 maintenanceReport,
                 setModal,
                 setOnQuery,

@@ -18,7 +18,13 @@ import * as Style from './styles';
 import { theme } from '../../styles/theme';
 
 // TYPES
-import { IBuilding, IFilter, IFilterOptions, IMaintenancesPlan } from './types';
+import {
+  IBuilding,
+  IFilter,
+  IFilterOptions,
+  IMaintenancesPlan,
+  IModalAdditionalInformations,
+} from './types';
 
 // FUNCTIONS
 import { requestMaintenancesPlan } from './functions';
@@ -39,7 +45,13 @@ export const MaintenancesPlan = () => {
 
   const [onQuery, setOnQuery] = useState<boolean>(false);
 
-  const [selectedMaintenanceHistoryId, setSelectedMaintenanceHistoryId] = useState<string>('');
+  const [modalAdditionalInformations, setModalAdditionalInformations] =
+    useState<IModalAdditionalInformations>({
+      id: '',
+      expectedNotificationDate: '',
+      expectedDueDate: '',
+      isFuture: false,
+    });
 
   const [filterOptions, setFilterOptions] = useState<IFilterOptions>({
     months: [],
@@ -110,7 +122,7 @@ export const MaintenancesPlan = () => {
       {modalMaintenanceDetailsOpen && (
         <ModalMaintenanceDetails
           setModal={setModalMaintenanceDetailsOpen}
-          maintenanceHistoryId={selectedMaintenanceHistoryId}
+          modalAdditionalInformations={modalAdditionalInformations}
         />
       )}
       <Style.Container>
@@ -269,7 +281,12 @@ export const MaintenancesPlan = () => {
                       <Style.DayWrapper
                         key={maintenance.activity + i}
                         onClick={() => {
-                          setSelectedMaintenanceHistoryId(maintenance.id);
+                          setModalAdditionalInformations({
+                            id: maintenance.id,
+                            expectedNotificationDate: maintenance.expectedNotificationDate ?? null,
+                            isFuture: maintenance.isFuture,
+                            expectedDueDate: maintenance.expectedDueDate ?? null,
+                          });
                           setModalMaintenanceDetailsOpen(true);
                         }}
                       >
