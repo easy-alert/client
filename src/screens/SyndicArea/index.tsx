@@ -23,6 +23,7 @@ import { theme } from '../../styles/theme';
 import * as Style from './styles';
 import { ModalMaintenanceDetails } from '../MaintenancesPlan/ModalMaintenanceDetails';
 import { Skeleton } from '../../components/Skeleton';
+import { IModalAdditionalInformations } from '../MaintenancesPlan/types';
 
 export const SyndicArea = () => {
   const [showFilter, setShowFilter] = useState<boolean>(false);
@@ -39,8 +40,13 @@ export const SyndicArea = () => {
 
   const [buildingName, setBuildingName] = useState<string>('');
 
-  const [selectedMaintenanceHistoryId, setSelectedMaintenanceHistoryId] = useState<string>('');
-
+  const [modalAdditionalInformations, setModalAdditionalInformations] =
+    useState<IModalAdditionalInformations>({
+      id: '',
+      expectedNotificationDate: '',
+      expectedDueDate: '',
+      isFuture: false,
+    });
   const [filterOptions, setFilterOptions] = useState<IFilterOptions>({
     months: [],
     status: [],
@@ -73,7 +79,7 @@ export const SyndicArea = () => {
     <>
       {modalSendReportOpen && (
         <ModalSendMaintenanceReport
-          maintenanceHistoryId={selectedMaintenanceHistoryId}
+          modalAdditionalInformations={modalAdditionalInformations}
           setModal={setModalSendReportOpen}
           filter={filter}
           setBuildingName={setBuildingName}
@@ -86,7 +92,7 @@ export const SyndicArea = () => {
       {modalMaintenanceDetailsOpen && (
         <ModalMaintenanceDetails
           setModal={setModalMaintenanceDetailsOpen}
-          maintenanceHistoryId={selectedMaintenanceHistoryId}
+          modalAdditionalInformations={modalAdditionalInformations}
         />
       )}
 
@@ -227,7 +233,13 @@ export const SyndicArea = () => {
                       <Style.MaintenanceInfo
                         status={maintenance.status}
                         onClick={() => {
-                          setSelectedMaintenanceHistoryId(maintenance.id);
+                          setModalAdditionalInformations({
+                            id: maintenance.id,
+                            expectedNotificationDate: '',
+                            expectedDueDate: '',
+                            isFuture: false,
+                          });
+
                           if (
                             maintenance.status === 'pending' ||
                             maintenance.status === 'expired'

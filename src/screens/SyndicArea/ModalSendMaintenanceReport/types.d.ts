@@ -1,9 +1,10 @@
 import { AnnexesAndImages } from '../../types';
 import { IFilterOptions, IKanban } from '../types';
+import { IModalAdditionalInformations } from '../../MaintenancesPlan/types';
 
 export interface IModalSendMaintenanceReport {
   setModal: (setModal: boolean) => void;
-  maintenanceHistoryId: string;
+  modalAdditionalInformations: IModalAdditionalInformations;
   syndicId: string;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setFilterOptions: React.Dispatch<React.SetStateAction<IFilterOptions>>;

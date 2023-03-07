@@ -21,6 +21,8 @@ export const requestMaintenancesPlan = async ({
     `/building/${buildingId}?year=${String(currentYear) < year ? String(currentYear) : year}`,
   )
     .then((res) => {
+      console.log(res.data.months);
+
       let filtered: IMaintenancesPlan[] = [];
 
       res.data.months.forEach((maintenance: IMaintenancesPlan) => {
