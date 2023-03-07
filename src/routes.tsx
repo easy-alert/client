@@ -4,6 +4,7 @@ import { MaintenancesPlan } from './screens/MaintenancesPlan';
 import { Informations } from './screens/Informations';
 import { SyndicArea } from './screens/SyndicArea';
 import { Home } from './screens/Home';
+import { Annexes } from './screens/Annexes';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -28,6 +29,7 @@ const AppRoutes = () => (
         <Route path="/home/:buildingId" element={<Home />} />
         <Route path="/maintenancesplan/:buildingId" element={<MaintenancesPlan />} />
         <Route path="/informations/:buildingId" element={<Informations />} />
+        <Route path="/annex/:buildingId" element={<Annexes />} />
         <Route path="/syndicarea/:buildingId" element={<SyndicArea />} />
       </Route>
     </Routes>
