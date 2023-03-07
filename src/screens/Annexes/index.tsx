@@ -37,6 +37,17 @@ export const Annexes = () => {
       <Style.Card>
         <h4>Anexos</h4>
 
+        {loading && (
+          <Style.CardRow>
+            <Skeleton height="198px" width="198px" />
+            <Skeleton height="198px" width="198px" />
+            <Skeleton height="198px" width="198px" />
+            <Skeleton height="198px" width="198px" />
+            <Skeleton height="198px" width="198px" />
+            <Skeleton height="198px" width="198px" />
+          </Style.CardRow>
+        )}
+
         {informations.Annexes?.length > 0 ? (
           <Style.CardRow>
             {informations.Annexes.map((annex) => (
