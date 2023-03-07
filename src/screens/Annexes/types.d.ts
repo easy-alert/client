@@ -1,14 +1,15 @@
-export interface IInformations {
-  mainContact: {
-    name: string;
-    email: string;
-    role: string;
-    contactNumber: string;
-  };
-  buildingName: string;
+export interface IAnnex {
+  name: string;
+  originalName: string;
+  url: string;
 }
 
-export interface IRequestMainContactInformations {
+export interface IInformations {
+  Annexes: IAnnex[];
+  name: string;
+}
+
+export interface IRequestAnnexInformations {
   buildingId: string;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setInformations: React.Dispatch<React.SetStateAction<IInformations>>;

@@ -1,19 +1,17 @@
 export interface IInformations {
-  annexes: {
-    name: string;
+  Banners: {
+    bannerName: string;
+    id: string;
     originalName: string;
+    redirectUrl: string;
+    type: 'Web' | 'Mobile';
     url: string;
   }[];
-  mainContact: {
-    name: string;
-    email: string;
-    role: string;
-    contactNumber: string;
-  };
-  buildingName: string;
+
+  name: string;
 }
 
-export interface IRequestMainContactInformations {
+export interface IRequestHomeInformations {
   buildingId: string;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setInformations: React.Dispatch<React.SetStateAction<IInformations>>;
