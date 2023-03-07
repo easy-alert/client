@@ -1,13 +1,13 @@
 import { Api } from '../../services/api';
 import { catchHandler } from '../../utils/functions';
-import { IRequestMainContactInformations } from './types';
+import { IRequestHomeInformations } from './types';
 
-export const requestMainContactInformations = async ({
+export const requestHomeInformations = async ({
   buildingId,
   setLoading,
   setInformations,
-}: IRequestMainContactInformations) => {
-  await Api.get(`/building/informations/${buildingId}`)
+}: IRequestHomeInformations) => {
+  await Api.get(`/building/home/${buildingId}`)
     .then((res) => {
       setInformations(res.data);
       setLoading(false);

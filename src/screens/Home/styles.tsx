@@ -1,80 +1,95 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { theme } from '../../styles/theme';
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: ${theme.size.sm};
+  height: 100%;
 `;
 
-export const Card = styled.div`
+export const Wrapper = styled.div`
   background-color: ${theme.color.white};
   border-radius: ${theme.size.xxsm};
-  padding: ${theme.size.md};
   display: flex;
   flex-direction: column;
   gap: ${theme.size.md};
+
+  padding: ${theme.size.md};
 
   @media (max-width: 900px) {
     padding: ${theme.size.sm};
   }
 `;
 
-export const RowWrapper = styled.div`
+export const ImageDiv = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: ${theme.size.sm};
-`;
+  justify-content: center;
+  align-items: center;
 
-export const Line = styled.div`
-  height: 1px;
-  width: 100%;
-  background-color: ${theme.color.gray2};
-`;
+  > img {
+    width: 130px;
+    cursor: pointer;
+    transition: 0.5s;
 
-export const Row = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${theme.size.xsm};
-
-  > p {
-    font-weight: 400;
+    :hover {
+      opacity: 0.8;
+    }
   }
 `;
 
-export const AnnexesRow = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${theme.size.xsm};
+export const WebBanner = styled.img<{ redirectUrl: string }>`
+  border-radius: ${theme.size.xxsm};
+  width: 100%;
+  max-height: 430px;
+  object-fit: contain;
+  transition: 0.25s;
+  ${({ redirectUrl }) =>
+    redirectUrl &&
+    css`
+      cursor: pointer;
+      :hover {
+        opacity: 0.9;
+      }
+    `}
+
+  @media (max-width: 900px) {
+    display: none;
+  }
 `;
 
-export const Tag = styled.div`
-  display: flex;
-  align-items: center;
-  padding: 4px 12px;
-  background-color: ${theme.color.primaryL};
-  width: fit-content;
-  height: fit-content;
-  border-radius: ${theme.size.xxsm};
-  gap: ${theme.size.xsm};
+export const MobileBanner = styled.img`
+  display: none;
 
-  > a {
-    display: flex;
-    align-items: center;
-    gap: ${theme.size.xxsm};
-    color: ${theme.color.black};
-
-    > p {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-weight: 400;
-      max-width: 185px;
-    }
-
+  @media (max-width: 900px) {
+    display: block;
     transition: 0.25s;
+    border-radius: ${theme.size.xxsm};
+    width: 100%;
+    max-height: 230px;
+    object-fit: contain;
+  }
+`;
+
+export const ButtonGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: ${theme.size.sm};
+
+  button {
+    width: 100%;
+    height: 48px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.5s;
+
     :hover {
-      opacity: 0.7;
+      opacity: 0.8;
     }
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
   }
 `;

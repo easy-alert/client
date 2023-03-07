@@ -13,31 +13,19 @@ export const Card = styled.div`
   padding: ${theme.size.md};
   display: flex;
   flex-direction: column;
-  gap: ${theme.size.md};
+  gap: ${theme.size.sm};
 
   @media (max-width: 900px) {
     padding: ${theme.size.sm};
   }
-`;
 
-export const RowWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${theme.size.sm};
-`;
-
-export const Line = styled.div`
-  height: 1px;
-  width: 100%;
-  background-color: ${theme.color.gray2};
-`;
-
-export const Row = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${theme.size.xsm};
-
-  > p {
-    font-weight: 400;
+  > h6 {
+    color: ${theme.color.gray4};
   }
+`;
+
+export const CardRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${theme.size.xsm};
 `;
