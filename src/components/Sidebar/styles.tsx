@@ -4,7 +4,7 @@ import { theme } from '../../styles/theme';
 export const Background = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100dvh;
 
   @media (max-width: 900px) {
     min-width: 280px;
@@ -26,8 +26,7 @@ export const CompanyLogo = styled.div`
   justify-content: center;
 
   > img {
-    height: 40px;
-    max-width: 200px;
+    max-height: 30px;
     margin: 0 ${theme.size.sm};
   }
 
@@ -107,7 +106,7 @@ export const MobileContent = styled.div`
 
 export const AppContent = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100%;
   margin: 0 auto;
   overflow: auto;
   max-width: 1920px;
