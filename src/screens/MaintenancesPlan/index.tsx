@@ -166,7 +166,7 @@ export const MaintenancesPlan = () => {
               <IconButton
                 icon={icon.filter}
                 size="16px"
-                label={showFilter ? 'Ocultar filtros' : 'Filtrar'}
+                label={showFilter ? 'Ocultar' : 'Filtrar'}
                 color={theme.color.gray5}
                 onClick={() => {
                   setShowFilter(!showFilter);
