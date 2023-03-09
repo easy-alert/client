@@ -17,7 +17,7 @@ import { requestHomeInformations } from './functions';
 import { IInformations } from './types';
 
 export const Home = () => {
-  const { buildingId } = useParams() as { buildingId: string };
+  const { buildingNanoId } = useParams() as { buildingNanoId: string };
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -25,7 +25,7 @@ export const Home = () => {
 
   useEffect(() => {
     requestHomeInformations({
-      buildingId,
+      buildingNanoId,
       setLoading,
       setInformations,
     });
@@ -69,15 +69,15 @@ export const Home = () => {
         )}
 
         <Style.ButtonGrid>
-          <Link to={`/maintenancesplan/${buildingId}${window.location.search}`}>
+          <Link to={`/maintenancesplan/${buildingNanoId}${window.location.search}`}>
             <button type="button">Plano de manutenções</button>
           </Link>
 
-          <Link to={`/informations/${buildingId}${window.location.search}`}>
+          <Link to={`/informations/${buildingNanoId}${window.location.search}`}>
             <button type="button">Informações</button>
           </Link>
 
-          <Link to={`/annex/${buildingId}${window.location.search}`}>
+          <Link to={`/annex/${buildingNanoId}${window.location.search}`}>
             <button type="button">Anexos</button>
           </Link>
         </Style.ButtonGrid>

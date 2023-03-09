@@ -4,11 +4,11 @@ import { catchHandler } from '../../utils/functions';
 import { IAnnex, IRequestAnnexInformations } from './types';
 
 export const requestAnnexInformations = async ({
-  buildingId,
+  buildingNanoId,
   setLoading,
   setInformations,
 }: IRequestAnnexInformations) => {
-  await Api.get(`/building/annex/${buildingId}`)
+  await Api.get(`/building/annex/${buildingNanoId}`)
     .then((res) => {
       setInformations(res.data);
       setLoading(false);

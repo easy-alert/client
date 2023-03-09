@@ -17,7 +17,7 @@ import { checkFileType, requestAnnexInformations } from './functions';
 import { IInformations } from './types';
 
 export const Annexes = () => {
-  const { buildingId } = useParams() as { buildingId: string };
+  const { buildingNanoId } = useParams() as { buildingNanoId: string };
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -25,7 +25,7 @@ export const Annexes = () => {
 
   useEffect(() => {
     requestAnnexInformations({
-      buildingId,
+      buildingNanoId,
       setLoading,
       setInformations,
     });

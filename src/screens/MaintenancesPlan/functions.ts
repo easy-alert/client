@@ -5,7 +5,7 @@ import { IMaintenancesPlan, IRequestMaintenancesPlan } from './types';
 export const requestMaintenancesPlan = async ({
   setMaintenancesPlan,
   setFilteredMaintenancesPlan,
-  buildingId,
+  buildingNanoId,
   setLoading,
   setOnQuery,
   setBuilding,
@@ -18,7 +18,7 @@ export const requestMaintenancesPlan = async ({
   setOnQuery(true);
 
   await Api.get(
-    `/building/${buildingId}?year=${String(currentYear) < year ? String(currentYear) : year}`,
+    `/building/${buildingNanoId}?year=${String(currentYear) < year ? String(currentYear) : year}`,
   )
     .then((res) => {
       let filtered: IMaintenancesPlan[] = [];

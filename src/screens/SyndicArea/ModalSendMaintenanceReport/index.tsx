@@ -36,7 +36,7 @@ export const ModalSendMaintenanceReport = ({
   setFilterOptions,
   setKanban,
   setLoading,
-  syndicId,
+  syndicNanoId,
 }: IModalSendMaintenanceReport) => {
   const [maintenance, setMaintenance] = useState<IMaintenance>({} as IMaintenance);
 
@@ -290,7 +290,7 @@ export const ModalSendMaintenanceReport = ({
                 setFilterOptions,
                 setKanban,
                 setLoading,
-                syndicId,
+                syndicNanoId,
               });
             }}
           />
