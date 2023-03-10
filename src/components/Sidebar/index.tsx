@@ -17,7 +17,7 @@ import { query } from '../../utils/functions';
 import { requestCompanyLogo } from './functions';
 
 export const Sidebar = ({ children }: ISidebar) => {
-  const { buildingId } = useParams() as { buildingId: string };
+  const { buildingNanoId } = useParams() as { buildingNanoId: string };
 
   const [showNavbarMenu, setShowNavbarMenu] = useState<boolean>(false);
 
@@ -26,27 +26,27 @@ export const Sidebar = ({ children }: ISidebar) => {
   const SidebarContent: SidebarContentProps[] = [
     {
       name: 'Home',
-      url: `/home/${buildingId}${window.location.search}`,
+      url: `/home/${buildingNanoId}${window.location.search}`,
       restricted: false,
     },
     {
       name: 'Plano de manutenções',
-      url: `/maintenancesplan/${buildingId}${window.location.search}`,
+      url: `/maintenancesplan/${buildingNanoId}${window.location.search}`,
       restricted: false,
     },
     {
       name: 'Informações',
-      url: `/informations/${buildingId}${window.location.search}`,
+      url: `/informations/${buildingNanoId}${window.location.search}`,
       restricted: false,
     },
     {
       name: 'Anexos',
-      url: `/annex/${buildingId}${window.location.search}`,
+      url: `/annex/${buildingNanoId}${window.location.search}`,
       restricted: false,
     },
     {
       name: 'Área do responsável',
-      url: `/syndicarea/${buildingId}${window.location.search}`,
+      url: `/syndicarea/${buildingNanoId}${window.location.search}`,
       restricted: true,
     },
   ];
@@ -55,7 +55,7 @@ export const Sidebar = ({ children }: ISidebar) => {
     if (window.location.href.endsWith('/')) {
       window.open('https://easyalert.com.br/', '_self');
     } else {
-      requestCompanyLogo({ setCompanyLogo, buildingId });
+      requestCompanyLogo({ setCompanyLogo, buildingNanoId });
     }
   }, []);
 
@@ -73,7 +73,7 @@ export const Sidebar = ({ children }: ISidebar) => {
           {showNavbarMenu && (
             <Style.MobileContent>
               {SidebarContent.map((element) => {
-                if (!query.get('syndicId') && element.restricted) {
+                if (!query.get('syndicNanoId') && element.restricted) {
                   return null;
                 }
 
@@ -105,7 +105,7 @@ export const Sidebar = ({ children }: ISidebar) => {
 
         <Style.WebContent>
           {SidebarContent.map((element) => {
-            if (!query.get('syndicId') && element.restricted) {
+            if (!query.get('syndicNanoId') && element.restricted) {
               return null;
             }
             return (

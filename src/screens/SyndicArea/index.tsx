@@ -59,12 +59,12 @@ export const SyndicArea = () => {
     years: String(new Date().getFullYear()),
   });
 
-  const syndicId = query.get('syndicId') ?? '';
+  const syndicNanoId = query.get('syndicNanoId') ?? '';
 
   useEffect(() => {
     requestSyndicKanban({
       setLoading,
-      syndicId,
+      syndicNanoId,
       setFilterOptions,
       filter,
       setOnQuery,
@@ -86,7 +86,7 @@ export const SyndicArea = () => {
           setFilterOptions={setFilterOptions}
           setKanban={setKanban}
           setLoading={setLoading}
-          syndicId={syndicId}
+          syndicNanoId={syndicNanoId}
         />
       )}
       {modalMaintenanceDetailsOpen && (
@@ -183,7 +183,7 @@ export const SyndicArea = () => {
               onClick={() => {
                 requestSyndicKanban({
                   setLoading,
-                  syndicId,
+                  syndicNanoId,
                   setFilterOptions,
                   filter,
                   setOnQuery,

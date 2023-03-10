@@ -15,7 +15,7 @@ import { applyMask } from '../../utils/functions';
 import { IInformations } from './types';
 
 export const Informations = () => {
-  const { buildingId } = useParams() as { buildingId: string };
+  const { buildingNanoId } = useParams() as { buildingNanoId: string };
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -26,7 +26,7 @@ export const Informations = () => {
 
   useEffect(() => {
     requestMainContactInformations({
-      buildingId,
+      buildingNanoId,
       setLoading,
       setInformations,
     });

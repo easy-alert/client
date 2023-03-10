@@ -4,7 +4,7 @@ import { IRequestSyndicKanban } from './types';
 
 export const requestSyndicKanban = async ({
   setLoading,
-  syndicId,
+  syndicNanoId,
   setFilterOptions,
   setKanban,
   setOnQuery,
@@ -14,7 +14,7 @@ export const requestSyndicKanban = async ({
   setOnQuery(true);
 
   await Api.get(
-    `/syndic/${syndicId}?year=${filter.years}&month=${filter.months}&status=${filter.status}`,
+    `/syndic/${syndicNanoId}?year=${filter.years}&month=${filter.months}&status=${filter.status}`,
   )
     .then((res) => {
       setKanban(res.data.kanban);

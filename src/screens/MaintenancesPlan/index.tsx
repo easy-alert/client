@@ -31,7 +31,7 @@ import { requestMaintenancesPlan } from './functions';
 import { capitalizeFirstLetter } from '../../utils/functions';
 
 export const MaintenancesPlan = () => {
-  const { buildingId } = useParams() as { buildingId: string };
+  const { buildingNanoId } = useParams() as { buildingNanoId: string };
 
   const [maintenancesPlan, setMaintenancesPlan] = useState<IMaintenancesPlan[]>([]);
 
@@ -101,7 +101,7 @@ export const MaintenancesPlan = () => {
 
   useEffect(() => {
     requestMaintenancesPlan({
-      buildingId,
+      buildingNanoId,
       setLoading,
       setMaintenancesPlan,
       setFilteredMaintenancesPlan,
@@ -244,7 +244,7 @@ export const MaintenancesPlan = () => {
                       Number(prevFilter?.years) < currentYear
                     ) {
                       requestMaintenancesPlan({
-                        buildingId,
+                        buildingNanoId,
                         setLoading,
                         setMaintenancesPlan,
                         setFilteredMaintenancesPlan,

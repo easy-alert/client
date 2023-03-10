@@ -26,11 +26,11 @@ const AppRoutes = () => (
           </Sidebar>
         }
       >
-        <Route path="/home/:buildingId" element={<Home />} />
-        <Route path="/maintenancesplan/:buildingId" element={<MaintenancesPlan />} />
-        <Route path="/informations/:buildingId" element={<Informations />} />
-        <Route path="/annex/:buildingId" element={<Annexes />} />
-        <Route path="/syndicarea/:buildingId" element={<SyndicArea />} />
+        <Route path="/home/:buildingNanoId" element={<Home />} />
+        <Route path="/maintenancesplan/:buildingNanoId" element={<MaintenancesPlan />} />
+        <Route path="/informations/:buildingNanoId" element={<Informations />} />
+        <Route path="/annex/:buildingNanoId" element={<Annexes />} />
+        <Route path="/syndicarea/:buildingNanoId" element={<SyndicArea />} />
       </Route>
     </Routes>
   </BrowserRouter>

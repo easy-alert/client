@@ -3,11 +3,11 @@ import { catchHandler } from '../../utils/functions';
 import { IRequestMainContactInformations } from './types';
 
 export const requestMainContactInformations = async ({
-  buildingId,
+  buildingNanoId,
   setLoading,
   setInformations,
 }: IRequestMainContactInformations) => {
-  await Api.get(`/building/informations/${buildingId}`)
+  await Api.get(`/building/informations/${buildingNanoId}`)
     .then((res) => {
       setInformations(res.data);
       setLoading(false);

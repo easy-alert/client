@@ -3,11 +3,11 @@ import { catchHandler } from '../../utils/functions';
 import { IRequestHomeInformations } from './types';
 
 export const requestHomeInformations = async ({
-  buildingId,
+  buildingNanoId,
   setLoading,
   setInformations,
 }: IRequestHomeInformations) => {
-  await Api.get(`/building/home/${buildingId}`)
+  await Api.get(`/building/home/${buildingNanoId}`)
     .then((res) => {
       setInformations(res.data);
       setLoading(false);
