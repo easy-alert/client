@@ -12,7 +12,7 @@ export interface IInformations {
 }
 
 export interface IRequestHomeInformations {
-  buildingId: string;
+  buildingNanoId: string;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setInformations: React.Dispatch<React.SetStateAction<IInformations>>;
 }

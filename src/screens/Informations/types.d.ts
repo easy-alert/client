@@ -9,7 +9,7 @@ export interface IInformations {
 }
 
 export interface IRequestMainContactInformations {
-  buildingId: string;
+  buildingNanoId: string;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setInformations: React.Dispatch<React.SetStateAction<IInformations>>;
 }

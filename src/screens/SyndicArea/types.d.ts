@@ -31,7 +31,7 @@ export interface IFilter {
 }
 
 export interface IRequestSyndicKanban {
-  syndicId: string;
+  syndicNanoId: string;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setFilterOptions: React.Dispatch<React.SetStateAction<IFilterOptions>>;
   setOnQuery: React.Dispatch<React.SetStateAction<boolean>>;

@@ -5,7 +5,7 @@ import { IModalAdditionalInformations } from '../../MaintenancesPlan/types';
 export interface IModalSendMaintenanceReport {
   setModal: (setModal: boolean) => void;
   modalAdditionalInformations: IModalAdditionalInformations;
-  syndicId: string;
+  syndicNanoId: string;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setFilterOptions: React.Dispatch<React.SetStateAction<IFilterOptions>>;
   filter: IFilter;
@@ -24,7 +24,7 @@ export interface IRequestSendReport {
   maintenanceHistoryId: string;
   files: AnnexesAndImages[];
   images: AnnexesAndImages[];
-  syndicId: string;
+  syndicNanoId: string;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setFilterOptions: React.Dispatch<React.SetStateAction<IFilterOptions>>;
   setOnQuery: React.Dispatch<React.SetStateAction<boolean>>;
