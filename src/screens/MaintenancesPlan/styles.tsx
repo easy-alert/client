@@ -12,7 +12,7 @@ export const WebBanner = styled.img<{ redirectUrl: string }>`
   width: 100%;
   max-height: 430px;
   object-fit: contain;
-  transition: 0.25s;
+
   ${({ redirectUrl }) =>
     redirectUrl &&
     css`
@@ -32,7 +32,6 @@ export const MobileBanner = styled.img`
 
   @media (max-width: 900px) {
     display: block;
-    transition: 0.25s;
     border-radius: ${theme.size.xxsm};
     width: 100%;
     max-height: 230px;
