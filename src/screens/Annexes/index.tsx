@@ -48,7 +48,7 @@ export const Annexes = () => {
           </Style.CardRow>
         )}
 
-        {!loading && informations.Annexes?.length > 0 ? (
+        {!loading && informations.Annexes?.length > 0 && (
           <Style.CardRow>
             {informations.Annexes.map((annex) => (
               <ImagePreview
@@ -62,9 +62,9 @@ export const Annexes = () => {
               />
             ))}
           </Style.CardRow>
-        ) : (
-          <h6>Nenhum anexo cadastrado.</h6>
         )}
+
+        {!loading && informations.Annexes.length === 0 && <h6>Nenhum anexo cadastrado.</h6>}
       </Style.Card>
     </Style.Container>
   );
