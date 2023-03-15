@@ -48,7 +48,7 @@ export const Annexes = () => {
           </Style.CardRow>
         )}
 
-        {informations.Annexes?.length > 0 ? (
+        {!loading && informations.Annexes?.length > 0 ? (
           <Style.CardRow>
             {informations.Annexes.map((annex) => (
               <ImagePreview
