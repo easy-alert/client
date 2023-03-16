@@ -160,7 +160,7 @@ export const ModalSendMaintenanceReport = ({
 
             <Style.Row>
               <h6>Observação da manutenção</h6>
-              <p className="p2">{maintenance.Maintenance.observation}</p>
+              <p className="p2">{maintenance.Maintenance.observation ?? '-'}</p>
             </Style.Row>
 
             <Style.Row>
