@@ -11,7 +11,7 @@ export const WebBanner = styled.img<{ redirectUrl: string }>`
   border-radius: ${theme.size.xxsm};
   width: 100%;
   max-height: 430px;
-  object-fit: contain;
+  object-fit: cover;
 
   ${({ redirectUrl }) =>
     redirectUrl &&
@@ -35,7 +35,7 @@ export const MobileBanner = styled.img`
     border-radius: ${theme.size.xxsm};
     width: 100%;
     max-height: 230px;
-    object-fit: contain;
+    object-fit: cover;
   }
 `;
 
