@@ -43,7 +43,7 @@ export const WebBanner = styled.img<{ redirectUrl: string }>`
   border-radius: ${theme.size.xxsm};
   width: 100%;
   max-height: 430px;
-  object-fit: contain;
+  object-fit: cover;
 
   ${({ redirectUrl }) =>
     redirectUrl &&
@@ -67,7 +67,7 @@ export const MobileBanner = styled.img`
     border-radius: ${theme.size.xxsm};
     width: 100%;
     max-height: 230px;
-    object-fit: contain;
+    object-fit: cover;
   }
 `;
 
@@ -78,7 +78,7 @@ export const ButtonGrid = styled.div`
 
   button {
     width: 100%;
-    height: 48px;
+    height: 40px;
     font-size: 14px;
     font-weight: 500;
     transition: 0.5s;
