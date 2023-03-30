@@ -26,7 +26,8 @@ export const CompanyLogo = styled.div`
   justify-content: center;
 
   > img {
-    max-height: 30px;
+    max-height: 54px;
+    max-width: 125px;
     margin: 0 ${theme.size.sm};
   }
 
