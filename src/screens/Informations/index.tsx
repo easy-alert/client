@@ -13,6 +13,7 @@ import { applyMask } from '../../utils/functions';
 
 // TYPES
 import { IInformations } from './types';
+import { ContactTable, ContactTableContent } from './ContactTable';
 
 export const Informations = () => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
@@ -20,8 +21,8 @@ export const Informations = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const [informations, setInformations] = useState<IInformations>({
-    mainContact: { contactNumber: '', email: '', name: '', role: '' },
-    buildingName: '',
+    NotificationsConfigurations: [],
+    name: '',
   });
 
   useEffect(() => {
@@ -34,59 +35,64 @@ export const Informations = () => {
 
   return (
     <Style.Container>
-      {loading ? <Skeleton height="24px" width="248px" /> : <h2>{informations.buildingName}</h2>}
+      {loading ? <Skeleton height="24px" width="248px" /> : <h2>{informations.name}</h2>}
 
       <Style.Card>
-        <h4>Dados do responsável</h4>
+        <h4>Dados dos responsáveis</h4>
         <Style.RowWrapper>
-          {informations.mainContact ? (
-            <>
-              <Style.Row>
-                <h6>Nome</h6>
-                {loading ? (
-                  <Skeleton height="14px" width="180px" />
-                ) : (
-                  <p className="p4">{informations.mainContact.name}</p>
-                )}
-              </Style.Row>
-              <Style.Line />
-              <Style.Row>
-                <h6>E-mail</h6>
-                {loading ? (
-                  <Skeleton height="14px" width="200px" />
-                ) : (
-                  <p className="p4">{informations.mainContact.email ?? '-'}</p>
-                )}
-              </Style.Row>
-              <Style.Line />
+          {loading && (
+            <ContactTable
+              colsHeader={[
+                { label: 'Nome' },
+                { label: 'Email' },
+                { label: 'Função' },
+                { label: 'WhatsApp' },
+              ]}
+            >
+              {Array.from(Array(3).keys()).map((e) => (
+                <ContactTableContent
+                  key={e}
+                  colsBody={[
+                    { cell: <Skeleton height="16px" /> },
+                    { cell: <Skeleton height="16px" /> },
+                    { cell: <Skeleton height="16px" /> },
+                    { cell: <Skeleton height="16px" /> },
+                  ]}
+                />
+              ))}
+            </ContactTable>
+          )}
 
-              <Style.Row>
-                <h6>WhatsApp</h6>
-                {loading ? (
-                  <Skeleton height="14px" width="100px" />
-                ) : (
-                  <p className="p4">
-                    {informations.mainContact.contactNumber
-                      ? applyMask({ mask: 'TEL', value: informations.mainContact.contactNumber })
-                          .value
-                      : '-'}
-                  </p>
-                )}
-              </Style.Row>
+          {!loading && informations.NotificationsConfigurations.length > 0 && (
+            <ContactTable
+              colsHeader={[
+                { label: 'Nome' },
+                { label: 'Email' },
+                { label: 'Função' },
+                { label: 'WhatsApp' },
+              ]}
+            >
+              {informations.NotificationsConfigurations.map((info) => (
+                <ContactTableContent
+                  key={info.id}
+                  colsBody={[
+                    { cell: info.name },
+                    { cell: info.email ?? '-' },
+                    { cell: info.role },
+                    {
+                      cell: info.contactNumber
+                        ? applyMask({ mask: 'TEL', value: info.contactNumber }).value
+                        : '-',
+                    },
+                  ]}
+                />
+              ))}
+            </ContactTable>
+          )}
 
-              <Style.Line />
-              <Style.Row>
-                <h6>Função</h6>
-                {loading ? (
-                  <Skeleton height="14px" width="120px" />
-                ) : (
-                  <p className="p4">{informations.mainContact.role}</p>
-                )}
-              </Style.Row>
-            </>
-          ) : (
+          {!loading && informations.NotificationsConfigurations.length < 0 && (
             <p className="p1" style={{ opacity: 0.7 }}>
-              Responsável não cadastrado.
+              Nenhum responsável cadastrado.
             </p>
           )}
         </Style.RowWrapper>

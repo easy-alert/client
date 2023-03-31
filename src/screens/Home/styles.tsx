@@ -13,8 +13,8 @@ export const Wrapper = styled.div`
   background-color: ${theme.color.white};
   border-radius: ${theme.size.xxsm};
   display: flex;
-  flex-direction: column;
   gap: ${theme.size.md};
+  flex-direction: column;
 
   padding: ${theme.size.md};
 

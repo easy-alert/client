@@ -1,11 +1,12 @@
 export interface IInformations {
-  mainContact: {
+  NotificationsConfigurations: {
     name: string;
     email: string;
     role: string;
     contactNumber: string;
-  };
-  buildingName: string;
+    id: string;
+  }[];
+  name: string;
 }
 
 export interface IRequestMainContactInformations {
