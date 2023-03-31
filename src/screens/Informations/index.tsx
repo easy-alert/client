@@ -90,7 +90,7 @@ export const Informations = () => {
             </ContactTable>
           )}
 
-          {!loading && informations.NotificationsConfigurations.length < 0 && (
+          {!loading && informations.NotificationsConfigurations.length === 0 && (
             <p className="p1" style={{ opacity: 0.7 }}>
               Nenhum responsável cadastrado.
             </p>
