@@ -44,7 +44,7 @@ export const Informations = () => {
             <ContactTable
               colsHeader={[
                 { label: 'Nome' },
-                { label: 'Email' },
+                { label: 'E-mail' },
                 { label: 'Função' },
                 { label: 'WhatsApp' },
               ]}
@@ -67,7 +67,7 @@ export const Informations = () => {
             <ContactTable
               colsHeader={[
                 { label: 'Nome' },
-                { label: 'Email' },
+                { label: 'E-mail' },
                 { label: 'Função' },
                 { label: 'WhatsApp' },
               ]}
