@@ -14,6 +14,7 @@ import { applyMask } from '../../utils/functions';
 // TYPES
 import { IInformations } from './types';
 import { ContactTable, ContactTableContent } from './ContactTable';
+import { theme } from '../../styles/theme';
 
 export const Informations = () => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
@@ -91,9 +92,7 @@ export const Informations = () => {
           )}
 
           {!loading && informations.NotificationsConfigurations.length === 0 && (
-            <p className="p1" style={{ opacity: 0.7 }}>
-              Nenhum responsável cadastrado.
-            </p>
+            <h6 style={{ color: theme.color.gray4 }}>Nenhum responsável cadastrado.</h6>
           )}
         </Style.RowWrapper>
       </Style.Card>

@@ -13,7 +13,7 @@ export const Card = styled.div`
   padding: ${theme.size.md};
   display: flex;
   flex-direction: column;
-  gap: ${theme.size.sm};
+  gap: ${theme.size.md};
 
   @media (max-width: 900px) {
     padding: ${theme.size.sm};
