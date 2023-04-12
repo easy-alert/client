@@ -56,7 +56,7 @@ export const SyndicArea = () => {
   const [filter, setFilter] = useState<IFilter>({
     months: '',
     status: '',
-    years: String(new Date().getFullYear()),
+    years: '',
   });
 
   const syndicNanoId = query.get('syndicNanoId') ?? '';
