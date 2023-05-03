@@ -109,6 +109,14 @@ export const MaintenanceInfo = styled.div<{
     cursor: pointer;
   }
 
+  > h6 {
+    > :nth-child(1),
+    > :nth-child(2) {
+      float: right;
+      margin-left: ${theme.size.xxsm};
+    }
+  }
+
   word-break: break-word;
 
   ${({ status }) =>

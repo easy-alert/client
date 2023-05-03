@@ -9,6 +9,8 @@ import { EventTag } from '../../components/EventTag';
 import { Select } from '../../components/Inputs/Select';
 import { DotSpinLoading } from '../../components/Loadings/DotSpinLoading';
 import { ModalSendMaintenanceReport } from './ModalSendMaintenanceReport';
+import { ModalMaintenanceDetails } from '../MaintenancesPlan/ModalMaintenanceDetails';
+import { Skeleton } from '../../components/Skeleton';
 
 // FUNCTIONS
 import { requestSyndicKanban } from './functions';
@@ -16,14 +18,13 @@ import { capitalizeFirstLetter, query } from '../../utils/functions';
 
 // TYPES
 import { IFilter, IFilterOptions, IKanban } from './types';
+import { IModalAdditionalInformations } from '../MaintenancesPlan/types';
 
 // STYLES
 import { icon } from '../../assets/icons';
 import { theme } from '../../styles/theme';
 import * as Style from './styles';
-import { ModalMaintenanceDetails } from '../MaintenancesPlan/ModalMaintenanceDetails';
-import { Skeleton } from '../../components/Skeleton';
-import { IModalAdditionalInformations } from '../MaintenancesPlan/types';
+import { FutureMaintenanceTag } from '../../components/FutureMaintenanceTag';
 
 export const SyndicArea = () => {
   const [showFilter, setShowFilter] = useState<boolean>(false);
@@ -250,8 +251,13 @@ export const SyndicArea = () => {
                           }
                         }}
                       >
-                        {maintenance.status === 'overdue' && <EventTag status="overdue" />}
-                        <h6>{maintenance.element}</h6>
+                        <h6>
+                          {maintenance.status === 'pending' &&
+                            new Date(maintenance.date) >
+                              new Date(new Date().setHours(0, 0, 0, 0)) && <FutureMaintenanceTag />}
+                          {maintenance.status === 'overdue' && <EventTag status="overdue" />}
+                          {maintenance.element}
+                        </h6>
                         <p className="p2">{maintenance.activity}</p>
                         <p className="p3">{maintenance.label}</p>
                       </Style.MaintenanceInfo>
