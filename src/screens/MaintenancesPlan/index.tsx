@@ -162,7 +162,7 @@ export const MaintenancesPlan = () => {
         <Style.Card>
           <Style.CardHeader>
             <Style.Header>
-              <h4>Plano de manutenções</h4>
+              <h4>Plano de manutenção</h4>
               <IconButton
                 icon={icon.filter}
                 size="16px"

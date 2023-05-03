@@ -70,7 +70,7 @@ export const Home = () => {
 
         <Style.ButtonGrid>
           <Link to={`/maintenancesplan/${buildingNanoId}${window.location.search}`}>
-            <button type="button">Plano de manutenções</button>
+            <button type="button">Plano de manutenção</button>
           </Link>
 
           <Link to={`/informations/${buildingNanoId}${window.location.search}`}>
