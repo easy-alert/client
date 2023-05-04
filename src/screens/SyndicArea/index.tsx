@@ -212,13 +212,13 @@ export const SyndicArea = () => {
                         setShowFutureMaintenances((prevState) => !prevState);
                       }}
                     />
-                    Mostrar manutenções futuras
+                    Mostrar futuras
                   </label>
                 )}
                 {card.status === 'Vencidas' && (
                   <label htmlFor="showExpireds">
                     <input type="checkbox" id="showExpireds" />
-                    Mostrar vencidas expiradas
+                    Mostrar expiradas
                   </label>
                 )}
               </Style.KanbanHeader>
