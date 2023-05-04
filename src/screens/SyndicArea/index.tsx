@@ -14,7 +14,7 @@ import { Skeleton } from '../../components/Skeleton';
 
 // FUNCTIONS
 import { requestSyndicKanban } from './functions';
-import { capitalizeFirstLetter, query } from '../../utils/functions';
+import { capitalizeFirstLetter, dateFormatter, query } from '../../utils/functions';
 
 // TYPES
 import { IFilter, IFilterOptions, IKanban } from './types';
@@ -32,6 +32,8 @@ export const SyndicArea = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const [onQuery, setOnQuery] = useState<boolean>(false);
+
+  const [showFutureMaintenances, setShowFutureMaintenances] = useState<boolean>(false);
 
   const [modalSendReportOpen, setModalSendReportOpen] = useState<boolean>(false);
 
@@ -200,6 +202,25 @@ export const SyndicArea = () => {
             <Style.KanbanCard key={card.status}>
               <Style.KanbanHeader>
                 <h5>{card.status}</h5>
+                {card.status === 'Pendentes' && (
+                  <label htmlFor="showFuture">
+                    <input
+                      type="checkbox"
+                      id="showFuture"
+                      checked={showFutureMaintenances}
+                      onChange={() => {
+                        setShowFutureMaintenances((prevState) => !prevState);
+                      }}
+                    />
+                    Mostrar manutenções futuras
+                  </label>
+                )}
+                {card.status === 'Vencidas' && (
+                  <label htmlFor="showExpireds">
+                    <input type="checkbox" id="showExpireds" />
+                    Mostrar vencidas expiradas
+                  </label>
+                )}
               </Style.KanbanHeader>
 
               {onQuery && (
@@ -229,40 +250,56 @@ export const SyndicArea = () => {
 
               {!onQuery &&
                 (card.maintenances.length > 0 ? (
-                  card.maintenances.map((maintenance, j: number) => (
-                    <Style.MaintenanceWrapper key={maintenance.id + j}>
-                      <Style.MaintenanceInfo
-                        status={maintenance.status}
-                        onClick={() => {
-                          setModalAdditionalInformations({
-                            id: maintenance.id,
-                            expectedNotificationDate: '',
-                            expectedDueDate: '',
-                            isFuture: false,
-                          });
+                  card.maintenances.map((maintenance, j: number) => {
+                    const isPending = maintenance.status === 'pending';
+                    const isFuture =
+                      new Date(maintenance.date) > new Date(new Date().setHours(0, 0, 0, 0));
 
-                          if (
-                            maintenance.status === 'pending' ||
-                            maintenance.status === 'expired'
-                          ) {
-                            setModalSendReportOpen(true);
-                          } else {
-                            setModalMaintenanceDetailsOpen(true);
-                          }
-                        }}
-                      >
-                        <h6>
-                          {maintenance.status === 'pending' &&
-                            new Date(maintenance.date) >
-                              new Date(new Date().setHours(0, 0, 0, 0)) && <FutureMaintenanceTag />}
-                          {maintenance.status === 'overdue' && <EventTag status="overdue" />}
-                          {maintenance.element}
-                        </h6>
-                        <p className="p2">{maintenance.activity}</p>
-                        <p className="p3">{maintenance.label}</p>
-                      </Style.MaintenanceInfo>
-                    </Style.MaintenanceWrapper>
-                  ))
+                    return (
+                      ((showFutureMaintenances && isPending && isFuture) ||
+                        (isPending && !isFuture) ||
+                        !isPending) && (
+                        <Style.MaintenanceWrapper key={maintenance.id + j}>
+                          <Style.MaintenanceInfo
+                            status={maintenance.status}
+                            onClick={() => {
+                              setModalAdditionalInformations({
+                                id: maintenance.id,
+                                expectedNotificationDate: '',
+                                expectedDueDate: '',
+                                isFuture: false,
+                              });
+
+                              if (
+                                maintenance.status === 'pending' ||
+                                maintenance.status === 'expired'
+                              ) {
+                                setModalSendReportOpen(true);
+                              } else {
+                                setModalMaintenanceDetailsOpen(true);
+                              }
+                            }}
+                          >
+                            <h6>
+                              {maintenance.status === 'pending' &&
+                                new Date(maintenance.date) >
+                                  new Date(new Date().setHours(0, 0, 0, 0)) && (
+                                  <FutureMaintenanceTag />
+                                )}
+                              {maintenance.status === 'overdue' && <EventTag status="overdue" />}
+                              {maintenance.element}
+                            </h6>
+                            <p className="p2">{maintenance.activity}</p>
+                            <p className="p3">
+                              {maintenance.status === 'pending' || maintenance.status === 'expired'
+                                ? maintenance.label
+                                : `Concluída em ${dateFormatter(maintenance.date)}`}
+                            </p>
+                          </Style.MaintenanceInfo>
+                        </Style.MaintenanceWrapper>
+                      )
+                    );
+                  })
                 ) : (
                   <Style.NoDataContainer>
                     <h4>Nenhuma manutenção encontrada.</h4>
