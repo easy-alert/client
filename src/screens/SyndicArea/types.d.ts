@@ -5,6 +5,7 @@ export interface MaintenanceKanban {
   status: 'expired' | 'pending' | 'completed' | 'overdue';
   date: string;
   label: string;
+  cantReportExpired?: boolean;
 }
 
 export interface IKanban {

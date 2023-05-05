@@ -35,6 +35,8 @@ export const SyndicArea = () => {
 
   const [showFutureMaintenances, setShowFutureMaintenances] = useState<boolean>(false);
 
+  const [showOldExpireds, setShowOldExpireds] = useState<boolean>(false);
+
   const [modalSendReportOpen, setModalSendReportOpen] = useState<boolean>(false);
 
   const [modalMaintenanceDetailsOpen, setModalMaintenanceDetailsOpen] = useState<boolean>(false);
@@ -217,7 +219,14 @@ export const SyndicArea = () => {
                 )}
                 {card.status === 'Vencidas' && (
                   <label htmlFor="showExpireds">
-                    <input type="checkbox" id="showExpireds" />
+                    <input
+                      type="checkbox"
+                      id="showExpireds"
+                      checked={showOldExpireds}
+                      onChange={() => {
+                        setShowOldExpireds((prevState) => !prevState);
+                      }}
+                    />
                     Mostrar expiradas
                   </label>
                 )}
@@ -249,62 +258,83 @@ export const SyndicArea = () => {
               )}
 
               {!onQuery &&
-                (card.maintenances.length > 0 ? (
-                  card.maintenances.map((maintenance, j: number) => {
-                    const isPending = maintenance.status === 'pending';
-                    const isFuture =
-                      new Date(maintenance.date) > new Date(new Date().setHours(0, 0, 0, 0));
+                card.maintenances.length > 0 &&
+                card.maintenances.map((maintenance, j: number) => {
+                  const isPending = maintenance.status === 'pending';
+                  const isFuture =
+                    new Date(maintenance.date) > new Date(new Date().setHours(0, 0, 0, 0));
 
-                    return (
-                      ((showFutureMaintenances && isPending && isFuture) ||
-                        (isPending && !isFuture) ||
-                        !isPending) && (
-                        <Style.MaintenanceWrapper key={maintenance.id + j}>
-                          <Style.MaintenanceInfo
-                            status={maintenance.status}
-                            onClick={() => {
-                              setModalAdditionalInformations({
-                                id: maintenance.id,
-                                expectedNotificationDate: '',
-                                expectedDueDate: '',
-                                isFuture: false,
-                              });
+                  const isExpired = maintenance.status === 'expired';
+                  const isOldExpired =
+                    maintenance.status === 'expired' && maintenance.cantReportExpired;
 
-                              if (
-                                maintenance.status === 'pending' ||
-                                maintenance.status === 'expired'
-                              ) {
-                                setModalSendReportOpen(true);
-                              } else {
-                                setModalMaintenanceDetailsOpen(true);
-                              }
-                            }}
-                          >
-                            <h6>
-                              {maintenance.status === 'pending' &&
-                                new Date(maintenance.date) >
-                                  new Date(new Date().setHours(0, 0, 0, 0)) && (
-                                  <FutureMaintenanceTag />
-                                )}
-                              {maintenance.status === 'overdue' && <EventTag status="overdue" />}
-                              {maintenance.element}
-                            </h6>
-                            <p className="p2">{maintenance.activity}</p>
-                            <p className="p3">
-                              {maintenance.status === 'pending' || maintenance.status === 'expired'
-                                ? maintenance.label
-                                : `Concluída em ${dateFormatter(maintenance.date)}`}
-                            </p>
-                          </Style.MaintenanceInfo>
-                        </Style.MaintenanceWrapper>
-                      )
-                    );
-                  })
-                ) : (
-                  <Style.NoDataContainer>
-                    <h4>Nenhuma manutenção encontrada.</h4>
-                  </Style.NoDataContainer>
-                ))}
+                  return (
+                    ((showFutureMaintenances && isPending && isFuture) ||
+                      (isPending && !isFuture) ||
+                      !isPending) &&
+                    ((showOldExpireds && isExpired && isOldExpired) ||
+                      (isExpired && !isOldExpired) ||
+                      !isExpired) && (
+                      <Style.MaintenanceWrapper key={maintenance.id + j}>
+                        <Style.MaintenanceInfo
+                          status={maintenance.status}
+                          onClick={() => {
+                            setModalAdditionalInformations({
+                              id: maintenance.id,
+                              expectedNotificationDate: '',
+                              expectedDueDate: '',
+                              isFuture: false,
+                            });
+
+                            if (
+                              maintenance.status === 'pending' ||
+                              maintenance.status === 'expired'
+                            ) {
+                              setModalSendReportOpen(true);
+                            } else {
+                              setModalMaintenanceDetailsOpen(true);
+                            }
+                          }}
+                        >
+                          <h6>
+                            {maintenance.status === 'pending' &&
+                              new Date(maintenance.date) >
+                                new Date(new Date().setHours(0, 0, 0, 0)) && (
+                                <FutureMaintenanceTag />
+                              )}
+                            {maintenance.status === 'overdue' && <EventTag status="overdue" />}
+                            {maintenance.element}
+                          </h6>
+                          <p className="p2">{maintenance.activity}</p>
+                          <p className="p3">
+                            {maintenance.status === 'pending' && maintenance.label}
+                            {maintenance.status === 'expired' && !isOldExpired && maintenance.label}
+
+                            {(maintenance.status === 'completed' ||
+                              maintenance.status === 'overdue') &&
+                              `Concluída em ${dateFormatter(maintenance.date)}`}
+                          </p>
+                        </Style.MaintenanceInfo>
+                      </Style.MaintenanceWrapper>
+                    )
+                  );
+                })}
+
+              {(card.maintenances.length === 0 ||
+                (!showFutureMaintenances &&
+                  card.maintenances.every(
+                    (maintenance) =>
+                      maintenance.status === 'pending' &&
+                      new Date(maintenance.date) > new Date(new Date().setHours(0, 0, 0, 0)),
+                  )) ||
+                (!showOldExpireds &&
+                  card.maintenances.every(
+                    (maintenance) => maintenance.cantReportExpired === true,
+                  ))) && (
+                <Style.NoDataContainer>
+                  <h4>Nenhuma manutenção encontrada.</h4>
+                </Style.NoDataContainer>
+              )}
             </Style.KanbanCard>
           ))}
         </Style.Kanban>
