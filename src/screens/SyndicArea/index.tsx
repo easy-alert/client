@@ -33,7 +33,7 @@ export const SyndicArea = () => {
 
   const [onQuery, setOnQuery] = useState<boolean>(false);
 
-  const [showFutureMaintenances, setShowFutureMaintenances] = useState<boolean>(false);
+  const [showFutureMaintenances, setShowFutureMaintenances] = useState<boolean>(true);
 
   const [showOldExpireds, setShowOldExpireds] = useState<boolean>(false);
 
@@ -320,21 +320,22 @@ export const SyndicArea = () => {
                   );
                 })}
 
-              {(card.maintenances.length === 0 ||
-                (!showFutureMaintenances &&
-                  card.maintenances.every(
-                    (maintenance) =>
-                      maintenance.status === 'pending' &&
-                      new Date(maintenance.date) > new Date(new Date().setHours(0, 0, 0, 0)),
-                  )) ||
-                (!showOldExpireds &&
-                  card.maintenances.every(
-                    (maintenance) => maintenance.cantReportExpired === true,
-                  ))) && (
-                <Style.NoDataContainer>
-                  <h4>Nenhuma manutenção encontrada.</h4>
-                </Style.NoDataContainer>
-              )}
+              {!onQuery &&
+                (card.maintenances.length === 0 ||
+                  (!showFutureMaintenances &&
+                    card.maintenances.every(
+                      (maintenance) =>
+                        maintenance.status === 'pending' &&
+                        new Date(maintenance.date) > new Date(new Date().setHours(0, 0, 0, 0)),
+                    )) ||
+                  (!showOldExpireds &&
+                    card.maintenances.every(
+                      (maintenance) => maintenance.cantReportExpired === true,
+                    ))) && (
+                  <Style.NoDataContainer>
+                    <h4>Nenhuma manutenção encontrada.</h4>
+                  </Style.NoDataContainer>
+                )}
             </Style.KanbanCard>
           ))}
         </Style.Kanban>
