@@ -3,8 +3,9 @@ export interface MaintenanceKanban {
   element: string;
   activity: string;
   status: 'expired' | 'pending' | 'completed' | 'overdue';
-  date: Date;
+  date: string;
   label: string;
+  cantReportExpired?: boolean;
 }
 
 export interface IKanban {

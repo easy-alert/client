@@ -86,6 +86,23 @@ export const KanbanHeader = styled.div`
   z-index: 9;
   padding: ${theme.size.sm} ${theme.size.sm} ${theme.size.xsm} ${theme.size.sm};
   border-radius: ${theme.size.xxsm};
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: ${theme.size.sm};
+
+  > label {
+    display: flex;
+    align-items: center;
+    gap: ${theme.size.xxsm};
+
+    cursor: pointer;
+    color: ${theme.color.gray4};
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+  }
 `;
 
 export const MaintenanceWrapper = styled.div`
@@ -107,6 +124,14 @@ export const MaintenanceInfo = styled.div<{
   :hover {
     opacity: 0.8;
     cursor: pointer;
+  }
+
+  > h6 {
+    > :nth-child(1),
+    > :nth-child(2) {
+      float: right;
+      margin-left: ${theme.size.xxsm};
+    }
   }
 
   word-break: break-word;
@@ -144,10 +169,10 @@ export const MaintenanceInfo = styled.div<{
     `}
 
     ${({ status }) =>
-    status === 'overdue' &&
+    (status === 'overdue' || status === 'completed') &&
     css`
       p.p3 {
-        color: ${theme.color.primaryM};
+        color: ${theme.color.success};
         font-weight: 500;
       }
     `}

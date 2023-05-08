@@ -30,7 +30,7 @@ export const Sidebar = ({ children }: ISidebar) => {
       restricted: false,
     },
     {
-      name: 'Plano de manutenções',
+      name: 'Plano de manutenção',
       url: `/maintenancesplan/${buildingNanoId}${window.location.search}`,
       restricted: false,
     },
