@@ -21,6 +21,7 @@ export const requestSendReport = async ({
   setOnQuery(true);
 
   await Api.post('/maintenances/create/report', {
+    origin: 'Client',
     maintenanceHistoryId,
     cost: Number(unMaskBRL(maintenanceReport.cost)),
     observation: maintenanceReport.observation !== '' ? maintenanceReport.observation : null,

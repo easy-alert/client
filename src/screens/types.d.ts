@@ -42,6 +42,7 @@ export interface IMaintenance {
   MaintenancesStatus: MaintenancesStatus;
   Building: Building;
   Maintenance: Maintenance;
+  canReport: boolean;
 }
 
 export interface IRequestMaintenanceDetails {
