@@ -5,8 +5,8 @@ import { useDropzone } from 'react-dropzone';
 // COMPONENTS
 import { useEffect, useState } from 'react';
 import { EventTag } from '../../../components/EventTag';
-import { Button } from '../../../components/Buttons/Button';
 import { Input } from '../../../components/Inputs/Input';
+import { Button } from '../../../components/Buttons/Button';
 import { Modal } from '../../../components/Modal';
 import { Image } from '../../../components/Image';
 import { DotLoading } from '../../../components/Loadings/DotLoading';
