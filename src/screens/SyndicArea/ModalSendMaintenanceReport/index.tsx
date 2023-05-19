@@ -5,8 +5,8 @@ import { useDropzone } from 'react-dropzone';
 // COMPONENTS
 import { useEffect, useState } from 'react';
 import { EventTag } from '../../../components/EventTag';
-import { Button } from '../../../components/Buttons/Button';
 import { Input } from '../../../components/Inputs/Input';
+import { Button } from '../../../components/Buttons/Button';
 import { Modal } from '../../../components/Modal';
 import { Image } from '../../../components/Image';
 import { DotLoading } from '../../../components/Loadings/DotLoading';
@@ -173,127 +173,141 @@ export const ModalSendMaintenanceReport = ({
               <p className="p2">{dateFormatter(maintenance.dueDate)}</p>
             </Style.Row>
 
-            <Input
-              label="Custo"
-              placeholder="Ex: R$ 100,00"
-              maxLength={14}
-              value={maintenanceReport.cost}
-              onChange={(e) => {
-                setMaintenanceReport((prevState) => {
-                  const newState = { ...prevState };
-                  newState.cost = applyMask({ mask: 'BRL', value: e.target.value }).value;
-                  return newState;
-                });
-              }}
-            />
+            {maintenance.canReport && (
+              <>
+                <Input
+                  label="Custo"
+                  placeholder="Ex: R$ 100,00"
+                  maxLength={14}
+                  value={maintenanceReport.cost}
+                  onChange={(e) => {
+                    setMaintenanceReport((prevState) => {
+                      const newState = { ...prevState };
+                      newState.cost = applyMask({ mask: 'BRL', value: e.target.value }).value;
+                      return newState;
+                    });
+                  }}
+                />
 
-            <TextArea
-              label="Observação do relato"
-              placeholder="Digite aqui"
-              maxLength={300}
-              value={maintenanceReport.observation}
-              onChange={(e) => {
-                setMaintenanceReport((prevState) => {
-                  const newState = { ...prevState };
-                  newState.observation = e.target.value;
-                  return newState;
-                });
-              }}
-            />
+                <TextArea
+                  label="Observação do relato"
+                  placeholder="Digite aqui"
+                  maxLength={300}
+                  value={maintenanceReport.observation}
+                  onChange={(e) => {
+                    setMaintenanceReport((prevState) => {
+                      const newState = { ...prevState };
+                      newState.observation = e.target.value;
+                      return newState;
+                    });
+                  }}
+                />
 
-            <Style.Row disabled={onFileQuery}>
-              <h6>Anexar</h6>
-              <Style.FileRow>
-                <Style.DragAndDropZoneFile {...getRootProps({ className: 'dropzone' })}>
-                  <input {...getInputProps()} />
+                <Style.Row disabled={onFileQuery}>
+                  <h6>Anexar</h6>
+                  <Style.FileRow>
+                    <Style.DragAndDropZoneFile {...getRootProps({ className: 'dropzone' })}>
+                      <input {...getInputProps()} />
 
-                  <Image img={icon.addFile} width="48px" height="46px" radius="0" />
-                </Style.DragAndDropZoneFile>
+                      <Image img={icon.addFile} width="48px" height="46px" radius="0" />
+                    </Style.DragAndDropZoneFile>
 
-                {(files.length > 0 || onFileQuery) && (
+                    {(files.length > 0 || onFileQuery) && (
+                      <Style.FileAndImageRow>
+                        {files.map((e, i: number) => (
+                          <Style.Tag title={e.name} key={i}>
+                            <p className="p3">{e.name}</p>
+                            <IconButton
+                              size="16px"
+                              icon={icon.xBlack}
+                              onClick={() => {
+                                setFiles((prevState) => {
+                                  const newState = [...prevState];
+                                  newState.splice(i, 1);
+                                  return newState;
+                                });
+                              }}
+                            />
+                          </Style.Tag>
+                        ))}
+                        {onFileQuery && (
+                          <Style.FileLoadingTag>
+                            <DotLoading />
+                          </Style.FileLoadingTag>
+                        )}
+                      </Style.FileAndImageRow>
+                    )}
+                  </Style.FileRow>
+                </Style.Row>
+                <Style.Row disabled={onImageQuery}>
+                  <h6>Imagens</h6>
+
                   <Style.FileAndImageRow>
-                    {files.map((e, i: number) => (
-                      <Style.Tag title={e.name} key={i}>
-                        <p className="p3">{e.name}</p>
-                        <IconButton
-                          size="16px"
-                          icon={icon.xBlack}
-                          onClick={() => {
-                            setFiles((prevState) => {
-                              const newState = [...prevState];
-                              newState.splice(i, 1);
-                              return newState;
-                            });
-                          }}
-                        />
-                      </Style.Tag>
+                    <Style.DragAndDropZoneImage {...getRootPropsImages({ className: 'dropzone' })}>
+                      <input {...getInputPropsImages()} />
+                      <Image img={icon.addImage} width="48px" height="46px" radius="0" />
+                    </Style.DragAndDropZoneImage>
+
+                    {images.map((e, i: number) => (
+                      <ImagePreview
+                        key={e.name + i}
+                        width="132px"
+                        height="136px"
+                        imageCustomName={e.name}
+                        imageOriginalName={e.name}
+                        src={e.url}
+                        onTrashClick={() => {
+                          setImages((prevState) => {
+                            const newState = [...prevState];
+                            newState.splice(i, 1);
+                            return newState;
+                          });
+                        }}
+                      />
                     ))}
-                    {onFileQuery && (
-                      <Style.FileLoadingTag>
+
+                    {onImageQuery && (
+                      <Style.ImageLoadingTag>
                         <DotLoading />
-                      </Style.FileLoadingTag>
+                      </Style.ImageLoadingTag>
                     )}
                   </Style.FileAndImageRow>
-                )}
-              </Style.FileRow>
-            </Style.Row>
-            <Style.Row disabled={onImageQuery}>
-              <h6>Imagens</h6>
-
-              <Style.FileAndImageRow>
-                <Style.DragAndDropZoneImage {...getRootPropsImages({ className: 'dropzone' })}>
-                  <input {...getInputPropsImages()} />
-                  <Image img={icon.addImage} width="48px" height="46px" radius="0" />
-                </Style.DragAndDropZoneImage>
-
-                {images.map((e, i: number) => (
-                  <ImagePreview
-                    key={e.name + i}
-                    width="132px"
-                    height="136px"
-                    imageCustomName={e.name}
-                    imageOriginalName={e.name}
-                    src={e.url}
-                    onTrashClick={() => {
-                      setImages((prevState) => {
-                        const newState = [...prevState];
-                        newState.splice(i, 1);
-                        return newState;
-                      });
-                    }}
-                  />
-                ))}
-
-                {onImageQuery && (
-                  <Style.ImageLoadingTag>
-                    <DotLoading />
-                  </Style.ImageLoadingTag>
-                )}
-              </Style.FileAndImageRow>
-            </Style.Row>
+                </Style.Row>
+              </>
+            )}
           </Style.Content>
-          <Button
-            label="Enviar relato"
-            center
-            disable={onFileQuery || onImageQuery}
-            loading={onQuery}
-            onClick={() => {
-              requestSendReport({
-                files,
-                images,
-                maintenanceHistoryId: modalAdditionalInformations.id,
-                maintenanceReport,
-                setModal,
-                setOnQuery,
-                filter,
-                setBuildingName,
-                setFilterOptions,
-                setKanban,
-                setLoading,
-                syndicNanoId,
-              });
-            }}
-          />
+          {maintenance.canReport ? (
+            <Button
+              label="Enviar relato"
+              center
+              disable={onFileQuery || onImageQuery}
+              loading={onQuery}
+              onClick={() => {
+                requestSendReport({
+                  files,
+                  images,
+                  maintenanceHistoryId: modalAdditionalInformations.id,
+                  maintenanceReport,
+                  setModal,
+                  setOnQuery,
+                  filter,
+                  setBuildingName,
+                  setFilterOptions,
+                  setKanban,
+                  setLoading,
+                  syndicNanoId,
+                });
+              }}
+            />
+          ) : (
+            <Button
+              label="Fechar"
+              center
+              onClick={() => {
+                setModal(false);
+              }}
+            />
+          )}
         </Style.Container>
       )}
     </Modal>
