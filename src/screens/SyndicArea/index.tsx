@@ -8,8 +8,8 @@ import { IconButton } from '../../components/Buttons/IconButton';
 import { EventTag } from '../../components/EventTag';
 import { Select } from '../../components/Inputs/Select';
 import { DotSpinLoading } from '../../components/Loadings/DotSpinLoading';
-import { ModalSendMaintenanceReport } from './ModalSendMaintenanceReport';
 import { ModalMaintenanceDetails } from '../MaintenancesPlan/ModalMaintenanceDetails';
+import { ModalSendMaintenanceReport } from './ModalSendMaintenanceReport';
 import { Skeleton } from '../../components/Skeleton';
 
 // FUNCTIONS

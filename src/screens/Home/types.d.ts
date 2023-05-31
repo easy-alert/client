@@ -8,6 +8,10 @@ export interface IInformations {
     url: string;
   }[];
 
+  Company: {
+    supportLink: string;
+  };
+
   name: string;
 }
 
