@@ -21,7 +21,13 @@ export const Home = () => {
 
   const [loading, setLoading] = useState<boolean>(true);
 
-  const [informations, setInformations] = useState<IInformations>({ Banners: [], name: '' });
+  const [informations, setInformations] = useState<IInformations>({
+    Banners: [],
+    name: '',
+    Company: {
+      supportLink: '',
+    },
+  });
 
   useEffect(() => {
     requestHomeInformations({
@@ -68,7 +74,7 @@ export const Home = () => {
             ),
         )}
 
-        <Style.ButtonGrid>
+        <Style.ButtonGrid hasSupportLink={!!informations.Company.supportLink}>
           <Link to={`/maintenancesplan/${buildingNanoId}${window.location.search}`}>
             <button type="button">Plano de manutenção</button>
           </Link>
@@ -80,6 +86,17 @@ export const Home = () => {
           <Link to={`/annex/${buildingNanoId}${window.location.search}`}>
             <button type="button">Anexos</button>
           </Link>
+
+          {informations.Company.supportLink && (
+            <a
+              className="supportLink"
+              href={informations.Company.supportLink}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Abrir chamado
+            </a>
+          )}
         </Style.ButtonGrid>
       </Style.Wrapper>
       <Style.ImageDiv>

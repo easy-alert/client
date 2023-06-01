@@ -71,9 +71,11 @@ export const MobileBanner = styled.img`
   }
 `;
 
-export const ButtonGrid = styled.div`
+export const ButtonGrid = styled.div<{ hasSupportLink: boolean }>`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: ${({ hasSupportLink }) =>
+    hasSupportLink ? '1fr 1fr 1fr 1fr;' : '1fr 1fr 1fr;'};
+
   gap: ${theme.size.sm};
 
   button {
@@ -82,6 +84,28 @@ export const ButtonGrid = styled.div`
     font-size: 14px;
     font-weight: 500;
     transition: 0.5s;
+
+    :hover {
+      opacity: 0.8;
+    }
+  }
+
+  .supportLink {
+    width: 100%;
+    height: 40px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.5s;
+    border-radius: ${theme.size.xxsm};
+    padding: ${theme.size.xsm} ${theme.size.sm};
+    outline: none;
+    border: none;
+    cursor: pointer;
+    color: ${theme.color.white};
+    background-color: ${theme.color.primary};
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     :hover {
       opacity: 0.8;
