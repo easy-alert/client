@@ -25,6 +25,7 @@ import { icon } from '../../assets/icons';
 import { theme } from '../../styles/theme';
 import * as Style from './styles';
 import { FutureMaintenanceTag } from '../../components/FutureMaintenanceTag';
+import { ModalCreateOccasionalMaintenance } from './ModalCreateOccasionalMaintenance';
 
 export const SyndicArea = () => {
   const [showFilter, setShowFilter] = useState<boolean>(false);
@@ -38,6 +39,9 @@ export const SyndicArea = () => {
   const [showOldExpireds, setShowOldExpireds] = useState<boolean>(false);
 
   const [modalSendReportOpen, setModalSendReportOpen] = useState<boolean>(false);
+
+  const [modalCreateOccasionalMaintenance, setModalCreateOccasionalMaintenance] =
+    useState<boolean>(false);
 
   const [modalMaintenanceDetailsOpen, setModalMaintenanceDetailsOpen] = useState<boolean>(false);
 
@@ -94,6 +98,7 @@ export const SyndicArea = () => {
           syndicNanoId={syndicNanoId}
         />
       )}
+
       {modalMaintenanceDetailsOpen && (
         <ModalMaintenanceDetails
           setModal={setModalMaintenanceDetailsOpen}
@@ -101,17 +106,42 @@ export const SyndicArea = () => {
         />
       )}
 
+      {modalCreateOccasionalMaintenance && (
+        <ModalCreateOccasionalMaintenance
+          setModal={setModalCreateOccasionalMaintenance}
+          getCalendarData={async () =>
+            requestSyndicKanban({
+              setLoading,
+              syndicNanoId,
+              setFilterOptions,
+              filter,
+              setOnQuery,
+              setKanban,
+              setBuildingName,
+            })
+          }
+        />
+      )}
+
       <Style.Container>
         <Style.Header>
-          <h2>{buildingName}</h2>
+          <Style.HeaderWrapper>
+            <h2>{buildingName}</h2>
+            <IconButton
+              icon={icon.filter}
+              size="16px"
+              label={showFilter ? 'Ocultar' : 'Filtrar'}
+              color={theme.color.gray5}
+              onClick={() => {
+                setShowFilter(!showFilter);
+              }}
+            />
+          </Style.HeaderWrapper>
+
           <IconButton
-            icon={icon.filter}
-            size="16px"
-            label={showFilter ? 'Ocultar' : 'Filtrar'}
-            color={theme.color.gray5}
-            onClick={() => {
-              setShowFilter(!showFilter);
-            }}
+            icon={icon.plus}
+            label="Manutenção avulsa"
+            onClick={() => setModalCreateOccasionalMaintenance(true)}
           />
         </Style.Header>
         {showFilter && (
@@ -199,6 +229,7 @@ export const SyndicArea = () => {
             />
           </Style.FilterWrapper>
         )}
+
         <Style.Kanban>
           {kanban.map((card, i: number) => (
             <Style.KanbanCard key={card.status}>
