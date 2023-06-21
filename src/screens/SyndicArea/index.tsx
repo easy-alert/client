@@ -297,12 +297,14 @@ export const SyndicArea = () => {
                           }}
                         >
                           <h6>
+                            {maintenance.type === 'occasional' && <EventTag status="occasional" />}
                             {maintenance.status === 'pending' &&
                               new Date(maintenance.date) >
                                 new Date(new Date().setHours(0, 0, 0, 0)) && (
                                 <FutureMaintenanceTag />
                               )}
                             {maintenance.status === 'overdue' && <EventTag status="overdue" />}
+
                             {maintenance.element}
                           </h6>
                           <p className="p2">{maintenance.activity}</p>
