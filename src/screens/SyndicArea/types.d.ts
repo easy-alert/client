@@ -6,6 +6,7 @@ export interface MaintenanceKanban {
   date: string;
   label: string;
   cantReportExpired?: boolean;
+  type: 'common' | 'occasional';
 }
 
 export interface IKanban {
