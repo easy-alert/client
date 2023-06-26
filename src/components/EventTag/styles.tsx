@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
-import { theme } from '../../styles/theme';
 import { IEventTag } from './types';
+import { theme } from '../../styles/theme';
 
 export const TagContainer = styled.div<IEventTag>`
   width: fit-content;
@@ -10,6 +10,7 @@ export const TagContainer = styled.div<IEventTag>`
   > p {
     color: ${theme.color.white};
     font-weight: 500;
+    white-space: nowrap;
   }
 
   ${({ status }) =>
@@ -31,5 +32,11 @@ export const TagContainer = styled.div<IEventTag>`
     status === 'expired' &&
     css`
       background-color: ${theme.color.actionDanger};
+    `};
+
+  ${({ status }) =>
+    status === 'occasional' &&
+    css`
+      background-color: ${theme.color.actionBlue};
     `};
 `;

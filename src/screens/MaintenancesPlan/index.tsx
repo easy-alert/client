@@ -298,6 +298,8 @@ export const MaintenancesPlan = () => {
                           <Style.MaintenanceTags>
                             {maintenance.status === 'overdue' && <EventTag status="completed" />}
                             <EventTag status={maintenance.status} />
+
+                            {maintenance.type === 'occasional' && <EventTag status="occasional" />}
                           </Style.MaintenanceTags>
 
                           <h6>{maintenance.element}</h6>
