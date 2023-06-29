@@ -8,7 +8,7 @@ export const FormContainer = styled.div`
 `;
 
 export const OnQueryContainer = styled.div`
-  height: 485px;
+  height: 340px;
 `;
 
 export const Row = styled.div<{ disabled?: boolean }>`

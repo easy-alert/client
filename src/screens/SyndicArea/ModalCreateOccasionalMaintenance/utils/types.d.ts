@@ -7,7 +7,7 @@ interface IAnnexesAndImages {
 interface ICategories {
   id: string;
   name: string;
-  Maintenances: {
+  Maintenances?: {
     id: string;
     element: string;
     activity: string;
