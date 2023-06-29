@@ -82,7 +82,6 @@ export const ModalCreateOccasionalMaintenance = ({
     },
 
     maintenanceData: {
-      id: '',
       element: '',
       activity: '',
       responsible: '',
@@ -180,7 +179,6 @@ export const ModalCreateOccasionalMaintenance = ({
                         ?.name ?? '',
                   },
                   maintenanceData: {
-                    id: '',
                     activity: '',
                     element: '',
                     responsible: '',
@@ -210,7 +208,6 @@ export const ModalCreateOccasionalMaintenance = ({
                     name: '',
                   },
                   maintenanceData: {
-                    id: '',
                     activity: '',
                     element: '',
                     responsible: '',
@@ -218,7 +215,6 @@ export const ModalCreateOccasionalMaintenance = ({
                 })),
             }}
           />
-
           <CRUDInput
             label="Elemento *"
             disabled={!data.categoryData.name}
@@ -228,13 +224,12 @@ export const ModalCreateOccasionalMaintenance = ({
                 const maintenance = findCategoryById({
                   id: data.categoryData.id,
                   categoriesData: auxiliaryData.Categories,
-                })?.Maintenances.find((maintenanceData) => maintenanceData.id === value);
+                })?.Maintenances?.find((maintenanceData) => maintenanceData.id === value);
 
                 setData((prevState) => ({
                   ...prevState,
                   maintenanceData: {
                     ...prevState.maintenanceData,
-                    id: value,
                     element: maintenance?.element ?? '',
                     responsible: maintenance?.responsible ?? '',
                     activity: maintenance?.activity ?? '',
@@ -247,7 +242,7 @@ export const ModalCreateOccasionalMaintenance = ({
                 findCategoryById({
                   id: data.categoryData.id,
                   categoriesData: auxiliaryData.Categories,
-                })?.Maintenances.map((maintenance) => ({
+                })?.Maintenances?.map((maintenance) => ({
                   value: maintenance.id,
                   label: maintenance.element,
                 })) || [],
@@ -266,7 +261,6 @@ export const ModalCreateOccasionalMaintenance = ({
                 setData((prevState) => ({
                   ...prevState,
                   maintenanceData: {
-                    id: '',
                     element: '',
                     activity: '',
                     responsible: '',

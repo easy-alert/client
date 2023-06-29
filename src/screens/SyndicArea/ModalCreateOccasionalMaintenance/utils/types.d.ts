@@ -7,7 +7,7 @@ interface IAnnexesAndImages {
 interface ICategories {
   id: string;
   name: string;
-  Maintenances: {
+  Maintenances?: {
     id: string;
     element: string;
     activity: string;
@@ -28,7 +28,6 @@ export interface ICreateOccasionalMaintenanceData {
   executionDate: string;
 
   maintenanceData: {
-    id: string;
     element: string;
     activity: string;
     responsible: string;
