@@ -82,7 +82,6 @@ export const ModalCreateOccasionalMaintenance = ({
     },
 
     maintenanceData: {
-      id: '',
       element: '',
       activity: '',
       responsible: '',
@@ -180,7 +179,6 @@ export const ModalCreateOccasionalMaintenance = ({
                         ?.name ?? '',
                   },
                   maintenanceData: {
-                    id: '',
                     activity: '',
                     element: '',
                     responsible: '',
@@ -210,7 +208,6 @@ export const ModalCreateOccasionalMaintenance = ({
                     name: '',
                   },
                   maintenanceData: {
-                    id: '',
                     activity: '',
                     element: '',
                     responsible: '',
@@ -234,7 +231,6 @@ export const ModalCreateOccasionalMaintenance = ({
                   ...prevState,
                   maintenanceData: {
                     ...prevState.maintenanceData,
-                    id: value,
                     element: maintenance?.element ?? '',
                     responsible: maintenance?.responsible ?? '',
                     activity: maintenance?.activity ?? '',
@@ -266,7 +262,6 @@ export const ModalCreateOccasionalMaintenance = ({
                 setData((prevState) => ({
                   ...prevState,
                   maintenanceData: {
-                    id: '',
                     element: '',
                     activity: '',
                     responsible: '',
