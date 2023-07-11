@@ -31,6 +31,13 @@ export interface Maintenance {
   observation: string;
   responsible: string;
   source: string;
+
+  frequency: number;
+  FrequencyTimeInterval: {
+    pluralLabel: string;
+    singularLabel: string;
+  };
+
   MaintenanceType: {
     name: string;
   };
