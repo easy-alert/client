@@ -12,10 +12,11 @@ export const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: ${theme.size.xxsm};
 
   @media (max-width: 900px) {
     flex-direction: column;
-    align-items: normal;
+    align-items: flex-start;
   }
 `;
 
