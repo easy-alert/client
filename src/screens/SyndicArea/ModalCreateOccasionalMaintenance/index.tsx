@@ -87,7 +87,7 @@ export const ModalCreateOccasionalMaintenance = ({
       responsible: '',
     },
     reportData: {
-      cost: '',
+      cost: 'R$ 0,00',
       observation: '',
       files: [],
       images: [],
@@ -310,7 +310,7 @@ export const ModalCreateOccasionalMaintenance = ({
               <Input
                 label="Custo"
                 placeholder="Ex: R$ 100,00"
-                maxLength={14}
+                maxLength={20}
                 value={data.reportData.cost}
                 onChange={(evt) => {
                   setData((prevState) => ({

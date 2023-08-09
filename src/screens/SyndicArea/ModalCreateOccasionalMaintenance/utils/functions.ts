@@ -5,7 +5,7 @@ import {
   IRequestAuxiliaryDataForCreateOccasionalMaintenance,
   IRequestCreateOccasionalMaintenance,
 } from './types';
-import { catchHandler, unMaskBRL } from '../../../../utils/functions';
+import { catchHandler, query, unMaskBRL } from '../../../../utils/functions';
 import { Api } from '../../../../services/api';
 
 export const requestCreateOccasionalMaintenance = async ({
@@ -23,11 +23,14 @@ export const requestCreateOccasionalMaintenance = async ({
   if (!maintenanceData.responsible) return toast.error('Nome do reponsável não informado.');
   if (!executionDate) return toast.error('Data de execução não informada.');
 
+  const syndicNanoId = query.get('syndicNanoId') ?? '';
+
   setOnQuery(true);
 
   await Api.post('/building/reports/occasional/create', {
     buildingId: buildingId || null,
     origin,
+    responsibleSyndicId: syndicNanoId,
     executionDate: new Date(new Date(executionDate).setUTCHours(3, 0, 0, 0)) || null,
     categoryData: {
       name: categoryData.name || null,
