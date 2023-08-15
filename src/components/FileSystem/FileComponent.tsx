@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import * as Style from './styles';
 import { icon } from '../../assets/icons/index';
 import { Image } from '../Image';
-import { theme } from '../../styles/theme';
-import { PopoverButton } from '../Buttons/PopoverButton';
 import { detectFileExtension } from '../../utils/functions';
 
 interface IFile {
@@ -61,30 +59,6 @@ export const FileComponent = ({ name, url }: IFile) => {
       </Style.Wrapper>
       {dropdownOpen && (
         <Style.Dropdown>
-          <PopoverButton
-            actionButtonBgColor={theme.color.actionDanger}
-            type="IconButton"
-            buttonIcon={icon.grayTrash}
-            buttonIconSize="16px"
-            iconButtonColor={theme.color.gray5}
-            label="Excluir"
-            message={{
-              title: 'Deseja excluir esta pasta?',
-              content: 'Atenção, todas as pastas e arquivos dentro desta pasta serão excluídos.',
-              contentColor: theme.color.danger,
-            }}
-            fontWeight="400"
-            labelPos="right"
-            actionButtonClick={() => {
-              // requestDeleteBuilding({
-              //   setModal,
-              //   setOnQuery,
-              //   buildingId: building.id,
-              //   navigate,
-              // });
-            }}
-          />
-
           <a href={url} download target="_blank" rel="noreferrer">
             <Image img={icon.grayDownload} size="16px" />
             <p className="p2">Download</p>
