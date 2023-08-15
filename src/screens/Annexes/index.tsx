@@ -112,24 +112,6 @@ export const Annexes = () => {
             <h5>Nenhum anexo cadastrado.</h5>
           </Style.NoAnnexes>
         )}
-
-        {/* {!loading && informations.Annexes?.length > 0 && (
-          <Style.CardRow>
-            {informations.Annexes.map((annex) => (
-              <ImagePreview
-                key={annex.url}
-                height="198px"
-                width="198px"
-                src={annex.url}
-                imageCustomName={annex.name}
-                imageOriginalName={annex.originalName}
-                downloadUrl={annex.url}
-              />
-            ))}
-          </Style.CardRow>
-        )}
-
-        {!loading && informations.Annexes?.length === 0 && <h6>Nenhum anexo cadastrado.</h6>} */}
       </Style.Card>
     </Style.Container>
   );
