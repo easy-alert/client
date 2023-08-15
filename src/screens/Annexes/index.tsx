@@ -1,61 +1,126 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable no-nested-ternary */
 // COMPONENTS
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Skeleton } from '../../components/Skeleton';
-import { ImagePreview } from '../../components/ImagePreview';
 
 // STYLES
 import * as Style from './styles';
 
 // FUNCTIONS
-import { checkFileType, requestAnnexInformations } from './functions';
+import { requestAnnexInformations, requestFolderDetails } from './functions';
+import { Folder, Folders } from './types';
+import { FolderComponent, FileComponent } from '../../components/FileSystem';
 
 // TYPES
-import { IInformations } from './types';
 
 export const Annexes = () => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
 
+  const [buildingName, setBuildingName] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const [informations, setInformations] = useState<IInformations>({ Annexes: [], name: '' });
+  const [informations, setInformations] = useState<Folders>();
+
+  const [folderId, setFolderId] = useState<string | null>(null);
+  const [rootFolder, setRootFolder] = useState<Folder>({ id: '', name: '' });
+  const [breadcrumb, setBreadcrumb] = useState<Folder[]>([{ id: '', name: 'Início' }]);
+
+  useEffect(() => {
+    if (folderId) {
+      requestFolderDetails({
+        folderId,
+        setInformations,
+        setBreadcrumb,
+        rootFolder,
+      });
+    }
+  }, [folderId]);
 
   useEffect(() => {
     requestAnnexInformations({
       buildingNanoId,
       setLoading,
       setInformations,
+      setBuildingName,
+      setRootFolder,
     });
   }, []);
 
   return (
     <Style.Container>
-      {loading ? <Skeleton height="24px" width="248px" /> : <h2>{informations.name}</h2>}
+      {loading ? <Skeleton height="24px" width="248px" /> : <h2>{buildingName}</h2>}
       <Style.Card>
-        <h4>Anexos</h4>
+        <Style.Header>
+          <h4>Anexos</h4>
+          <Style.BreadcrumbWrapper>
+            {breadcrumb.map((element, i) => (
+              <React.Fragment key={element.id}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFolderId(element.id);
+                  }}
+                >
+                  {element.name}
+                </button>
+
+                {i === 0 && breadcrumb.length > 1 && <p className="p3">/</p>}
+
+                {i > 0 && breadcrumb.length > 1 && i + 1 !== breadcrumb.length && (
+                  <p className="p3">{'>'}</p>
+                )}
+              </React.Fragment>
+            ))}
+          </Style.BreadcrumbWrapper>
+        </Style.Header>
 
         {loading && (
           <Style.CardRow>
-            <Skeleton height="198px" width="198px" />
-            <Skeleton height="198px" width="198px" />
-            <Skeleton height="198px" width="198px" />
-            <Skeleton height="198px" width="198px" />
-            <Skeleton height="198px" width="198px" />
-            <Skeleton height="198px" width="198px" />
+            <Skeleton height="32px" />
+            <Skeleton height="32px" />
+            <Skeleton height="32px" />
+            <Skeleton height="32px" />
+            <Skeleton height="32px" />
+            <Skeleton height="32px" />
+            <Skeleton height="32px" />
+            <Skeleton height="32px" />
+            <Skeleton height="32px" />
           </Style.CardRow>
         )}
 
-        {!loading && informations.Annexes?.length > 0 && (
+        {!loading &&
+          informations &&
+          (informations?.Files?.length > 0 || informations?.Folders?.length > 0) && (
+            <Style.TagWrapper>
+              {informations?.Folders?.map((element) => (
+                <FolderComponent
+                  key={element.id}
+                  name={element.name}
+                  onFolderClick={() => {
+                    setFolderId(element.id);
+                  }}
+                />
+              ))}
+              {informations?.Files?.map((element) => (
+                <FileComponent key={element.id} name={element.name} url={element.url} />
+              ))}
+            </Style.TagWrapper>
+          )}
+
+        {!loading && informations?.Files?.length === 0 && informations?.Folders?.length === 0 && (
+          <Style.NoAnnexes className="bottom">
+            <h5>Nenhum anexo cadastrado.</h5>
+          </Style.NoAnnexes>
+        )}
+
+        {/* {!loading && informations.Annexes?.length > 0 && (
           <Style.CardRow>
             {informations.Annexes.map((annex) => (
               <ImagePreview
                 key={annex.url}
                 height="198px"
                 width="198px"
-                src={checkFileType(annex)}
+                src={annex.url}
                 imageCustomName={annex.name}
                 imageOriginalName={annex.originalName}
                 downloadUrl={annex.url}
@@ -64,7 +129,7 @@ export const Annexes = () => {
           </Style.CardRow>
         )}
 
-        {!loading && informations.Annexes.length === 0 && <h6>Nenhum anexo cadastrado.</h6>}
+        {!loading && informations.Annexes?.length === 0 && <h6>Nenhum anexo cadastrado.</h6>} */}
       </Style.Card>
     </Style.Container>
   );

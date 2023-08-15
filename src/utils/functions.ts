@@ -229,6 +229,15 @@ export const unMaskBRL = (value: string) => value.replace(/[^0-9]/g, '');
 export const capitalizeFirstLetter = (value: string) =>
   value.charAt(0).toUpperCase() + value.slice(1);
 
+export const detectFileExtension = (fileName: string): string | null => {
+  const parts = fileName.split('.');
+
+  if (parts.length > 1) {
+    return parts[parts.length - 1];
+  }
+  return null;
+};
+
 export const convertToUrlString = (value: string) =>
   value
     .normalize('NFD')
