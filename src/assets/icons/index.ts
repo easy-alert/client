@@ -44,6 +44,14 @@ import downloadRedBg from './downloadRedBg.svg';
 import logoFullWhite from './logoFullWhite.svg';
 import trashWithPrimaryBg from './trashWithPrimaryBg.svg';
 import filter from './filter.svg';
+import folder from './folder.svg';
+import grayEdit from './grayEdit.svg';
+import grayTrash from './grayTrash.svg';
+import grayPaper from './grayPaper.svg';
+import placeholder from './placeholder.svg';
+import grayDownload from './grayDownload.svg';
+import addFileV2 from './addFileV2.svg';
+import dots from './dots.svg';
 
 export const icon = {
   leftArrow,
@@ -92,4 +100,12 @@ export const icon = {
   logoFullWhite,
   trashWithPrimaryBg,
   filter,
+  folder,
+  grayEdit,
+  grayTrash,
+  grayPaper,
+  placeholder,
+  grayDownload,
+  addFileV2,
+  dots,
 };
