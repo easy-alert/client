@@ -1,6 +1,6 @@
 import * as Style from './styles';
-import { icon } from '../../assets/icons/index';
 import { Image } from '../Image';
+import { icon } from '../../assets/icons/index';
 
 interface IFolder {
   name: string;
