@@ -12,7 +12,7 @@ interface Folder {
 interface Folders {
   name: string;
   id: string;
-  Files: Files[];
+  Files: File[];
   Folders: Folder[];
 }
 
