@@ -11,13 +11,15 @@ import * as Style from './styles';
 import { icon } from '../../assets/icons';
 
 // FUNCTIONS
-import { requestHomeInformations } from './functions';
+import { requestBuildingAccess, requestHomeInformations } from './functions';
+import { query } from '../../utils/functions';
 
 // TYPES
 import { IInformations } from './types';
 
 export const Home = () => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
+  const syndicNanoId = query.get('syndicNanoId') ?? '';
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -35,6 +37,8 @@ export const Home = () => {
       setLoading,
       setInformations,
     });
+
+    if (!syndicNanoId) requestBuildingAccess(buildingNanoId);
   }, []);
 
   return (
