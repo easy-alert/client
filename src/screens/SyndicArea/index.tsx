@@ -34,7 +34,7 @@ export const SyndicArea = () => {
 
   const [onQuery, setOnQuery] = useState<boolean>(false);
 
-  const [showFutureMaintenances, setShowFutureMaintenances] = useState<boolean>(true);
+  const [showFutureMaintenances, setShowFutureMaintenances] = useState<boolean>(false);
 
   const [showOldExpireds, setShowOldExpireds] = useState<boolean>(false);
 
