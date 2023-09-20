@@ -34,7 +34,7 @@ export const SyndicArea = () => {
 
   const [onQuery, setOnQuery] = useState<boolean>(false);
 
-  const [showFutureMaintenances, setShowFutureMaintenances] = useState<boolean>(true);
+  const [showFutureMaintenances, setShowFutureMaintenances] = useState<boolean>(false);
 
   const [showOldExpireds, setShowOldExpireds] = useState<boolean>(false);
 
@@ -295,17 +295,21 @@ export const SyndicArea = () => {
                   const isFuture =
                     new Date(maintenance.date) > new Date(new Date().setHours(0, 0, 0, 0));
 
+                  // se for avulsa, pode reportar qlqer vencida
+                  const showExpiredOccasional = maintenance.type === 'occasional';
+
                   const isExpired = maintenance.status === 'expired';
                   const isOldExpired =
                     maintenance.status === 'expired' && maintenance.cantReportExpired;
 
                   return (
-                    ((showFutureMaintenances && isPending && isFuture) ||
+                    ((((showFutureMaintenances && isPending && isFuture) ||
                       (isPending && !isFuture) ||
                       !isPending) &&
-                    ((showOldExpireds && isExpired && isOldExpired) ||
-                      (isExpired && !isOldExpired) ||
-                      !isExpired) && (
+                      ((showOldExpireds && isExpired && isOldExpired) ||
+                        (isExpired && !isOldExpired) ||
+                        !isExpired)) ||
+                      showExpiredOccasional) && (
                       <Style.MaintenanceWrapper key={maintenance.id + j}>
                         <Style.MaintenanceInfo
                           status={maintenance.status}
