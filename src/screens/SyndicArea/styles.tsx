@@ -23,6 +23,18 @@ export const Header = styled.div`
 export const HeaderWrapper = styled.div`
   display: flex;
   gap: ${theme.size.xsm};
+
+  > label {
+    display: flex;
+    align-items: center;
+    gap: ${theme.size.xxsm};
+
+    cursor: pointer;
+    color: ${theme.color.gray4};
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+  }
 `;
 
 export const FilterWrapper = styled.div`

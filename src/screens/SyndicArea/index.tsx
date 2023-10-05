@@ -137,6 +137,17 @@ export const SyndicArea = () => {
                 setShowFilter(!showFilter);
               }}
             />
+            <label htmlFor="showFuture">
+              <input
+                type="checkbox"
+                id="showFuture"
+                checked={showFutureMaintenances}
+                onChange={() => {
+                  setShowFutureMaintenances((prevState) => !prevState);
+                }}
+              />
+              Mostrar futuras
+            </label>
           </Style.HeaderWrapper>
 
           <IconButton
@@ -236,7 +247,7 @@ export const SyndicArea = () => {
             <Style.KanbanCard key={card.status}>
               <Style.KanbanHeader>
                 <h5>{card.status}</h5>
-                {card.status === 'Pendentes' && (
+                {/* {(card.status === 'Pendentes' || card.status === 'Em execução') && (
                   <label htmlFor="showFuture">
                     <input
                       type="checkbox"
@@ -248,7 +259,7 @@ export const SyndicArea = () => {
                     />
                     Mostrar futuras
                   </label>
-                )}
+                )} */}
                 {card.status === 'Vencidas' && (
                   <label htmlFor="showExpireds">
                     <input

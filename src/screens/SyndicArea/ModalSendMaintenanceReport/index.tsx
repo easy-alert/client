@@ -27,6 +27,7 @@ import { AnnexesAndImages, IMaintenance } from '../../types';
 import { applyMask, dateFormatter, uploadFile } from '../../../utils/functions';
 import { requestMaintenanceDetails } from '../../functions';
 import { requestSendReport } from './functions';
+import { InProgressTag } from '../../../components/InProgressTag';
 
 export const ModalSendMaintenanceReport = ({
   setModal,
@@ -140,6 +141,9 @@ export const ModalSendMaintenanceReport = ({
             {maintenance?.Maintenance.MaintenanceType.name === 'occasional' && (
               <EventTag status="occasional" />
             )}
+            {(maintenance?.MaintenancesStatus.name === 'expired' ||
+              maintenance?.MaintenancesStatus.name === 'pending') &&
+              maintenance.inProgress && <InProgressTag />}
           </Style.StatusTagWrapper>
           <Style.Content>
             <Style.Row>
