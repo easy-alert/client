@@ -26,6 +26,7 @@ import { theme } from '../../styles/theme';
 import * as Style from './styles';
 import { FutureMaintenanceTag } from '../../components/FutureMaintenanceTag';
 import { ModalCreateOccasionalMaintenance } from './ModalCreateOccasionalMaintenance';
+import { InProgressTag } from '../../components/InProgressTag';
 
 export const SyndicArea = () => {
   const [showFilter, setShowFilter] = useState<boolean>(false);
@@ -296,7 +297,8 @@ export const SyndicArea = () => {
                     new Date(maintenance.date) > new Date(new Date().setHours(0, 0, 0, 0));
 
                   // se for avulsa, pode reportar qlqer vencida
-                  const showExpiredOccasional = maintenance.type === 'occasional';
+                  const showExpiredOccasional =
+                    maintenance.type === 'occasional' && maintenance.status === 'expired';
 
                   const isExpired = maintenance.status === 'expired';
                   const isOldExpired =
@@ -332,14 +334,21 @@ export const SyndicArea = () => {
                           }}
                         >
                           <h6>
-                            {maintenance.type === 'occasional' && <EventTag status="occasional" />}
-                            {maintenance.status === 'pending' &&
-                              new Date(maintenance.date) >
-                                new Date(new Date().setHours(0, 0, 0, 0)) && (
-                                <FutureMaintenanceTag />
+                            <span>
+                              {maintenance.type === 'occasional' && (
+                                <EventTag status="occasional" />
                               )}
-                            {maintenance.status === 'overdue' && <EventTag status="overdue" />}
+                              {maintenance.status === 'pending' &&
+                                new Date(maintenance.date) >
+                                  new Date(new Date().setHours(0, 0, 0, 0)) && (
+                                  <FutureMaintenanceTag />
+                                )}
+                              {maintenance.status === 'overdue' && <EventTag status="overdue" />}
 
+                              {(maintenance.status === 'expired' ||
+                                maintenance.status === 'pending') &&
+                                maintenance.inProgress && <InProgressTag />}
+                            </span>
                             {maintenance.element}
                           </h6>
                           <p className="p2">{maintenance.activity}</p>

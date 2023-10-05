@@ -138,10 +138,12 @@ export const MaintenanceInfo = styled.div<{
   }
 
   > h6 {
-    > :nth-child(1),
-    > :nth-child(2) {
-      float: right;
-      margin-left: ${theme.size.xxsm};
+    > span {
+      display: flex;
+      align-items: center;
+      gap: ${theme.size.xxsm};
+      flex-wrap: wrap;
+      margin-bottom: 4px;
     }
   }
 
