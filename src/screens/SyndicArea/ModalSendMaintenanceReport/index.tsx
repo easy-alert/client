@@ -29,6 +29,7 @@ import { requestMaintenanceDetails } from '../../functions';
 import { requestSendReport, requestToggleInProgress } from './functions';
 import { InProgressTag } from '../../../components/InProgressTag';
 import { PopoverButton } from '../../../components/Buttons/PopoverButton';
+import { theme } from '../../../styles/theme';
 
 export const ModalSendMaintenanceReport = ({
   setModal,
@@ -301,36 +302,38 @@ export const ModalSendMaintenanceReport = ({
           </Style.Content>
           {maintenance.canReport ? (
             <Style.ButtonContainer>
+              {!onQuery && (
+                <PopoverButton
+                  disabled={onFileQuery || onImageQuery || onQuery}
+                  actionButtonClick={() => {
+                    requestToggleInProgress({
+                      maintenanceHistoryId: modalAdditionalInformations.id,
+                      setModal,
+                      setOnQuery,
+                      filter,
+                      setBuildingName,
+                      setFilterOptions,
+                      setKanban,
+                      setLoading,
+                      syndicNanoId,
+                      inProgressChange: !maintenance.inProgress,
+                    });
+                  }}
+                  borderless
+                  label={maintenance.inProgress ? 'Parar execução' : 'Iniciar execução'}
+                  message={{
+                    title: maintenance.inProgress
+                      ? 'Tem certeza que deseja alterar a execução?'
+                      : 'Iniciar a execução apenas indica que a manutenção está sendo realizada, mas não conclui a manutenção.',
+                    content: 'Esta ação é reversível.',
+                  }}
+                  type="Button"
+                />
+              )}
               <PopoverButton
-                actionButtonClick={() => {
-                  requestToggleInProgress({
-                    maintenanceHistoryId: modalAdditionalInformations.id,
-                    setModal,
-                    setOnQuery,
-                    filter,
-                    setBuildingName,
-                    setFilterOptions,
-                    setKanban,
-                    setLoading,
-                    syndicNanoId,
-                    inProgressChange: !maintenance.inProgress,
-                  });
-                }}
-                borderless
-                label={maintenance.inProgress ? 'Parar execução' : 'Iniciar execução'}
-                message={{
-                  title: maintenance.inProgress
-                    ? 'Tem certeza que deseja alterar a execução?'
-                    : 'Iniciar a execução apenas indica que a manutenção está sendo realizada, mas não conclui a manutenção.',
-                  content: 'Esta ação é reversível.',
-                }}
-                type="Button"
-              />
-              <Button
-                label="Enviar relato"
-                disable={onFileQuery || onImageQuery}
+                disabled={onFileQuery || onImageQuery}
                 loading={onQuery}
-                onClick={() => {
+                actionButtonClick={() => {
                   requestSendReport({
                     files,
                     images,
@@ -346,6 +349,13 @@ export const ModalSendMaintenanceReport = ({
                     syndicNanoId,
                   });
                 }}
+                label="Enviar relato"
+                message={{
+                  title: 'Tem certeza que deseja enviar o relato?',
+                  content: 'Esta ação é irreversível.',
+                  contentColor: theme.color.danger,
+                }}
+                type="Button"
               />
             </Style.ButtonContainer>
           ) : (
