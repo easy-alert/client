@@ -128,26 +128,28 @@ export const SyndicArea = () => {
         <Style.Header>
           <Style.HeaderWrapper>
             <h2>{buildingName}</h2>
-            <IconButton
-              icon={icon.filter}
-              size="16px"
-              label={showFilter ? 'Ocultar' : 'Filtrar'}
-              color={theme.color.gray5}
-              onClick={() => {
-                setShowFilter(!showFilter);
-              }}
-            />
-            <label htmlFor="showFuture">
-              <input
-                type="checkbox"
-                id="showFuture"
-                checked={showFutureMaintenances}
-                onChange={() => {
-                  setShowFutureMaintenances((prevState) => !prevState);
+            <Style.HeaderSide>
+              <IconButton
+                icon={icon.filter}
+                size="16px"
+                label={showFilter ? 'Ocultar' : 'Filtrar'}
+                color={theme.color.gray5}
+                onClick={() => {
+                  setShowFilter(!showFilter);
                 }}
               />
-              Mostrar futuras
-            </label>
+              <label htmlFor="showFuture">
+                <input
+                  type="checkbox"
+                  id="showFuture"
+                  checked={showFutureMaintenances}
+                  onChange={() => {
+                    setShowFutureMaintenances((prevState) => !prevState);
+                  }}
+                />
+                Mostrar futuras
+              </label>
+            </Style.HeaderSide>
           </Style.HeaderWrapper>
 
           <IconButton

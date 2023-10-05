@@ -20,9 +20,14 @@ export const Header = styled.div`
   }
 `;
 
-export const HeaderWrapper = styled.div`
+export const HeaderSide = styled.div`
   display: flex;
+  align-items: center;
   gap: ${theme.size.xsm};
+
+  @media (max-width: 600px) {
+    gap: ${theme.size.sm};
+  }
 
   > label {
     display: flex;
@@ -34,6 +39,18 @@ export const HeaderWrapper = styled.div`
     font-weight: 500;
     font-size: 12px;
     line-height: 14px;
+  }
+`;
+
+export const HeaderWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${theme.size.xsm};
+  width: 100%;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: flex-start;
   }
 `;
 
