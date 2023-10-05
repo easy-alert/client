@@ -29,6 +29,7 @@ import {
 // FUNCTIONS
 import { requestMaintenancesPlan } from './functions';
 import { capitalizeFirstLetter } from '../../utils/functions';
+import { InProgressTag } from '../../components/InProgressTag';
 
 export const MaintenancesPlan = () => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
@@ -300,6 +301,11 @@ export const MaintenancesPlan = () => {
                             <EventTag status={maintenance.status} />
 
                             {maintenance.type === 'occasional' && <EventTag status="occasional" />}
+
+                            {(maintenance.status === 'expired' ||
+                              maintenance.status === 'pending') &&
+                              maintenance.inProgress &&
+                              !maintenance.isFuture && <InProgressTag />}
                           </Style.MaintenanceTags>
 
                           <h6>{maintenance.element}</h6>

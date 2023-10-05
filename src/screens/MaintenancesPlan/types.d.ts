@@ -15,6 +15,7 @@ export interface Date {
   expectedNotificationDate: string;
   expectedDueDate: string;
   type: 'occasional' | null;
+  inProgress: boolean;
 }
 
 export interface IMaintenancesPlan {
