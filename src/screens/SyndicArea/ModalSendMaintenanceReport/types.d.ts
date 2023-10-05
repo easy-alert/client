@@ -32,3 +32,16 @@ export interface IRequestSendReport {
   setKanban: React.Dispatch<React.SetStateAction<IKanban[]>>;
   setBuildingName: React.Dispatch<React.SetStateAction<string>>;
 }
+
+export interface IRequestToggleInProgress {
+  setModal: (setModal: boolean) => void;
+  maintenanceHistoryId: string;
+  syndicNanoId: string;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setFilterOptions: React.Dispatch<React.SetStateAction<IFilterOptions>>;
+  setOnQuery: React.Dispatch<React.SetStateAction<boolean>>;
+  filter: IFilter;
+  setKanban: React.Dispatch<React.SetStateAction<IKanban[]>>;
+  setBuildingName: React.Dispatch<React.SetStateAction<string>>;
+  inProgressChange: boolean;
+}
