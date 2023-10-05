@@ -26,7 +26,6 @@ import { theme } from '../../styles/theme';
 import * as Style from './styles';
 import { FutureMaintenanceTag } from '../../components/FutureMaintenanceTag';
 import { ModalCreateOccasionalMaintenance } from './ModalCreateOccasionalMaintenance';
-import { InProgressTag } from '../../components/InProgressTag';
 
 export const SyndicArea = () => {
   const [showFilter, setShowFilter] = useState<boolean>(false);
@@ -357,10 +356,6 @@ export const SyndicArea = () => {
                                   <FutureMaintenanceTag />
                                 )}
                               {maintenance.status === 'overdue' && <EventTag status="overdue" />}
-
-                              {(maintenance.status === 'expired' ||
-                                maintenance.status === 'pending') &&
-                                maintenance.inProgress && <InProgressTag />}
                             </span>
                             {maintenance.element}
                           </h6>
