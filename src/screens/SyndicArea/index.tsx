@@ -127,15 +127,28 @@ export const SyndicArea = () => {
         <Style.Header>
           <Style.HeaderWrapper>
             <h2>{buildingName}</h2>
-            <IconButton
-              icon={icon.filter}
-              size="16px"
-              label={showFilter ? 'Ocultar' : 'Filtrar'}
-              color={theme.color.gray5}
-              onClick={() => {
-                setShowFilter(!showFilter);
-              }}
-            />
+            <Style.HeaderSide>
+              <IconButton
+                icon={icon.filter}
+                size="16px"
+                label={showFilter ? 'Ocultar' : 'Filtrar'}
+                color={theme.color.gray5}
+                onClick={() => {
+                  setShowFilter(!showFilter);
+                }}
+              />
+              <label htmlFor="showFuture">
+                <input
+                  type="checkbox"
+                  id="showFuture"
+                  checked={showFutureMaintenances}
+                  onChange={() => {
+                    setShowFutureMaintenances((prevState) => !prevState);
+                  }}
+                />
+                Mostrar futuras
+              </label>
+            </Style.HeaderSide>
           </Style.HeaderWrapper>
 
           <IconButton
@@ -235,7 +248,7 @@ export const SyndicArea = () => {
             <Style.KanbanCard key={card.status}>
               <Style.KanbanHeader>
                 <h5>{card.status}</h5>
-                {card.status === 'Pendentes' && (
+                {/* {(card.status === 'Pendentes' || card.status === 'Em execução') && (
                   <label htmlFor="showFuture">
                     <input
                       type="checkbox"
@@ -247,7 +260,7 @@ export const SyndicArea = () => {
                     />
                     Mostrar futuras
                   </label>
-                )}
+                )} */}
                 {card.status === 'Vencidas' && (
                   <label htmlFor="showExpireds">
                     <input
@@ -296,7 +309,8 @@ export const SyndicArea = () => {
                     new Date(maintenance.date) > new Date(new Date().setHours(0, 0, 0, 0));
 
                   // se for avulsa, pode reportar qlqer vencida
-                  const showExpiredOccasional = maintenance.type === 'occasional';
+                  const showExpiredOccasional =
+                    maintenance.type === 'occasional' && maintenance.status === 'expired';
 
                   const isExpired = maintenance.status === 'expired';
                   const isOldExpired =
@@ -332,14 +346,17 @@ export const SyndicArea = () => {
                           }}
                         >
                           <h6>
-                            {maintenance.type === 'occasional' && <EventTag status="occasional" />}
-                            {maintenance.status === 'pending' &&
-                              new Date(maintenance.date) >
-                                new Date(new Date().setHours(0, 0, 0, 0)) && (
-                                <FutureMaintenanceTag />
+                            <span>
+                              {maintenance.type === 'occasional' && (
+                                <EventTag status="occasional" />
                               )}
-                            {maintenance.status === 'overdue' && <EventTag status="overdue" />}
-
+                              {maintenance.status === 'pending' &&
+                                new Date(maintenance.date) >
+                                  new Date(new Date().setHours(0, 0, 0, 0)) && (
+                                  <FutureMaintenanceTag />
+                                )}
+                              {maintenance.status === 'overdue' && <EventTag status="overdue" />}
+                            </span>
                             {maintenance.element}
                           </h6>
                           <p className="p2">{maintenance.activity}</p>
