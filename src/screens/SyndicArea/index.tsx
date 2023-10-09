@@ -127,15 +127,17 @@ export const SyndicArea = () => {
         <Style.Header>
           <Style.HeaderWrapper>
             <h2>{buildingName}</h2>
-            <IconButton
-              icon={icon.filter}
-              size="16px"
-              label={showFilter ? 'Ocultar' : 'Filtrar'}
-              color={theme.color.gray5}
-              onClick={() => {
-                setShowFilter(!showFilter);
-              }}
-            />
+            <Style.HeaderSide>
+              <IconButton
+                icon={icon.filter}
+                size="16px"
+                label={showFilter ? 'Ocultar' : 'Filtrar'}
+                color={theme.color.gray5}
+                onClick={() => {
+                  setShowFilter(!showFilter);
+                }}
+              />
+            </Style.HeaderSide>
           </Style.HeaderWrapper>
 
           <IconButton
@@ -296,11 +298,14 @@ export const SyndicArea = () => {
                     new Date(maintenance.date) > new Date(new Date().setHours(0, 0, 0, 0));
 
                   // se for avulsa, pode reportar qlqer vencida
-                  const showExpiredOccasional = maintenance.type === 'occasional';
+                  const showExpiredOccasional =
+                    maintenance.type === 'occasional' && maintenance.status === 'expired';
 
                   const isExpired = maintenance.status === 'expired';
                   const isOldExpired =
                     maintenance.status === 'expired' && maintenance.cantReportExpired;
+
+                  const { inProgress } = maintenance;
 
                   return (
                     ((((showFutureMaintenances && isPending && isFuture) ||
@@ -309,7 +314,8 @@ export const SyndicArea = () => {
                       ((showOldExpireds && isExpired && isOldExpired) ||
                         (isExpired && !isOldExpired) ||
                         !isExpired)) ||
-                      showExpiredOccasional) && (
+                      showExpiredOccasional ||
+                      inProgress) && (
                       <Style.MaintenanceWrapper key={maintenance.id + j}>
                         <Style.MaintenanceInfo
                           status={maintenance.status}
@@ -332,14 +338,17 @@ export const SyndicArea = () => {
                           }}
                         >
                           <h6>
-                            {maintenance.type === 'occasional' && <EventTag status="occasional" />}
-                            {maintenance.status === 'pending' &&
-                              new Date(maintenance.date) >
-                                new Date(new Date().setHours(0, 0, 0, 0)) && (
-                                <FutureMaintenanceTag />
+                            <span>
+                              {maintenance.type === 'occasional' && (
+                                <EventTag status="occasional" />
                               )}
-                            {maintenance.status === 'overdue' && <EventTag status="overdue" />}
-
+                              {maintenance.status === 'pending' &&
+                                new Date(maintenance.date) >
+                                  new Date(new Date().setHours(0, 0, 0, 0)) && (
+                                  <FutureMaintenanceTag />
+                                )}
+                              {maintenance.status === 'overdue' && <EventTag status="overdue" />}
+                            </span>
                             {maintenance.element}
                           </h6>
                           <p className="p2">{maintenance.activity}</p>
@@ -363,6 +372,7 @@ export const SyndicArea = () => {
                     card.maintenances.every(
                       (maintenance) =>
                         maintenance.status === 'pending' &&
+                        !maintenance.inProgress &&
                         new Date(maintenance.date) > new Date(new Date().setHours(0, 0, 0, 0)),
                     )) ||
                   (!showOldExpireds &&

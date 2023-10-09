@@ -2,7 +2,7 @@ import { toast } from 'react-toastify';
 import { Api } from '../../../services/api';
 import { catchHandler, unMaskBRL } from '../../../utils/functions';
 import { requestSyndicKanban } from '../functions';
-import { IRequestSendReport } from './types';
+import { IRequestSendReport, IRequestToggleInProgress } from './types';
 
 export const requestSendReport = async ({
   maintenanceReport,
@@ -28,6 +28,45 @@ export const requestSendReport = async ({
     ReportAnnexes: files,
     ReportImages: images,
     responsibleSyndicId: syndicNanoId,
+  })
+    .then((res) => {
+      toast.success(res.data.ServerMessage.message);
+      requestSyndicKanban({
+        setLoading,
+        syndicNanoId,
+        setFilterOptions,
+        filter,
+        setOnQuery,
+        setKanban,
+        setBuildingName,
+      });
+      setModal(false);
+    })
+    .catch((err) => {
+      catchHandler(err);
+    })
+    .finally(() => {
+      setOnQuery(false);
+    });
+};
+
+export const requestToggleInProgress = async ({
+  setModal,
+  maintenanceHistoryId,
+  setOnQuery,
+  filter,
+  setBuildingName,
+  setFilterOptions,
+  setKanban,
+  setLoading,
+  syndicNanoId,
+  inProgressChange,
+}: IRequestToggleInProgress) => {
+  setOnQuery(true);
+
+  await Api.post('/maintenances/set/in-progress', {
+    maintenanceHistoryId,
+    inProgressChange,
   })
     .then((res) => {
       toast.success(res.data.ServerMessage.message);
