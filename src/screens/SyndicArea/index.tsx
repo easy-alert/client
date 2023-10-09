@@ -137,17 +137,6 @@ export const SyndicArea = () => {
                   setShowFilter(!showFilter);
                 }}
               />
-              <label htmlFor="showFuture">
-                <input
-                  type="checkbox"
-                  id="showFuture"
-                  checked={showFutureMaintenances}
-                  onChange={() => {
-                    setShowFutureMaintenances((prevState) => !prevState);
-                  }}
-                />
-                Mostrar futuras
-              </label>
             </Style.HeaderSide>
           </Style.HeaderWrapper>
 
@@ -248,7 +237,7 @@ export const SyndicArea = () => {
             <Style.KanbanCard key={card.status}>
               <Style.KanbanHeader>
                 <h5>{card.status}</h5>
-                {/* {(card.status === 'Pendentes' || card.status === 'Em execução') && (
+                {card.status === 'Pendentes' && (
                   <label htmlFor="showFuture">
                     <input
                       type="checkbox"
@@ -260,7 +249,7 @@ export const SyndicArea = () => {
                     />
                     Mostrar futuras
                   </label>
-                )} */}
+                )}
                 {card.status === 'Vencidas' && (
                   <label htmlFor="showExpireds">
                     <input
@@ -316,6 +305,8 @@ export const SyndicArea = () => {
                   const isOldExpired =
                     maintenance.status === 'expired' && maintenance.cantReportExpired;
 
+                  const { inProgress } = maintenance;
+
                   return (
                     ((((showFutureMaintenances && isPending && isFuture) ||
                       (isPending && !isFuture) ||
@@ -323,7 +314,8 @@ export const SyndicArea = () => {
                       ((showOldExpireds && isExpired && isOldExpired) ||
                         (isExpired && !isOldExpired) ||
                         !isExpired)) ||
-                      showExpiredOccasional) && (
+                      showExpiredOccasional ||
+                      inProgress) && (
                       <Style.MaintenanceWrapper key={maintenance.id + j}>
                         <Style.MaintenanceInfo
                           status={maintenance.status}
@@ -380,6 +372,7 @@ export const SyndicArea = () => {
                     card.maintenances.every(
                       (maintenance) =>
                         maintenance.status === 'pending' &&
+                        !maintenance.inProgress &&
                         new Date(maintenance.date) > new Date(new Date().setHours(0, 0, 0, 0)),
                     )) ||
                   (!showOldExpireds &&
