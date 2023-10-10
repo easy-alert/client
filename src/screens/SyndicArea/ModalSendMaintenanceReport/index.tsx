@@ -24,7 +24,7 @@ import { IMaintenanceReport, IModalSendMaintenanceReport } from './types';
 import { AnnexesAndImages, IMaintenance } from '../../types';
 
 // FUNCTIONS
-import { applyMask, dateFormatter, uploadFile } from '../../../utils/functions';
+import { applyMask, dateFormatter, uploadManyFiles } from '../../../utils/functions';
 import { requestMaintenanceDetails } from '../../functions';
 import { requestSendReport, requestToggleInProgress } from './functions';
 import { InProgressTag } from '../../../components/InProgressTag';
@@ -55,7 +55,6 @@ export const ModalSendMaintenanceReport = ({
   const [files, setFiles] = useState<AnnexesAndImages[]>([]);
   const [onFileQuery, setOnFileQuery] = useState<boolean>(false);
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
-    multiple: false,
     disabled: onFileQuery,
   });
 
@@ -66,7 +65,6 @@ export const ModalSendMaintenanceReport = ({
     getRootProps: getRootPropsImages,
     getInputProps: getInputPropsImages,
   } = useDropzone({
-    multiple: false,
     accept: {
       'image/png': ['.png'],
       'image/jpg': ['.jpg'],
@@ -80,13 +78,17 @@ export const ModalSendMaintenanceReport = ({
       const uploadAcceptedFiles = async () => {
         setOnFileQuery(true);
 
-        const { Location: fileUrl, originalname: originalName } = await uploadFile(
-          acceptedFiles[0],
-        );
+        const uploadedFiles = await uploadManyFiles(acceptedFiles);
+
+        const formattedFiles = uploadedFiles.map((file) => ({
+          name: file.originalname,
+          originalName: file.originalname,
+          url: file.Location,
+        }));
 
         setFiles((prevState) => {
           let newState = [...prevState];
-          newState = [...newState, { originalName, name: originalName, url: fileUrl }];
+          newState = [...newState, ...formattedFiles];
           return newState;
         });
         setOnFileQuery(false);
@@ -101,13 +103,17 @@ export const ModalSendMaintenanceReport = ({
       const uploadAcceptedImages = async () => {
         setOnImageQuery(true);
 
-        const { Location: fileUrl, originalname: originalName } = await uploadFile(
-          acceptedImages[0],
-        );
+        const uploadedImages = await uploadManyFiles(acceptedImages);
+
+        const formattedImages = uploadedImages.map((file) => ({
+          name: file.originalname,
+          originalName: file.originalname,
+          url: file.Location,
+        }));
 
         setImages((prevState) => {
           let newState = [...prevState];
-          newState = [...newState, { originalName, name: originalName, url: fileUrl }];
+          newState = [...newState, ...formattedImages];
           return newState;
         });
         setOnImageQuery(false);
@@ -254,11 +260,12 @@ export const ModalSendMaintenanceReport = ({
                             />
                           </Style.Tag>
                         ))}
-                        {onFileQuery && (
-                          <Style.FileLoadingTag>
-                            <DotLoading />
-                          </Style.FileLoadingTag>
-                        )}
+                        {onFileQuery &&
+                          acceptedFiles.map((e) => (
+                            <Style.FileLoadingTag key={e.name}>
+                              <DotLoading />
+                            </Style.FileLoadingTag>
+                          ))}
                       </Style.FileAndImageRow>
                     )}
                   </Style.FileRow>
@@ -290,11 +297,12 @@ export const ModalSendMaintenanceReport = ({
                       />
                     ))}
 
-                    {onImageQuery && (
-                      <Style.ImageLoadingTag>
-                        <DotLoading />
-                      </Style.ImageLoadingTag>
-                    )}
+                    {onImageQuery &&
+                      acceptedImages.map((e) => (
+                        <Style.ImageLoadingTag key={e.name}>
+                          <DotLoading />
+                        </Style.ImageLoadingTag>
+                      ))}
                   </Style.FileAndImageRow>
                 </Style.Row>
               </>
