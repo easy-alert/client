@@ -33,7 +33,7 @@ import {
   requestCreateOccasionalMaintenance,
 } from './utils/functions';
 
-import { applyMask, uploadFile } from '../../../utils/functions';
+import { applyMask, uploadManyFiles } from '../../../utils/functions';
 import { CRUDInput } from '../../../components/Inputs/CRUDInput';
 
 export const ModalCreateOccasionalMaintenance = ({
@@ -47,7 +47,6 @@ export const ModalCreateOccasionalMaintenance = ({
   const [onImageQuery, setOnImageQuery] = useState<boolean>(false);
 
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
-    multiple: false,
     disabled: onFileQuery,
   });
 
@@ -56,7 +55,6 @@ export const ModalCreateOccasionalMaintenance = ({
     getRootProps: getRootPropsImages,
     getInputProps: getInputPropsImages,
   } = useDropzone({
-    multiple: false,
     accept: {
       'image/png': ['.png'],
       'image/jpg': ['.jpg'],
@@ -107,18 +105,19 @@ export const ModalCreateOccasionalMaintenance = ({
       const uploadAcceptedFiles = async () => {
         setOnFileQuery(true);
 
-        const { Location: fileUrl, originalname: originalName } = await uploadFile(
-          acceptedFiles[0],
-        );
+        const uploadedFiles = await uploadManyFiles(acceptedFiles);
+
+        const formattedFiles = uploadedFiles.map((file) => ({
+          name: file.originalname,
+          originalName: file.originalname,
+          url: file.Location,
+        }));
 
         setData((prevState) => ({
           ...prevState,
           reportData: {
             ...prevState.reportData,
-            files: [
-              ...prevState.reportData.files,
-              { url: fileUrl, originalName, name: originalName },
-            ],
+            files: [...prevState.reportData.files, ...formattedFiles],
           },
         }));
         setOnFileQuery(false);
@@ -133,18 +132,19 @@ export const ModalCreateOccasionalMaintenance = ({
       const uploadAcceptedImages = async () => {
         setOnImageQuery(true);
 
-        const { Location: fileUrl, originalname: originalName } = await uploadFile(
-          acceptedImages[0],
-        );
+        const uploadedImages = await uploadManyFiles(acceptedImages);
+
+        const formattedImages = uploadedImages.map((file) => ({
+          name: file.originalname,
+          originalName: file.originalname,
+          url: file.Location,
+        }));
 
         setData((prevState) => ({
           ...prevState,
           reportData: {
             ...prevState.reportData,
-            images: [
-              ...prevState.reportData.images,
-              { url: fileUrl, originalName, name: originalName },
-            ],
+            images: [...prevState.reportData.images, ...formattedImages],
           },
         }));
 
@@ -372,11 +372,12 @@ export const ModalCreateOccasionalMaintenance = ({
                           />
                         </Style.Tag>
                       ))}
-                      {onFileQuery && (
-                        <Style.FileLoadingTag>
-                          <DotLoading />
-                        </Style.FileLoadingTag>
-                      )}
+                      {onFileQuery &&
+                        acceptedFiles.map((e) => (
+                          <Style.FileLoadingTag key={e.name}>
+                            <DotLoading />
+                          </Style.FileLoadingTag>
+                        ))}
                     </Style.FileAndImageRow>
                   )}
                 </Style.FileRow>
@@ -412,11 +413,12 @@ export const ModalCreateOccasionalMaintenance = ({
                     />
                   ))}
 
-                  {onImageQuery && (
-                    <Style.ImageLoadingTag>
-                      <DotLoading />
-                    </Style.ImageLoadingTag>
-                  )}
+                  {onImageQuery &&
+                    acceptedImages.map((e) => (
+                      <Style.ImageLoadingTag key={e.name}>
+                        <DotLoading />
+                      </Style.ImageLoadingTag>
+                    ))}
                 </Style.FileAndImageRow>
               </Style.Row>
             </>
