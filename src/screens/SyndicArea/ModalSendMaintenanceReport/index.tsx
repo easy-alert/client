@@ -328,7 +328,7 @@ export const ModalSendMaintenanceReport = ({
                     });
                   }}
                   borderless
-                  textColor={maintenance.inProgress ? theme.color.danger : theme.color.actionBlue}
+                  textColor={theme.color.actionBlue}
                   label={maintenance.inProgress ? 'Parar execução' : 'Iniciar execução'}
                   message={{
                     title: maintenance.inProgress
