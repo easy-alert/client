@@ -203,6 +203,13 @@ export const ModalSendMaintenanceReport = ({
               <p className="p2">{dateFormatter(maintenance.dueDate)}</p>
             </Style.Row>
 
+            {!!maintenance.daysInAdvance && (
+              <Style.Row>
+                <h6>Dias antecipados</h6>
+                <p className="p2">{maintenance.daysInAdvance}</p>
+              </Style.Row>
+            )}
+
             {maintenance.canReport && (
               <>
                 <Input
@@ -328,6 +335,7 @@ export const ModalSendMaintenanceReport = ({
                     });
                   }}
                   borderless
+                  textColor={theme.color.actionBlue}
                   label={maintenance.inProgress ? 'Parar execução' : 'Iniciar execução'}
                   message={{
                     title: maintenance.inProgress

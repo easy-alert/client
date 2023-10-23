@@ -79,6 +79,8 @@ export const ModalCreateOccasionalMaintenance = ({
       name: '',
     },
 
+    inProgress: false,
+
     maintenanceData: {
       element: '',
       activity: '',
@@ -304,6 +306,20 @@ export const ModalCreateOccasionalMaintenance = ({
               }))
             }
           />
+
+          {new Date(data.executionDate) > new Date() && (
+            <Style.Label htmlFor="inProgress">
+              <input
+                id="inProgress"
+                type="checkbox"
+                checked={data.inProgress}
+                onChange={() => {
+                  setData((prevState) => ({ ...prevState, inProgress: !prevState.inProgress }));
+                }}
+              />
+              Iniciar em execução
+            </Style.Label>
+          )}
 
           {new Date(data.executionDate) < new Date() && (
             <>

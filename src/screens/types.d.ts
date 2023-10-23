@@ -54,6 +54,7 @@ export interface IMaintenance {
   Maintenance: Maintenance;
   canReport: boolean;
   inProgress: boolean;
+  daysInAdvance: number;
 }
 
 export interface IRequestMaintenanceDetails {
