@@ -26,6 +26,7 @@ import { theme } from '../../styles/theme';
 import * as Style from './styles';
 import { FutureMaintenanceTag } from '../../components/FutureMaintenanceTag';
 import { ModalCreateOccasionalMaintenance } from './ModalCreateOccasionalMaintenance';
+import { InProgressTag } from '../../components/InProgressTag';
 
 export const SyndicArea = () => {
   const [showFilter, setShowFilter] = useState<boolean>(false);
@@ -267,22 +268,22 @@ export const SyndicArea = () => {
 
               {onQuery && (
                 <>
-                  {(i === 0 || i === 1 || i === 2) && (
+                  {(i === 1 || i === 2 || i === 3) && (
                     <Style.MaintenanceWrapper>
                       <Skeleton />
                     </Style.MaintenanceWrapper>
                   )}
-                  {(i === 0 || i === 1 || i === 2) && (
+                  {(i === 0 || i === 1 || i === 2 || i === 3) && (
                     <Style.MaintenanceWrapper>
                       <Skeleton />
                     </Style.MaintenanceWrapper>
                   )}
-                  {(i === 0 || i === 2) && (
+                  {(i === 0 || i === 2 || i === 3) && (
                     <Style.MaintenanceWrapper>
                       <Skeleton />
                     </Style.MaintenanceWrapper>
                   )}
-                  {i === 2 && (
+                  {i === 3 && (
                     <Style.MaintenanceWrapper>
                       <Skeleton />
                     </Style.MaintenanceWrapper>
@@ -347,6 +348,7 @@ export const SyndicArea = () => {
                                   new Date(new Date().setHours(0, 0, 0, 0)) && (
                                   <FutureMaintenanceTag />
                                 )}
+                              {maintenance.inProgress && <InProgressTag />}
                               {maintenance.status === 'overdue' && <EventTag status="overdue" />}
                             </span>
                             {maintenance.element}
