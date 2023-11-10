@@ -32,7 +32,7 @@ const AppRoutes = () => (
         <Route path="/informations/:buildingNanoId" element={<Informations />} />
         <Route path="/annex/:buildingNanoId" element={<Annexes />} />
         <Route path="/syndicarea/:buildingNanoId" element={<SyndicArea />} />
-        <Route path="/syndicarea/:buildingNanoId/settings" element={<Settings />} />
+        <Route path="/settings/:buildingNanoId" element={<Settings />} />
       </Route>
     </Routes>
   </BrowserRouter>

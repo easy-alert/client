@@ -70,7 +70,8 @@ export interface IBuildingDetail {
 export interface IRequestBuildingDetails {
   setLoading?: (setLoading: boolean) => void;
   setBuilding: (setBuilding: IBuildingDetail) => void;
-  buildingId: string;
+  buildingNanoId: string;
+  syndicNanoId: string;
   setRootFolder: React.Dispatch<React.SetStateAction<Folder>>;
 }
 

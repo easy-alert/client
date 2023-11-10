@@ -11,17 +11,22 @@ import { catchHandler } from '../../utils/functions';
 
 export const requestBuildingDetails = async ({
   setLoading,
-  buildingId,
+  buildingNanoId,
   setBuilding,
   setRootFolder,
+  syndicNanoId,
 }: IRequestBuildingDetails) => {
-  await Api.get(`/buildings/list/details/${buildingId}`)
+  await Api.get(`/buildings/settings-data/${buildingNanoId}/${syndicNanoId}`)
     .then((res) => {
-      setBuilding(res.data.BuildingDetails);
-      setRootFolder(res.data.BuildingDetails.Folders);
+      setBuilding(res.data);
+      setRootFolder(res.data.Folders);
     })
     .catch((err) => {
-      catchHandler(err);
+      if (err.response && err.response.status === 404) {
+        window.open('https://easyalert.com.br/', '_self');
+      } else {
+        catchHandler(err);
+      }
     })
     .finally(() => {
       if (setLoading) setLoading(false);
@@ -73,7 +78,7 @@ export const changeShowContactStatus = async ({
 }: IChangeShowContactStatus) => {
   setShowContactLoading(true);
 
-  await Api.put('/buildings//notifications/change/showcontact', {
+  await Api.put('/buildings/notifications/change/showcontact', {
     buildingNotificationConfigurationId,
     showContact,
   })

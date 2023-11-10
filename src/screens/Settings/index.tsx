@@ -20,7 +20,6 @@ import * as Style from './styles';
 // TYPES
 import { Folder, IBuildingDetail, INotificationConfiguration, File } from './types';
 import { icon } from '../../assets/icons';
-import { Button } from '../../components/Buttons/Button';
 import { Image } from '../../components/Image';
 import { IconButton } from '../../components/Buttons/IconButton';
 import { PopoverButton } from '../../components/Buttons/PopoverButton';
@@ -28,7 +27,7 @@ import { FolderComponent, FileComponent } from '../../components/FileSystem';
 import { ImagePreview } from '../../components/ImagePreview';
 import { DotSpinLoading } from '../../components/Loadings/DotSpinLoading';
 import { theme } from '../../styles/theme';
-import { capitalizeFirstLetter, applyMask } from '../../utils/functions';
+import { applyMask, query } from '../../utils/functions';
 import { ModalAddFiles } from './ModalAddFiles';
 import { ModalCreateFolder } from './ModalCreateFolder';
 import { ModalCreateNotificationConfiguration } from './ModalCreateNotificationConfiguration';
@@ -37,15 +36,17 @@ import { ModalEditFolder } from './ModalEditFolder';
 import { ModalEditNotificationConfiguration } from './ModalEditNotificationConfiguration';
 import { ModalManageBanners } from './ModalManageBanners';
 import { NotificationTable, NotificationTableContent } from './NotificationTable';
+import { Skeleton } from '../../components/Skeleton';
 
 // #endregion
 
 export const Settings = () => {
   // #region states
-  const { buildingId } = useParams();
+  const { buildingNanoId } = useParams();
+  const syndicNanoId = query.get('syndicNanoId') ?? '';
 
-  const phoneConfirmUrl = `${window.location.origin}/confirm/phone`;
-  const emailConfirmUrl = `${window.location.origin}/confirm/email`;
+  const phoneConfirmUrl = `${import.meta.env.VITE_CONTACT_CONFIRM_URL}/confirm/phone`;
+  const emailConfirmUrl = `${import.meta.env.VITE_CONTACT_CONFIRM_URL}/confirm/email`;
 
   const [building, setBuilding] = useState<IBuildingDetail>();
 
@@ -86,10 +87,11 @@ export const Settings = () => {
   // #region useeffects
   useEffect(() => {
     requestBuildingDetails({
-      buildingId: buildingId!,
+      buildingNanoId: buildingNanoId!,
       setLoading,
       setBuilding,
       setRootFolder,
+      syndicNanoId,
     });
   }, []);
 
@@ -117,10 +119,11 @@ export const Settings = () => {
           phoneConfirmUrl={phoneConfirmUrl}
           requestBuildingDetailsCall={async () => {
             requestBuildingDetails({
-              buildingId: buildingId!,
+              buildingNanoId: buildingNanoId!,
               setLoading,
               setBuilding,
               setRootFolder,
+              syndicNanoId,
             });
           }}
         />
@@ -135,10 +138,11 @@ export const Settings = () => {
           phoneConfirmUrl={phoneConfirmUrl}
           requestBuildingDetailsCall={async () => {
             requestBuildingDetails({
-              buildingId: buildingId!,
+              buildingNanoId: buildingNanoId!,
               setLoading,
               setBuilding,
               setRootFolder,
+              syndicNanoId,
             });
           }}
         />
@@ -184,79 +188,21 @@ export const Settings = () => {
           currentBanners={building?.Banners}
           requestBuildingDetailsCall={async () => {
             requestBuildingDetails({
-              buildingId: buildingId!,
+              buildingNanoId: buildingNanoId!,
               setLoading,
               setBuilding,
               setRootFolder,
+              syndicNanoId,
             });
           }}
         />
       )}
 
       <Style.Header>
-        <h2>Detalhes de edificação</h2>
+        {loading ? <Skeleton height="24px" width="248px" /> : <h2>{building?.name}</h2>}
       </Style.Header>
 
       <Style.CardWrapper>
-        {building?.MaintenancesCount && (
-          <Style.FirstCard>
-            <Style.CardHeaderLeftSide>
-              <h5>Manutenções</h5>
-              <Style.MaintenanceCardFooter>
-                {/* Não fiz .map pra facilitar a estilização */}
-                <Style.MaintenanceCardFooterInfo>
-                  <h5 className="completed">{building?.MaintenancesCount[0].count}</h5>
-                  <p className="p5">
-                    {building?.MaintenancesCount[0].count > 1
-                      ? capitalizeFirstLetter(building?.MaintenancesCount[0].pluralLabel)
-                      : capitalizeFirstLetter(building?.MaintenancesCount[0].singularLabel)}
-                  </p>
-                </Style.MaintenanceCardFooterInfo>
-
-                <Style.MaintenanceCardFooterInfo>
-                  <h5 className="pending">{building?.MaintenancesCount[1].count}</h5>
-                  <p className="p5">
-                    {building?.MaintenancesCount[1].count > 1
-                      ? capitalizeFirstLetter(building?.MaintenancesCount[1].pluralLabel)
-                      : capitalizeFirstLetter(building?.MaintenancesCount[1].singularLabel)}
-                  </p>
-                </Style.MaintenanceCardFooterInfo>
-
-                <Style.MaintenanceCardFooterInfo>
-                  <h5 className="expired">{building?.MaintenancesCount[2].count}</h5>
-                  <p className="p5">
-                    {building?.MaintenancesCount[2].count > 1
-                      ? capitalizeFirstLetter(building?.MaintenancesCount[2].pluralLabel)
-                      : capitalizeFirstLetter(building?.MaintenancesCount[2].singularLabel)}
-                  </p>
-                </Style.MaintenanceCardFooterInfo>
-              </Style.MaintenanceCardFooter>
-            </Style.CardHeaderLeftSide>
-            <Style.ButtonWrapper>
-              <Button
-                label="Manutenções"
-                onClick={() => {
-                  if (building.NotificationsConfigurations.length > 0) {
-                    window.open(
-                      `${import.meta.env.VITE_CLIENT_URL ?? 'http://localhost:3001'}/syndicarea/${
-                        building.nanoId
-                      }?syndicNanoId=${building.NotificationsConfigurations[0].nanoId}`,
-                      '_blank',
-                    );
-                  } else {
-                    window.open(
-                      `${import.meta.env.VITE_CLIENT_URL ?? 'http://localhost:3001'}/home/${
-                        building.nanoId
-                      }`,
-                      '_blank',
-                    );
-                  }
-                }}
-              />
-            </Style.ButtonWrapper>
-          </Style.FirstCard>
-        )}
-
         <Style.Card>
           <Style.CardHeader>
             <h5>Responsáveis de manutenção</h5>

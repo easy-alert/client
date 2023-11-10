@@ -45,13 +45,13 @@ export const NavBar = ({ children }: ISidebar) => {
       restricted: false,
     },
     {
-      name: 'Área do responsável',
-      url: `/syndicarea/${buildingNanoId}${window.location.search}`,
+      name: 'Configurações',
+      url: `/settings/${buildingNanoId}${window.location.search}`,
       restricted: true,
     },
     {
-      name: 'Configurações',
-      url: `/syndicarea/${buildingNanoId}/settings${window.location.search}`,
+      name: 'Área do responsável',
+      url: `/syndicarea/${buildingNanoId}${window.location.search}`,
       restricted: true,
     },
   ];
