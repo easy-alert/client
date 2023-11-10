@@ -3,11 +3,8 @@ import { theme } from '../../styles/theme';
 
 export const Header = styled.div`
   > h2 {
-    margin-bottom: ${theme.size.xsm};
+    margin-bottom: ${theme.size.sm};
   }
-
-  margin-bottom: ${theme.size.sm};
-  padding-top: ${theme.size.sm};
 `;
 
 export const CardWrapper = styled.div`

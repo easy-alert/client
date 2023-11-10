@@ -13,16 +13,12 @@ export const requestBuildingDetails = async ({
   setLoading,
   buildingId,
   setBuilding,
-  setUsedMaintenancesCount,
-  setTotalMaintenancesCount,
   setRootFolder,
 }: IRequestBuildingDetails) => {
   await Api.get(`/buildings/list/details/${buildingId}`)
     .then((res) => {
       setBuilding(res.data.BuildingDetails);
       setRootFolder(res.data.BuildingDetails.Folders);
-      setUsedMaintenancesCount(res.data.usedMaintenancesCount);
-      setTotalMaintenancesCount(res.data.totalMaintenancesCount);
     })
     .catch((err) => {
       catchHandler(err);

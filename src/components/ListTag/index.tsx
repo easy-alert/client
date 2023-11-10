@@ -2,7 +2,7 @@ import { IListTag } from './types';
 import * as Style from './styles';
 import { icon } from '../../assets/icons';
 import { theme } from '../../styles/theme';
-import { ImageComponent } from '../ImageComponent';
+import { Image } from '../Image';
 
 export const ListTag = ({
   label,
@@ -26,7 +26,7 @@ export const ListTag = ({
     </p>
     {onClick && (
       <button onClick={onClick} disabled={disabled} type="button">
-        <ImageComponent src={icon.xBlack} size="14px" />
+        <Image img={icon.xBlack} size="14px" />
       </button>
     )}
   </Style.TagContainer>

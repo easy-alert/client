@@ -1,16 +1,16 @@
 // COMPONENTS
 import { Form, Formik } from 'formik';
 import { useState } from 'react';
-import { Modal } from '../../../../../../components/Modal';
 
 // STYLES
 import * as Style from './styles';
 
 // FUNCTIONS
-import { FormikInput } from '../../../../../../components/Form/FormikInput';
-import { Button } from '../../../../../../components/Buttons/Button';
 import { IModalEditFile } from './types';
 import { schemaEditFile, requestEditFile } from './functions';
+import { Button } from '../../../components/Buttons/Button';
+import { FormikInput } from '../../../components/Form/FormikInput';
+import { Modal } from '../../../components/Modal';
 
 export const ModalEditFile = ({ setBuilding, setModal, file }: IModalEditFile) => {
   const [onQuery, setOnQuery] = useState<boolean>(false);

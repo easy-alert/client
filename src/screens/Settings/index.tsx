@@ -1,21 +1,7 @@
 // #region imports
 // COMPONENTS
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { icon } from '../../../assets/icons';
-import { IconButton } from '../../../components/Buttons/IconButton';
-import { ReturnButton } from '../../../components/Buttons/ReturnButton';
-import { DotSpinLoading } from '../../../components/Loadings/DotSpinLoading';
-import { NotificationTable, NotificationTableContent } from './NotificationTable';
-import { ModalEditBuilding } from './utils/modals/ModalEditBuilding';
-import { PopoverButton } from '../../../components/Buttons/PopoverButton';
-import { ImagePreview } from '../../../components/ImagePreview';
-import { Image } from '../../../components/Image';
-import { ModalCreateNotificationConfiguration } from './utils/modals/ModalCreateNotificationConfiguration';
-import { ModalEditNotificationConfiguration } from './utils/modals/ModalEditNotificationConfiguration';
-import { ModalAddFiles } from './utils/modals/ModalAddFiles';
-import { ModalManageBanners } from './utils/modals/ModalManageBanners';
-import { ModalPrintQRCode } from './utils/modals/ModalPrintQRCode';
+import { useParams } from 'react-router-dom';
 
 // FUNCTIONS
 import {
@@ -27,51 +13,45 @@ import {
   requestResendEmailConfirmation,
   requestResendPhoneConfirmation,
 } from './functions';
-import {
-  applyMask,
-  capitalizeFirstLetter,
-  dateFormatter,
-  query,
-  requestBuildingTypes,
-} from '../../../utils/functions';
 
 // STYLES
 import * as Style from './styles';
-import { theme } from '../../../styles/theme';
 
 // TYPES
 import { Folder, IBuildingDetail, INotificationConfiguration, File } from './types';
-import { IBuildingTypes } from '../../../utils/types';
-import { Button } from '../../../components/Buttons/Button';
-import { FileComponent, FolderComponent } from '../../../components/FileSystem';
-import { ModalCreateFolder } from './utils/modals/ModalCreateFolder';
-import { ModalEditFolder } from './utils/modals/ModalEditFolder';
-import { ModalEditFile } from './utils/modals/ModalEditFile';
+import { icon } from '../../assets/icons';
+import { Button } from '../../components/Buttons/Button';
+import { Image } from '../../components/Image';
+import { IconButton } from '../../components/Buttons/IconButton';
+import { PopoverButton } from '../../components/Buttons/PopoverButton';
+import { FolderComponent, FileComponent } from '../../components/FileSystem';
+import { ImagePreview } from '../../components/ImagePreview';
+import { DotSpinLoading } from '../../components/Loadings/DotSpinLoading';
+import { theme } from '../../styles/theme';
+import { capitalizeFirstLetter, applyMask } from '../../utils/functions';
+import { ModalAddFiles } from './ModalAddFiles';
+import { ModalCreateFolder } from './ModalCreateFolder';
+import { ModalCreateNotificationConfiguration } from './ModalCreateNotificationConfiguration';
+import { ModalEditFile } from './ModalEditFile';
+import { ModalEditFolder } from './ModalEditFolder';
+import { ModalEditNotificationConfiguration } from './ModalEditNotificationConfiguration';
+import { ModalManageBanners } from './ModalManageBanners';
+import { NotificationTable, NotificationTableContent } from './NotificationTable';
+
 // #endregion
 
 export const Settings = () => {
   // #region states
-  const navigate = useNavigate();
   const { buildingId } = useParams();
-
-  const { search } = window.location;
 
   const phoneConfirmUrl = `${window.location.origin}/confirm/phone`;
   const emailConfirmUrl = `${window.location.origin}/confirm/email`;
 
   const [building, setBuilding] = useState<IBuildingDetail>();
 
-  const [buildingTypes, setBuildingTypes] = useState<IBuildingTypes[]>([]);
-
   const [loading, setLoading] = useState<boolean>(true);
 
   const [showContactLoading, setShowContactLoading] = useState<boolean>(false);
-
-  const [usedMaintenancesCount, setUsedMaintenancesCount] = useState<number>(0);
-
-  const [totalMaintenancesCount, setTotalMaintenancesCount] = useState<number>(0);
-
-  const [modalEditBuildingOpen, setModalEditBuildingOpen] = useState<boolean>(false);
 
   const [modalCreateNotificationConfigurationOpen, setModalCreateNotificationConfigurationOpen] =
     useState<boolean>(false);
@@ -89,8 +69,6 @@ export const Settings = () => {
 
   const [modalEditFileOpen, setModalEditFileOpen] = useState<boolean>(false);
 
-  const [modalPrintQRCodeOpen, setModalPrintQRCodeOpen] = useState<boolean>(false);
-
   const [folderId, setFolderId] = useState<string | null>(null);
 
   const [rootFolder, setRootFolder] = useState<Folder>({ id: '', name: '' });
@@ -107,31 +85,13 @@ export const Settings = () => {
 
   // #region useeffects
   useEffect(() => {
-    requestBuildingTypes({ setBuildingTypes }).then(() => {
-      requestBuildingDetails({
-        buildingId: buildingId!,
-        setLoading,
-        setBuilding,
-        setUsedMaintenancesCount,
-        setTotalMaintenancesCount,
-        setRootFolder,
-      });
-
-      if (query.get('flow') === '1') {
-        setModalCreateNotificationConfigurationOpen(true);
-        // não precisaria desse set, se fosse consumir com o useserachparams
-        query.set('flow', '2');
-        navigate(`/buildings/details/${buildingId}?flow=2`);
-      }
+    requestBuildingDetails({
+      buildingId: buildingId!,
+      setLoading,
+      setBuilding,
+      setRootFolder,
     });
   }, []);
-
-  useEffect(() => {
-    if (!modalCreateNotificationConfigurationOpen && query.get('flow') === '2') {
-      query.delete('flow');
-      navigate(`/buildings/details/${buildingId}/maintenances/manage`);
-    }
-  }, [modalCreateNotificationConfigurationOpen]);
 
   useEffect(() => {
     if (folderId) {
@@ -149,24 +109,6 @@ export const Settings = () => {
     <DotSpinLoading />
   ) : (
     <>
-      {modalEditBuildingOpen && building && (
-        <ModalEditBuilding
-          setModal={setModalEditBuildingOpen}
-          building={building}
-          buildingTypes={buildingTypes}
-          requestBuildingDetailsCall={async () => {
-            requestBuildingDetails({
-              buildingId: buildingId!,
-              setLoading,
-              setBuilding,
-              setUsedMaintenancesCount,
-              setTotalMaintenancesCount,
-              setRootFolder,
-            });
-          }}
-        />
-      )}
-
       {modalCreateNotificationConfigurationOpen && building && (
         <ModalCreateNotificationConfiguration
           setModal={setModalCreateNotificationConfigurationOpen}
@@ -178,8 +120,6 @@ export const Settings = () => {
               buildingId: buildingId!,
               setLoading,
               setBuilding,
-              setUsedMaintenancesCount,
-              setTotalMaintenancesCount,
               setRootFolder,
             });
           }}
@@ -198,8 +138,6 @@ export const Settings = () => {
               buildingId: buildingId!,
               setLoading,
               setBuilding,
-              setUsedMaintenancesCount,
-              setTotalMaintenancesCount,
               setRootFolder,
             });
           }}
@@ -249,25 +187,14 @@ export const Settings = () => {
               buildingId: buildingId!,
               setLoading,
               setBuilding,
-              setUsedMaintenancesCount,
-              setTotalMaintenancesCount,
               setRootFolder,
             });
           }}
         />
       )}
 
-      {modalPrintQRCodeOpen && building && (
-        <ModalPrintQRCode
-          setModal={setModalPrintQRCodeOpen}
-          buildingName={building?.name}
-          buildingNanoId={building.nanoId}
-        />
-      )}
-
       <Style.Header>
         <h2>Detalhes de edificação</h2>
-        <ReturnButton path={`/buildings${search}`} />
       </Style.Header>
 
       <Style.CardWrapper>
@@ -326,98 +253,10 @@ export const Settings = () => {
                   }
                 }}
               />
-              <Button
-                label="QR Code"
-                onClick={() => {
-                  setModalPrintQRCodeOpen(true);
-                }}
-              />
             </Style.ButtonWrapper>
           </Style.FirstCard>
         )}
 
-        <Style.Card>
-          <Style.CardHeader>
-            <h5>Dados da edificação</h5>
-            <IconButton
-              icon={icon.editWithBg}
-              label="Editar"
-              hideLabelOnMedia
-              onClick={() => {
-                setModalEditBuildingOpen(true);
-              }}
-            />
-          </Style.CardHeader>
-          <Style.BuildingCardWrapper>
-            <Style.BuildingCardColumn>
-              <Style.BuildingCardData>
-                <p className="p3">Nome:</p>
-                <p className="p3">{building?.name}</p>
-              </Style.BuildingCardData>
-
-              <Style.BuildingCardData>
-                <p className="p3">Tipo:</p>
-                <p className="p3">
-                  {building?.BuildingType.name
-                    ? capitalizeFirstLetter(building.BuildingType.name)
-                    : '-'}
-                </p>
-              </Style.BuildingCardData>
-
-              <Style.BuildingCardData>
-                <p className="p3">Data de início:</p>
-                <p className="p3">
-                  {building?.deliveryDate ? dateFormatter(building?.deliveryDate!) : ''}
-                </p>
-              </Style.BuildingCardData>
-
-              <Style.BuildingCardData>
-                <p className="p3">Término da garantia:</p>
-                <p className="p3">
-                  {building?.warrantyExpiration ? dateFormatter(building.warrantyExpiration) : '-'}
-                </p>
-              </Style.BuildingCardData>
-
-              <Style.BuildingCardData>
-                <p className="p3">Notificar após garantia?</p>
-                <p className="p3">{building?.keepNotificationAfterWarrantyEnds ? 'Sim' : 'Não'}</p>
-              </Style.BuildingCardData>
-            </Style.BuildingCardColumn>
-
-            <Style.BuildingCardColumn>
-              <Style.BuildingCardData>
-                <p className="p3">CEP:</p>
-                <p className="p3">
-                  {building?.cep ? applyMask({ mask: 'CEP', value: building?.cep }).value : '-'}
-                </p>
-              </Style.BuildingCardData>
-
-              <Style.BuildingCardData>
-                <p className="p3">Local:</p>
-                <p className="p3">
-                  {!building?.city && !building?.state && '-'}
-                  {building?.city}
-                  {building?.city && building?.state ? `, ${building?.state}` : building?.state}
-                </p>
-              </Style.BuildingCardData>
-
-              <Style.BuildingCardData>
-                <p className="p3">Bairro:</p>
-                <p className="p3">{building?.neighborhood ?? '-'}</p>
-              </Style.BuildingCardData>
-
-              <Style.BuildingCardData>
-                <p className="p3">Logradouro:</p>
-                <p className="p3">{building?.streetName ?? '-'}</p>
-              </Style.BuildingCardData>
-
-              <Style.BuildingCardData>
-                <p className="p3">Comprovantes de relato obrigatórios?</p>
-                <p className="p3">{building?.mandatoryReportProof ? 'Sim' : 'Não'}</p>
-              </Style.BuildingCardData>
-            </Style.BuildingCardColumn>
-          </Style.BuildingCardWrapper>
-        </Style.Card>
         <Style.Card>
           <Style.CardHeader>
             <h5>Responsáveis de manutenção</h5>
@@ -595,36 +434,6 @@ export const Settings = () => {
               <h5>Nenhum dado cadastrado.</h5>
             </Style.NoDataContainer>
           )}
-        </Style.Card>
-        <Style.Card>
-          <Style.MaintenanceCardHeader>
-            <h5>
-              Plano de manutenção ({usedMaintenancesCount}/{totalMaintenancesCount})
-            </h5>
-            <Style.ButtonWrapper>
-              <IconButton
-                icon={icon.listWithBg}
-                label="Visualizar"
-                hideLabelOnMedia
-                onClick={() => {
-                  if (building?.id) {
-                    navigate(`/buildings/details/${building?.id}/maintenances/list${search}`);
-                  }
-                }}
-              />
-
-              <IconButton
-                icon={icon.editWithBg}
-                label="Editar"
-                hideLabelOnMedia
-                onClick={() => {
-                  if (building?.id) {
-                    navigate(`/buildings/details/${building?.id}/maintenances/manage${search}`);
-                  }
-                }}
-              />
-            </Style.ButtonWrapper>
-          </Style.MaintenanceCardHeader>
         </Style.Card>
 
         <Style.CardGrid>

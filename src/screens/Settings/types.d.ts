@@ -71,8 +71,6 @@ export interface IRequestBuildingDetails {
   setLoading?: (setLoading: boolean) => void;
   setBuilding: (setBuilding: IBuildingDetail) => void;
   buildingId: string;
-  setUsedMaintenancesCount: (setUsedMaintenancesCount: number) => void;
-  setTotalMaintenancesCount: (setTotalMaintenancesCount: number) => void;
   setRootFolder: React.Dispatch<React.SetStateAction<Folder>>;
 }
 
