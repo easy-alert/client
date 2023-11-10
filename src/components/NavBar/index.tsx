@@ -16,7 +16,7 @@ import { ISidebar, SidebarContentProps } from './types';
 import { query } from '../../utils/functions';
 import { requestCompanyLogo } from './functions';
 
-export const Sidebar = ({ children }: ISidebar) => {
+export const NavBar = ({ children }: ISidebar) => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
 
   const [showNavbarMenu, setShowNavbarMenu] = useState<boolean>(false);
@@ -47,6 +47,11 @@ export const Sidebar = ({ children }: ISidebar) => {
     {
       name: 'Área do responsável',
       url: `/syndicarea/${buildingNanoId}${window.location.search}`,
+      restricted: true,
+    },
+    {
+      name: 'Configurações',
+      url: `/syndicarea/${buildingNanoId}/settings${window.location.search}`,
       restricted: true,
     },
   ];
