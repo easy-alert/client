@@ -9,7 +9,10 @@ import * as Style from './styles';
 // FUNCTIONS
 import { requestAnnexInformations, requestFolderDetails } from './functions';
 import { Folder, Folders } from './types';
-import { FolderComponent, FileComponent } from '../../components/FileSystem';
+import {
+  ReadOnlyFolderComponent,
+  ReadOnlyFileComponent,
+} from '../../components/ReadOnlyFileSystem';
 
 // TYPES
 
@@ -93,7 +96,7 @@ export const Annexes = () => {
           (informations?.Files?.length > 0 || informations?.Folders?.length > 0) && (
             <Style.TagWrapper>
               {informations?.Folders?.map((element) => (
-                <FolderComponent
+                <ReadOnlyFolderComponent
                   key={element.id}
                   name={element.name}
                   onFolderClick={() => {
@@ -102,7 +105,7 @@ export const Annexes = () => {
                 />
               ))}
               {informations?.Files?.map((element) => (
-                <FileComponent key={element.id} name={element.name} url={element.url} />
+                <ReadOnlyFileComponent key={element.id} name={element.name} url={element.url} />
               ))}
             </Style.TagWrapper>
           )}

@@ -61,7 +61,7 @@ export const Label = styled.div`
   min-width: 0;
   height: 100%;
   width: 100%;
-  padding: ${theme.size.xsm} 0 ${theme.size.xsm} ${theme.size.xsm};
+  padding: ${theme.size.xsm};
 
   > p {
     white-space: nowrap;
