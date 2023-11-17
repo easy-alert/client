@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
-import { Sidebar } from './components/Sidebar';
+import { NavBar } from './components/NavBar';
 import { MaintenancesPlan } from './screens/MaintenancesPlan';
 import { Informations } from './screens/Informations';
 import { SyndicArea } from './screens/SyndicArea';
 import { Home } from './screens/Home';
 import { Annexes } from './screens/Annexes';
+import { Settings } from './screens/Settings';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -12,18 +13,18 @@ const AppRoutes = () => (
       <Route
         path="*"
         element={
-          <Sidebar>
+          <NavBar>
             <MaintenancesPlan />
-          </Sidebar>
+          </NavBar>
         }
       />
 
       <Route
         path="/"
         element={
-          <Sidebar>
+          <NavBar>
             <Outlet />
-          </Sidebar>
+          </NavBar>
         }
       >
         <Route path="/home/:buildingNanoId" element={<Home />} />
@@ -31,6 +32,7 @@ const AppRoutes = () => (
         <Route path="/informations/:buildingNanoId" element={<Informations />} />
         <Route path="/annex/:buildingNanoId" element={<Annexes />} />
         <Route path="/syndicarea/:buildingNanoId" element={<SyndicArea />} />
+        <Route path="/settings/:buildingNanoId" element={<Settings />} />
       </Route>
     </Routes>
   </BrowserRouter>
