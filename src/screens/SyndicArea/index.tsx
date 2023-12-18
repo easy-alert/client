@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 
 // COMPONENTS
+import { useSearchParams } from 'react-router-dom';
 import { Button } from '../../components/Buttons/Button';
 import { IconButton } from '../../components/Buttons/IconButton';
 import { EventTag } from '../../components/EventTag';
@@ -14,7 +15,7 @@ import { Skeleton } from '../../components/Skeleton';
 
 // FUNCTIONS
 import { requestSyndicKanban } from './functions';
-import { capitalizeFirstLetter, dateFormatter, query } from '../../utils/functions';
+import { capitalizeFirstLetter, dateFormatter } from '../../utils/functions';
 
 // TYPES
 import { IFilter, IFilterOptions, IKanban } from './types';
@@ -69,8 +70,10 @@ export const SyndicArea = () => {
     years: '',
   });
 
-  const syndicNanoId = query.get('syndicNanoId') ?? '';
-  const categoryId = query.get('categoryId') ?? '';
+  const [search] = useSearchParams();
+  const syndicNanoId = search.get('syndicNanoId') ?? '';
+  const categoryId = search.get('categoryId') ?? '';
+  console.log('categoryId:', categoryId);
 
   useEffect(() => {
     requestSyndicKanban({
@@ -199,6 +202,26 @@ export const SyndicArea = () => {
               disabled={onQuery}
               selectPlaceholderValue={' '}
               label="Status"
+              value={filter.status}
+              onChange={(e) => {
+                setFilter((prevState) => {
+                  const newState = { ...prevState };
+                  newState.status = e.target.value;
+                  return newState;
+                });
+              }}
+            >
+              <option value="">Todos</option>
+              {filterOptions.status.map((option) => (
+                <option key={option.name} value={option.name}>
+                  {capitalizeFirstLetter(option.label)}
+                </option>
+              ))}
+            </Select>
+            <Select
+              disabled={onQuery}
+              selectPlaceholderValue={' '}
+              label="Categoria"
               value={filter.status}
               onChange={(e) => {
                 setFilter((prevState) => {

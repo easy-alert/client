@@ -29,7 +29,7 @@ export const ChooseSyndic = () => {
     <DotSpinLoading />
   ) : (
     <Style.Container>
-      Escolha o responsável:
+      <h2>Escolha o responsável:</h2>
       <Select
         value=""
         onChange={(e) => {
