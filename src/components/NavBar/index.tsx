@@ -46,6 +46,11 @@ export const NavBar = ({ children }: ISidebar) => {
       restricted: false,
     },
     {
+      name: 'Parceiros',
+      url: `/partners/${buildingNanoId}${window.location.search}`,
+      restricted: false,
+    },
+    {
       name: 'Configurações',
       url: `/settings/${buildingNanoId}${window.location.search}`,
       restricted: true,
