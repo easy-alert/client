@@ -59,11 +59,11 @@ export const NavbarButtonWeb = styled.header<{ selected: boolean }>`
   ${({ selected }) =>
     selected &&
     css`
-      background: #ededed80;
+      background: #edededcc;
     `}
 
   :hover {
-    background: #ededed80;
+    background: #edededcc;
   }
 `;
 
