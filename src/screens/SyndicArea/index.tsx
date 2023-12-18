@@ -70,6 +70,7 @@ export const SyndicArea = () => {
   });
 
   const syndicNanoId = query.get('syndicNanoId') ?? '';
+  const categoryId = query.get('categoryId') ?? '';
 
   useEffect(() => {
     requestSyndicKanban({
