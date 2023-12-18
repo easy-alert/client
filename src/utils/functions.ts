@@ -47,7 +47,7 @@ export async function uploadManyFiles(files: any) {
     formData.append('files', files[i]);
   }
 
-  await Api.post('upload/files', formData).then((res) => {
+  await Api.post('/upload/files', formData).then((res) => {
     response = res.data;
   });
 
@@ -311,5 +311,4 @@ export const requestAddressData = async ({ cep, setFieldValue }: IRequestAddress
     });
 };
 
-export const query = new URLSearchParams(window.location.search);
 // #endregion

@@ -1,7 +1,7 @@
 // #region imports
 // COMPONENTS
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 // FUNCTIONS
 import {
@@ -27,7 +27,7 @@ import { FolderComponent, FileComponent } from '../../components/FileSystem';
 import { ImagePreview } from '../../components/ImagePreview';
 import { DotSpinLoading } from '../../components/Loadings/DotSpinLoading';
 import { theme } from '../../styles/theme';
-import { applyMask, query } from '../../utils/functions';
+import { applyMask } from '../../utils/functions';
 import { ModalAddFiles } from './ModalAddFiles';
 import { ModalCreateFolder } from './ModalCreateFolder';
 import { ModalCreateNotificationConfiguration } from './ModalCreateNotificationConfiguration';
@@ -43,7 +43,8 @@ import { Skeleton } from '../../components/Skeleton';
 export const Settings = () => {
   // #region states
   const { buildingNanoId } = useParams();
-  const syndicNanoId = query.get('syndicNanoId') ?? '';
+  const [search] = useSearchParams();
+  const syndicNanoId = search.get('syndicNanoId') ?? '';
 
   const phoneConfirmUrl = `${import.meta.env.VITE_CONTACT_CONFIRM_URL}/confirm/phone`;
   const emailConfirmUrl = `${import.meta.env.VITE_CONTACT_CONFIRM_URL}/confirm/email`;

@@ -6,6 +6,7 @@ import { SyndicArea } from './screens/SyndicArea';
 import { Home } from './screens/Home';
 import { Annexes } from './screens/Annexes';
 import { Settings } from './screens/Settings';
+import { ChooseSyndic } from './screens/ChooseSyndic';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -33,6 +34,7 @@ const AppRoutes = () => (
         <Route path="/annex/:buildingNanoId" element={<Annexes />} />
         <Route path="/syndicarea/:buildingNanoId" element={<SyndicArea />} />
         <Route path="/settings/:buildingNanoId" element={<Settings />} />
+        <Route path="/choose/:buildingNanoId/:categoryId" element={<ChooseSyndic />} />
       </Route>
     </Routes>
   </BrowserRouter>

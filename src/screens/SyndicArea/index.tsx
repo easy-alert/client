@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 
 // COMPONENTS
+import { useSearchParams } from 'react-router-dom';
 import { Button } from '../../components/Buttons/Button';
 import { IconButton } from '../../components/Buttons/IconButton';
 import { EventTag } from '../../components/EventTag';
@@ -14,7 +15,7 @@ import { Skeleton } from '../../components/Skeleton';
 
 // FUNCTIONS
 import { requestSyndicKanban } from './functions';
-import { capitalizeFirstLetter, dateFormatter, query } from '../../utils/functions';
+import { capitalizeFirstLetter, dateFormatter } from '../../utils/functions';
 
 // TYPES
 import { IFilter, IFilterOptions, IKanban } from './types';
@@ -61,15 +62,19 @@ export const SyndicArea = () => {
     months: [],
     status: [],
     years: [],
+    categories: [],
   });
+
+  const [search, setSearch] = useSearchParams();
+  const syndicNanoId = search.get('syndicNanoId') ?? '';
+  const categoryId = search.get('categoryId') ?? '';
 
   const [filter, setFilter] = useState<IFilter>({
     months: '',
     status: '',
     years: '',
+    categoryId,
   });
-
-  const syndicNanoId = query.get('syndicNanoId') ?? '';
 
   useEffect(() => {
     requestSyndicKanban({
@@ -214,11 +219,34 @@ export const SyndicArea = () => {
                 </option>
               ))}
             </Select>
+            <Select
+              disabled={onQuery}
+              selectPlaceholderValue={' '}
+              label="Categoria"
+              value={filter.categoryId}
+              onChange={(e) => {
+                setFilter((prevState) => {
+                  const newState = { ...prevState };
+                  newState.categoryId = e.target.value;
+                  return newState;
+                });
+              }}
+            >
+              <option value="">Todas</option>
+              {filterOptions.categories.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
+                </option>
+              ))}
+            </Select>
             <Button
               type="button"
               label="Filtrar"
               disable={onQuery}
               onClick={() => {
+                search.set('syndicNanoId', syndicNanoId);
+                search.delete('categoryId');
+                setSearch(search);
                 requestSyndicKanban({
                   setLoading,
                   syndicNanoId,

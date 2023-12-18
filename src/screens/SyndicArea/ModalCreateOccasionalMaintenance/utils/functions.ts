@@ -1,11 +1,12 @@
 import { toast } from 'react-toastify';
 
+import { useSearchParams } from 'react-router-dom';
 import {
   ICategories,
   IRequestAuxiliaryDataForCreateOccasionalMaintenance,
   IRequestCreateOccasionalMaintenance,
 } from './types';
-import { catchHandler, query, unMaskBRL } from '../../../../utils/functions';
+import { catchHandler, unMaskBRL } from '../../../../utils/functions';
 import { Api } from '../../../../services/api';
 
 export const requestCreateOccasionalMaintenance = async ({
@@ -23,7 +24,8 @@ export const requestCreateOccasionalMaintenance = async ({
   if (!maintenanceData.responsible) return toast.error('Nome do reponsável não informado.');
   if (!executionDate) return toast.error('Data de execução não informada.');
 
-  const syndicNanoId = query.get('syndicNanoId') ?? '';
+  const [search] = useSearchParams();
+  const syndicNanoId = search.get('syndicNanoId') ?? '';
 
   setOnQuery(true);
 
