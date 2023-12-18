@@ -7,6 +7,7 @@ import { DotSpinLoading } from '../../components/Loadings/DotSpinLoading';
 import { requestSyndicList } from './functions';
 import { ISyndic } from './types';
 import { Select } from '../../components/Inputs/Select';
+import { Modal } from '../../components/Modal';
 
 export const ChooseSyndic = () => {
   const { buildingNanoId, categoryId } = useParams() as {
@@ -28,25 +29,31 @@ export const ChooseSyndic = () => {
   return loading ? (
     <DotSpinLoading />
   ) : (
-    <Style.Container>
-      <h2>Escolha o responsável:</h2>
-      <Select
-        value=""
-        onChange={(e) => {
-          navigate(
-            `/syndicarea/${buildingNanoId}?syndicNanoId=${e.target.value}&categoryId=${categoryId}`,
-          );
-        }}
-      >
-        <option value="" hidden disabled>
-          Selecione
-        </option>
-        {syndics.map((e) => (
-          <option key={e.nanoId} value={e.nanoId}>
-            {e.name}
+    <Modal
+      title="Escolha o responsável"
+      setModal={() => {
+        //
+      }}
+    >
+      <Style.Container>
+        <Select
+          value=""
+          onChange={(e) => {
+            navigate(
+              `/syndicarea/${buildingNanoId}?syndicNanoId=${e.target.value}&categoryId=${categoryId}`,
+            );
+          }}
+        >
+          <option value="" hidden disabled>
+            Selecione
           </option>
-        ))}
-      </Select>
-    </Style.Container>
+          {syndics.map((e) => (
+            <option key={e.nanoId} value={e.nanoId}>
+              {e.name}
+            </option>
+          ))}
+        </Select>
+      </Style.Container>
+    </Modal>
   );
 };
