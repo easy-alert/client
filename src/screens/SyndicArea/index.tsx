@@ -62,18 +62,19 @@ export const SyndicArea = () => {
     months: [],
     status: [],
     years: [],
+    categories: [],
   });
+
+  const [search, setSearch] = useSearchParams();
+  const syndicNanoId = search.get('syndicNanoId') ?? '';
+  const categoryId = search.get('categoryId') ?? '';
 
   const [filter, setFilter] = useState<IFilter>({
     months: '',
     status: '',
     years: '',
+    categoryId,
   });
-
-  const [search] = useSearchParams();
-  const syndicNanoId = search.get('syndicNanoId') ?? '';
-  const categoryId = search.get('categoryId') ?? '';
-  console.log('categoryId:', categoryId);
 
   useEffect(() => {
     requestSyndicKanban({
@@ -222,19 +223,19 @@ export const SyndicArea = () => {
               disabled={onQuery}
               selectPlaceholderValue={' '}
               label="Categoria"
-              value={filter.status}
+              value={filter.categoryId}
               onChange={(e) => {
                 setFilter((prevState) => {
                   const newState = { ...prevState };
-                  newState.status = e.target.value;
+                  newState.categoryId = e.target.value;
                   return newState;
                 });
               }}
             >
-              <option value="">Todos</option>
-              {filterOptions.status.map((option) => (
-                <option key={option.name} value={option.name}>
-                  {capitalizeFirstLetter(option.label)}
+              <option value="">Todas</option>
+              {filterOptions.categories.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.name}
                 </option>
               ))}
             </Select>
@@ -243,6 +244,9 @@ export const SyndicArea = () => {
               label="Filtrar"
               disable={onQuery}
               onClick={() => {
+                search.set('syndicNanoId', syndicNanoId);
+                search.delete('categoryId');
+                setSearch(search);
                 requestSyndicKanban({
                   setLoading,
                   syndicNanoId,

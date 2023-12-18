@@ -56,11 +56,11 @@ export const HeaderWrapper = styled.div`
 
 export const FilterWrapper = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1.2fr 1.5fr 2fr 1fr;
+  grid-template-columns: 1fr 1.2fr 1.5fr 2.5fr 1fr;
 
   align-items: flex-end;
   gap: ${theme.size.xsm};
-  max-width: 65%;
+  max-width: 70%;
 
   > :last-child {
     margin-left: ${theme.size.xsm};

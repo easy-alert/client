@@ -3,7 +3,7 @@
 /* eslint-disable no-nested-ternary */
 // COMPONENTS
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { Skeleton } from '../../components/Skeleton';
 
 // STYLES
@@ -12,14 +12,14 @@ import { icon } from '../../assets/icons';
 
 // FUNCTIONS
 import { requestBuildingAccess, requestHomeInformations } from './functions';
-import { query } from '../../utils/functions';
 
 // TYPES
 import { IInformations } from './types';
 
 export const Home = () => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
-  const syndicNanoId = query.get('syndicNanoId') ?? '';
+  const [search] = useSearchParams();
+  const syndicNanoId = search.get('syndicNanoId') ?? '';
 
   const [loading, setLoading] = useState<boolean>(true);
 

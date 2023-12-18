@@ -14,7 +14,7 @@ export const requestSyndicKanban = async ({
   setOnQuery(true);
 
   await Api.get(
-    `/syndic/${syndicNanoId}?year=${filter.years}&month=${filter.months}&status=${filter.status}`,
+    `/syndic/${syndicNanoId}?year=${filter.years}&month=${filter.months}&status=${filter.status}&categoryId=${filter.categoryId}`,
   )
     .then((res) => {
       setKanban(res.data.kanban);
