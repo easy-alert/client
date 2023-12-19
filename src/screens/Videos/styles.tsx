@@ -53,8 +53,4 @@ export const Card = styled.a`
   > h5 {
     color: ${theme.color.black};
   }
-
-  > p {
-    color: ${theme.color.gray4};
-  }
 `;

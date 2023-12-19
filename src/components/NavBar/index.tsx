@@ -51,6 +51,11 @@ export const NavBar = ({ children }: ISidebar) => {
       restricted: false,
     },
     {
+      name: 'Videoaulas',
+      url: `/videos/${buildingNanoId}${window.location.search}`,
+      restricted: false,
+    },
+    {
       name: 'Configurações',
       url: `/settings/${buildingNanoId}${window.location.search}`,
       restricted: true,
