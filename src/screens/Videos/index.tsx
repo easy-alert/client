@@ -5,28 +5,23 @@ export const Videos = () => {
   const videos = [
     {
       thumbnail: icon.paper,
-      href: 'https://www.youtube.com/watch?v=ZmAId85nywI&q=1',
-      name: 'VÍDEO',
+      href: 'https://www.youtube.com/watch?v=HQ7cXTIq6FA',
+      name: 'Limpeza de caixas de gordura e poços de esgoto',
     },
     {
       thumbnail: icon.paper,
-      href: 'https://www.youtube.com/watch?v=ZmAId85nywI&q=2',
-      name: 'VÍDEO',
+      href: 'https://www.youtube.com/watch?v=PBcFVZBb9U0',
+      name: 'Limpeza de reservatórios',
     },
     {
       thumbnail: icon.paper,
-      href: 'https://www.youtube.com/watch?v=ZmAId85nywI&q=3',
-      name: 'VÍDEO',
+      href: 'https://www.youtube.com/watch?v=8KKPzqJM9cI',
+      name: 'Inspeção SPDA',
     },
     {
       thumbnail: icon.paper,
-      href: 'https://www.youtube.com/watch?v=ZmAId85nywI&q=4',
-      name: 'VÍDEO',
-    },
-    {
-      thumbnail: icon.paper,
-      href: 'https://www.youtube.com/watch?v=ZmAId85nywI&q=5',
-      name: 'VÍDEO',
+      href: 'https://www.youtube.com/watch?v=8ivOW_bZgv8',
+      name: `Como trocar a boia da caixa d'água`,
     },
   ];
 
