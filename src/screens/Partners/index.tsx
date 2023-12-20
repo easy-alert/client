@@ -26,7 +26,7 @@ export const Partners = () => {
       href: 'https://prestadoresdeservicos.com.br/',
       name: 'Prestadores de Serviços',
       icon: icon.prestadoresDeServicos,
-      text: 'Cadastre seus serviços e receba solicitações direto do seu celular.',
+      text: 'Fale o que precisa, receba até 3 orçamentos, escolha o melhor.',
     },
     {
       href: 'https://coteibem.sindiconet.com.br/',
