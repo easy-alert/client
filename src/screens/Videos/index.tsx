@@ -20,8 +20,8 @@ export const Videos = () => {
     },
     {
       thumbnail: icon.paper,
-      href: 'https://www.youtube.com/watch?v=8ivOW_bZgv8',
-      name: `Como trocar a boia da caixa d'água`,
+      href: 'https://www.youtube.com/watch?v=o2uHQf8fmrI',
+      name: `Como Instalar ou Trocar a Boia da Caixa D'Água`,
     },
   ];
 
