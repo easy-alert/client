@@ -91,6 +91,29 @@ export const Informations = () => {
             </ContactTable>
           )}
 
+          {!loading &&
+            informations.NotificationsConfigurations.length > 0 &&
+            informations.NotificationsConfigurations.map((info) => (
+              <Style.MediaWrapper key={info.id}>
+                <Style.MediaCard>
+                  <Style.MediaCardRow>
+                    <h6>{info.name}</h6>
+                    <p className="p3">{info.role}</p>
+                  </Style.MediaCardRow>
+
+                  <Style.MediaCardRow>
+                    <p className="p2">{info.email || '-'}</p>
+                    <p className="p2">
+                      {info.contactNumber
+                        ? applyMask({ mask: 'TEL', value: info.contactNumber }).value
+                        : '-'}
+                    </p>
+                  </Style.MediaCardRow>
+                </Style.MediaCard>
+                <Style.Line />
+              </Style.MediaWrapper>
+            ))}
+
           {!loading && informations.NotificationsConfigurations.length === 0 && (
             <h6 style={{ color: theme.color.gray4 }}>Nenhum responsável cadastrado.</h6>
           )}
