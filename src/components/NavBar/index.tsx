@@ -1,6 +1,6 @@
 // LIBS
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 // STYLES
 import * as Style from './styles';
@@ -13,11 +13,12 @@ import { IconButton } from '../Buttons/IconButton';
 import { ISidebar, SidebarContentProps } from './types';
 
 // FUNCTIONS
-import { query } from '../../utils/functions';
 import { requestCompanyLogo } from './functions';
 
 export const NavBar = ({ children }: ISidebar) => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
+  const [search] = useSearchParams();
+  const syndicNanoId = search.get('syndicNanoId') ?? '';
 
   const [showNavbarMenu, setShowNavbarMenu] = useState<boolean>(false);
 
@@ -44,6 +45,16 @@ export const NavBar = ({ children }: ISidebar) => {
       url: `/annex/${buildingNanoId}${window.location.search}`,
       restricted: false,
     },
+    // {
+    //   name: 'Parceiros',
+    //   url: `/partners/${buildingNanoId}${window.location.search}`,
+    //   restricted: false,
+    // },
+    // {
+    //   name: 'Videoaulas',
+    //   url: `/videos/${buildingNanoId}${window.location.search}`,
+    //   restricted: false,
+    // },
     {
       name: 'Configurações',
       url: `/settings/${buildingNanoId}${window.location.search}`,
@@ -78,7 +89,7 @@ export const NavBar = ({ children }: ISidebar) => {
           {showNavbarMenu && (
             <Style.MobileContent>
               {SidebarContent.map((element) => {
-                if (!query.get('syndicNanoId') && element.restricted) {
+                if (!syndicNanoId && element.restricted) {
                   return null;
                 }
 
@@ -110,7 +121,7 @@ export const NavBar = ({ children }: ISidebar) => {
 
         <Style.WebContent>
           {SidebarContent.map((element) => {
-            if (!query.get('syndicNanoId') && element.restricted) {
+            if (!syndicNanoId && element.restricted) {
               return null;
             }
             return (

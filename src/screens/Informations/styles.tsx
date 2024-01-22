@@ -5,6 +5,9 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${theme.size.sm};
+  @media (max-width: 750px) {
+    height: 100%;
+  }
 `;
 
 export const Card = styled.div`
@@ -17,6 +20,10 @@ export const Card = styled.div`
 
   @media (max-width: 900px) {
     padding: ${theme.size.sm};
+  }
+
+  @media (max-width: 750px) {
+    height: 100%;
   }
 `;
 
@@ -40,4 +47,27 @@ export const Row = styled.div`
   > p {
     font-weight: 400;
   }
+`;
+
+export const MediaWrapper = styled.div`
+  display: none;
+
+  @media (max-width: 750px) {
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.size.sm};
+    height: 100%;
+  }
+`;
+
+export const MediaCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.size.xsm};
+`;
+
+export const MediaCardRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.size.xxsm};
 `;

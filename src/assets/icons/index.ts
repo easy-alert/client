@@ -52,6 +52,11 @@ import placeholder from './placeholder.svg';
 import grayDownload from './grayDownload.svg';
 import addFileV2 from './addFileV2.svg';
 import dots from './dots.svg';
+import casaDoSindico from './casaDoSindico.svg';
+import coteiBem from './coteiBem.svg';
+import getNinjas from './getNinjas.svg';
+import prestadoresDeServicos from './prestadoresDeServicos.svg';
+import pro6 from './pro6.svg';
 
 export const icon = {
   leftArrow,
@@ -108,4 +113,9 @@ export const icon = {
   grayDownload,
   addFileV2,
   dots,
+  casaDoSindico,
+  coteiBem,
+  getNinjas,
+  prestadoresDeServicos,
+  pro6,
 };

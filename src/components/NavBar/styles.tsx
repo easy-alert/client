@@ -6,7 +6,7 @@ export const Background = styled.div`
   flex-direction: column;
   height: 100dvh;
 
-  @media (max-width: 900px) {
+  @media (max-width: 960px) {
     min-width: 280px;
   }
 `;
@@ -31,7 +31,7 @@ export const CompanyLogo = styled.div`
     margin: 0 ${theme.size.sm};
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 960px) {
     margin: 0 auto;
     > img {
       margin-left: 0;
@@ -44,7 +44,7 @@ export const WebContent = styled.div`
   display: flex;
   align-items: center;
 
-  @media (max-width: 900px) {
+  @media (max-width: 960px) {
     display: none;
   }
 `;
@@ -59,11 +59,11 @@ export const NavbarButtonWeb = styled.header<{ selected: boolean }>`
   ${({ selected }) =>
     selected &&
     css`
-      background: #ededed80;
+      background: #edededcc;
     `}
 
   :hover {
-    background: #ededed80;
+    background: #edededcc;
   }
 `;
 
@@ -71,7 +71,7 @@ export const HamburguerWrapper = styled.div`
   display: none;
   z-index: 10;
 
-  @media (max-width: 900px) {
+  @media (max-width: 960px) {
     position: relative;
     display: block;
     margin: 0 ${theme.size.sm};
@@ -80,7 +80,6 @@ export const HamburguerWrapper = styled.div`
 
 export const NavbarButtonMobile = styled.header<{ selected: boolean }>`
   padding: ${theme.size.sm};
-
   color: ${theme.color.black};
   font-weight: 500;
   transition: 0.25s;
@@ -113,7 +112,7 @@ export const AppContent = styled.div`
   max-width: 1920px;
   padding: ${theme.size.md};
 
-  @media (max-width: 900px) {
+  @media (max-width: 960px) {
     padding: ${theme.size.sm};
   }
 `;

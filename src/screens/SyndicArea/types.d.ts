@@ -25,12 +25,17 @@ export interface IFilterOptions {
     label: string;
   }[];
   years: string[];
+  categories: {
+    name: string;
+    id: string;
+  }[];
 }
 
 export interface IFilter {
   months: string;
   status: string;
   years: string;
+  categoryId: string;
 }
 
 export interface IRequestSyndicKanban {

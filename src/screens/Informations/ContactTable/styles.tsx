@@ -4,6 +4,10 @@ import { theme } from '../../../styles/theme';
 export const Background = styled.div`
   max-width: 100%;
   overflow-x: auto;
+
+  @media (max-width: 750px) {
+    display: none;
+  }
 `;
 
 export const TableContainer = styled.table`
