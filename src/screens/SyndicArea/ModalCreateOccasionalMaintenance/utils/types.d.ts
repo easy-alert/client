@@ -60,11 +60,13 @@ export interface IRequestCreateOccasionalMaintenance {
   data: ICreateOccasionalMaintenanceData;
   origin: string;
   getCalendarData: () => Promise<void>;
+  syndicNanoId: string;
 }
 
 export interface IModalCreateOccasionalMaintenance {
   setModal: (setModal: boolean) => void;
   getCalendarData: () => Promise<void>;
+  syndicNanoId: string;
 }
 
 export interface IModalCreateOccasionalMaintenanceInstructions {

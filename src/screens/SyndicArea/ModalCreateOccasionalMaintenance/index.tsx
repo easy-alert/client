@@ -39,6 +39,7 @@ import { CRUDInput } from '../../../components/Inputs/CRUDInput';
 export const ModalCreateOccasionalMaintenance = ({
   setModal,
   getCalendarData,
+  syndicNanoId,
 }: IModalCreateOccasionalMaintenance) => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
   const [loading, setLoading] = useState<boolean>(true);
@@ -465,6 +466,7 @@ export const ModalCreateOccasionalMaintenance = ({
                   setModal,
                   setOnQuery,
                   origin: 'Client',
+                  syndicNanoId,
                 })
               }
             />
