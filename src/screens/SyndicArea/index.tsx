@@ -114,6 +114,7 @@ export const SyndicArea = () => {
 
       {modalCreateOccasionalMaintenance && (
         <ModalCreateOccasionalMaintenance
+          syndicNanoId={syndicNanoId}
           setModal={setModalCreateOccasionalMaintenance}
           getCalendarData={async () =>
             requestSyndicKanban({

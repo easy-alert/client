@@ -1,6 +1,5 @@
 import { toast } from 'react-toastify';
 
-import { useSearchParams } from 'react-router-dom';
 import {
   ICategories,
   IRequestAuxiliaryDataForCreateOccasionalMaintenance,
@@ -15,6 +14,7 @@ export const requestCreateOccasionalMaintenance = async ({
   origin,
   getCalendarData,
   data: { buildingId, executionDate, maintenanceData, categoryData, reportData, inProgress },
+  syndicNanoId,
 }: IRequestCreateOccasionalMaintenance) => {
   if (!buildingId) return toast.error('Edificação não informada.');
   if (!categoryData) return toast.error('Categoria não informada.');
@@ -23,9 +23,6 @@ export const requestCreateOccasionalMaintenance = async ({
   if (!maintenanceData.activity) return toast.error('Atividade não informada.');
   if (!maintenanceData.responsible) return toast.error('Nome do reponsável não informado.');
   if (!executionDate) return toast.error('Data de execução não informada.');
-
-  const [search] = useSearchParams();
-  const syndicNanoId = search.get('syndicNanoId') ?? '';
 
   setOnQuery(true);
 
