@@ -26,7 +26,12 @@ import { AnnexesAndImages, IMaintenance } from '../../types';
 // FUNCTIONS
 import { applyMask, dateFormatter, uploadManyFiles } from '../../../utils/functions';
 import { requestMaintenanceDetails } from '../../functions';
-import { requestSendReport, requestToggleInProgress } from './functions';
+import {
+  requestReportProgress,
+  requestSendReport,
+  requestToggleInProgress,
+  requestSaveReportProgress,
+} from './functions';
 import { InProgressTag } from '../../../components/InProgressTag';
 import { PopoverButton } from '../../../components/Buttons/PopoverButton';
 import { theme } from '../../../styles/theme';
@@ -124,10 +129,17 @@ export const ModalSendMaintenanceReport = ({
   }, [acceptedImages]);
 
   useEffect(() => {
-    requestMaintenanceDetails({
+    requestReportProgress({
       maintenanceHistoryId: modalAdditionalInformations.id,
-      setMaintenance,
-      setModalLoading,
+      setFiles,
+      setImages,
+      setMaintenanceReport,
+    }).then(() => {
+      requestMaintenanceDetails({
+        maintenanceHistoryId: modalAdditionalInformations.id,
+        setMaintenance,
+        setModalLoading,
+      });
     });
   }, []);
 
@@ -343,6 +355,36 @@ export const ModalSendMaintenanceReport = ({
                     title: maintenance.inProgress
                       ? 'Tem certeza que deseja alterar a execução?'
                       : 'Iniciar a execução apenas indica que a manutenção está sendo realizada, mas não conclui a manutenção.',
+                    content: 'Esta ação é reversível.',
+                  }}
+                  type="Button"
+                />
+              )}
+
+              {!onQuery && (
+                <PopoverButton
+                  disabled={onFileQuery || onImageQuery || onQuery}
+                  actionButtonClick={() => {
+                    requestSaveReportProgress({
+                      files,
+                      images,
+                      maintenanceHistoryId: modalAdditionalInformations.id,
+                      maintenanceReport,
+                      setModal,
+                      setOnQuery,
+                      filter,
+                      setBuildingName,
+                      setFilterOptions,
+                      setKanban,
+                      setLoading,
+                      syndicNanoId,
+                    });
+                  }}
+                  textColor={theme.color.primaryM}
+                  borderless
+                  label="Salvar progresso"
+                  message={{
+                    title: 'Tem certeza que salvar o progresso?',
                     content: 'Esta ação é reversível.',
                   }}
                   type="Button"
