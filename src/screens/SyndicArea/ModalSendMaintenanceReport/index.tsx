@@ -26,12 +26,7 @@ import { AnnexesAndImages, IMaintenance } from '../../types';
 // FUNCTIONS
 import { applyMask, dateFormatter, uploadManyFiles } from '../../../utils/functions';
 import { requestMaintenanceDetails } from '../../functions';
-import {
-  requestReportProgress,
-  requestSendReport,
-  requestToggleInProgress,
-  requestSaveReportProgress,
-} from './functions';
+import { requestReportProgress, requestSendReport, requestSaveReportProgress } from './functions';
 import { InProgressTag } from '../../../components/InProgressTag';
 import { PopoverButton } from '../../../components/Buttons/PopoverButton';
 import { theme } from '../../../styles/theme';
@@ -364,7 +359,7 @@ export const ModalSendMaintenanceReport = ({
           </Style.Content>
           {maintenance.canReport ? (
             <Style.ButtonContainer>
-              {!onQuery && (
+              {/* {!onQuery && (
                 <PopoverButton
                   disabled={onFileQuery || onImageQuery || onQuery}
                   actionButtonClick={() => {
@@ -392,7 +387,7 @@ export const ModalSendMaintenanceReport = ({
                   }}
                   type="Button"
                 />
-              )}
+              )} */}
 
               {!onQuery && (
                 <PopoverButton
@@ -413,12 +408,12 @@ export const ModalSendMaintenanceReport = ({
                       syndicNanoId,
                     });
                   }}
-                  textColor={theme.color.primaryM}
+                  textColor={theme.color.actionBlue}
                   borderless
                   label="Salvar progresso"
                   message={{
-                    title: 'Tem certeza que salvar o progresso?',
-                    content: 'Esta ação é reversível.',
+                    title: 'Tem certeza que deseja salvar o progresso?',
+                    content: '',
                   }}
                   type="Button"
                 />
