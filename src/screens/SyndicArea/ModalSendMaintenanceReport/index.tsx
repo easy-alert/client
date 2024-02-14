@@ -288,7 +288,7 @@ export const ModalSendMaintenanceReport = ({
                     <Style.DragAndDropZoneFile {...getRootProps({ className: 'dropzone' })}>
                       <input {...getInputProps()} />
 
-                      <Image img={icon.addFile} width="48px" height="46px" radius="0" />
+                      <Image img={icon.addFile} width="60px" height="48px" radius="0" />
                     </Style.DragAndDropZoneFile>
 
                     {(files.length > 0 || onFileQuery) && (
@@ -437,7 +437,7 @@ export const ModalSendMaintenanceReport = ({
                     syndicNanoId,
                   });
                 }}
-                label="Enviar relato"
+                label="Finalizar manutenção"
                 message={{
                   title: 'Tem certeza que deseja enviar o relato?',
                   content: 'Esta ação é irreversível.',
