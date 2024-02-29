@@ -15,7 +15,7 @@ export interface IImage {
 export interface IRequestRegisterBuildingBanners {
   buildingId: string;
   bannerName: string;
-  bannerLink: string;
+  bannerLink: string | null;
   setOnQuery: (setOnQuery: boolean) => void;
   setModal: (setModal: boolean) => void;
   webBanner: IImage[];
