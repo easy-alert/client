@@ -133,6 +133,14 @@ export default createGlobalStyle`
     cursor: pointer;
   }
 
+
+  pre {
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+  }
+
   input[type=checkbox] {
     width: 16px;
     height: 16px;
