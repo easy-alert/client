@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { theme } from '../../styles/theme';
 
 export const Header = styled.header`
@@ -73,7 +72,8 @@ export const Wrapper = styled.div`
   gap: ${theme.size.md};
 `;
 
-export const Card = styled(Link)`
+export const Card = styled.button`
+  all: unset;
   background-color: ${theme.color.white};
   padding: ${theme.size.md};
   border-radius: ${theme.size.xsm};

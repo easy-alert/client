@@ -59,7 +59,13 @@ export const Suppliers = () => {
       {!loading && suppliers?.length > 0 && (
         <Style.Wrapper>
           {suppliers.map((supplier) => (
-            <Style.Card key={supplier.id} to={supplier.link} target="_blank">
+            <Style.Card
+              key={supplier.id}
+              type="button"
+              onClick={() => {
+                window.open(supplier.link, '_blank');
+              }}
+            >
               <Style.ImageDiv>
                 <Image img={supplier.image} size="100px" />
               </Style.ImageDiv>
