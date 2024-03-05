@@ -45,11 +45,11 @@ export const NavBar = ({ children }: ISidebar) => {
       url: `/annex/${buildingNanoId}${window.location.search}`,
       restricted: false,
     },
-    // {
-    //   name: 'Parceiros',
-    //   url: `/partners/${buildingNanoId}${window.location.search}`,
-    //   restricted: false,
-    // },
+    {
+      name: 'Fornecedores',
+      url: `/suppliers/${buildingNanoId}${window.location.search}`,
+      restricted: false,
+    },
     // {
     //   name: 'Videoaulas',
     //   url: `/videos/${buildingNanoId}${window.location.search}`,
