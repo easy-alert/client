@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 // STYLES
+import { toast } from 'react-toastify';
 import * as Style from './styles';
 import { icon } from '../../assets/icons';
 
@@ -14,6 +15,7 @@ import { ISidebar, SidebarContentProps } from './types';
 
 // FUNCTIONS
 import { requestCompanyLogo } from './functions';
+import { theme } from '../../styles/theme';
 
 export const NavBar = ({ children }: ISidebar) => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
@@ -26,45 +28,54 @@ export const NavBar = ({ children }: ISidebar) => {
 
   const SidebarContent: SidebarContentProps[] = [
     {
-      name: 'Home',
+      name: 'QRCode',
       url: `/home/${buildingNanoId}${window.location.search}`,
       restricted: false,
     },
     {
-      name: 'Plano de manutenção',
-      url: `/maintenancesplan/${buildingNanoId}${window.location.search}`,
+      name: 'Chamados',
+      url: `/soon`,
       restricted: false,
+      disabled: true,
     },
+
     {
-      name: 'Informações',
-      url: `/informations/${buildingNanoId}${window.location.search}`,
-      restricted: false,
+      name: 'Manutenções',
+      url: `/syndicarea/${buildingNanoId}${window.location.search}`,
+      restricted: true,
     },
+
     {
-      name: 'Anexos',
-      url: `/annex/${buildingNanoId}${window.location.search}`,
-      restricted: false,
+      name: 'Configurações',
+      url: `/settings/${buildingNanoId}${window.location.search}`,
+      restricted: true,
     },
+
+    // {
+    //   name: 'Plano de manutenção',
+    //   url: `/maintenancesplan/${buildingNanoId}${window.location.search}`,
+    //   restricted: false,
+    // },
+    // {
+    //   name: 'Informações',
+    //   url: `/informations/${buildingNanoId}${window.location.search}`,
+    //   restricted: false,
+    // },
+    // {
+    //   name: 'Anexos',
+    //   url: `/annex/${buildingNanoId}${window.location.search}`,
+    //   restricted: false,
+    // },
     {
       name: 'Fornecedores',
       url: `/suppliers/${buildingNanoId}${window.location.search}`,
-      restricted: false,
+      restricted: true,
     },
     // {
     //   name: 'Videoaulas',
     //   url: `/videos/${buildingNanoId}${window.location.search}`,
     //   restricted: false,
     // },
-    {
-      name: 'Configurações',
-      url: `/settings/${buildingNanoId}${window.location.search}`,
-      restricted: true,
-    },
-    {
-      name: 'Área do responsável',
-      url: `/syndicarea/${buildingNanoId}${window.location.search}`,
-      restricted: true,
-    },
   ];
 
   useEffect(() => {
@@ -96,12 +107,20 @@ export const NavBar = ({ children }: ISidebar) => {
                 return (
                   <Link
                     key={element.url}
-                    to={element.url}
+                    to={
+                      element.disabled
+                        ? window.location.pathname + window.location.search
+                        : element.url
+                    }
                     onClick={() => {
+                      if (element.disabled) {
+                        toast.success('Em breve', { toastId: 'soon' });
+                      }
                       setShowNavbarMenu(false);
                     }}
                   >
                     <Style.NavbarButtonMobile
+                      style={{ color: element.disabled ? theme.color.gray4 : theme.color.black }}
                       selected={
                         window.location.pathname.split('/')[1] === element.url.split('/')[1]
                       }
@@ -125,8 +144,21 @@ export const NavBar = ({ children }: ISidebar) => {
               return null;
             }
             return (
-              <Link className="p3" to={element.url} key={element.url}>
+              <Link
+                className="p3"
+                to={
+                  element.disabled ? window.location.pathname + window.location.search : element.url
+                }
+                key={element.url}
+                title={element.disabled ? 'Em breve' : ''}
+                onClick={() => {
+                  if (element.disabled) {
+                    toast.success('Em breve', { toastId: 'soon' });
+                  }
+                }}
+              >
                 <Style.NavbarButtonWeb
+                  style={{ color: element.disabled ? theme.color.gray4 : theme.color.black }}
                   selected={window.location.pathname.split('/')[1] === element.url.split('/')[1]}
                 >
                   {element.name}
