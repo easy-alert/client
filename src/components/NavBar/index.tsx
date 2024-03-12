@@ -45,32 +45,24 @@ export const NavBar = ({ children }: ISidebar) => {
       restricted: true,
     },
 
+    // {
+    //   name: 'Checklists',
+    //   url: `/checklists/${buildingNanoId}${window.location.search}`,
+    //   restricted: true,
+    // },
+
     {
       name: 'Configurações',
       url: `/settings/${buildingNanoId}${window.location.search}`,
       restricted: true,
     },
 
-    // {
-    //   name: 'Plano de manutenção',
-    //   url: `/maintenancesplan/${buildingNanoId}${window.location.search}`,
-    //   restricted: false,
-    // },
-    // {
-    //   name: 'Informações',
-    //   url: `/informations/${buildingNanoId}${window.location.search}`,
-    //   restricted: false,
-    // },
-    // {
-    //   name: 'Anexos',
-    //   url: `/annex/${buildingNanoId}${window.location.search}`,
-    //   restricted: false,
-    // },
     {
       name: 'Fornecedores',
       url: `/suppliers/${buildingNanoId}${window.location.search}`,
       restricted: true,
     },
+
     // {
     //   name: 'Videoaulas',
     //   url: `/videos/${buildingNanoId}${window.location.search}`,
