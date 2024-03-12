@@ -9,6 +9,7 @@ import { Settings } from './screens/Settings';
 import { ChooseSyndic } from './screens/ChooseSyndic';
 import { Suppliers } from './screens/Suppliers';
 import { Videos } from './screens/Videos';
+import { Checklists } from './screens/Checklists';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -35,6 +36,7 @@ const AppRoutes = () => (
         <Route path="/informations/:buildingNanoId" element={<Informations />} />
         <Route path="/annex/:buildingNanoId" element={<Annexes />} />
         <Route path="/suppliers/:buildingNanoId" element={<Suppliers />} />
+        <Route path="/checklists/:buildingNanoId" element={<Checklists />} />
         <Route path="/videos/:buildingNanoId" element={<Videos />} />
         <Route path="/syndicarea/:buildingNanoId" element={<SyndicArea />} />
         <Route path="/settings/:buildingNanoId" element={<Settings />} />
