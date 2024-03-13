@@ -57,6 +57,8 @@ import coteiBem from './coteiBem.svg';
 import getNinjas from './getNinjas.svg';
 import prestadoresDeServicos from './prestadoresDeServicos.svg';
 import pro6 from './pro6.svg';
+import checklistChecked from './checklistChecked.svg';
+import checklistUnchecked from './checklistUnchecked.svg';
 
 export const icon = {
   leftArrow,
@@ -118,4 +120,6 @@ export const icon = {
   getNinjas,
   prestadoresDeServicos,
   pro6,
+  checklistChecked,
+  checklistUnchecked,
 };
