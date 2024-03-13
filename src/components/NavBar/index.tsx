@@ -45,11 +45,13 @@ export const NavBar = ({ children }: ISidebar) => {
       restricted: true,
     },
 
-    // {
-    //   name: 'Checklists',
-    //   url: `/checklists/${buildingNanoId}${window.location.search}`,
-    //   restricted: true,
-    // },
+    {
+      name: 'Checklists',
+      // url: `/checklists/${buildingNanoId}${window.location.search}`,
+      url: `/soon2`,
+      restricted: true,
+      disabled: true,
+    },
 
     {
       name: 'Configurações',
@@ -106,7 +108,7 @@ export const NavBar = ({ children }: ISidebar) => {
                     }
                     onClick={() => {
                       if (element.disabled) {
-                        toast.success('Em breve', { toastId: 'soon' });
+                        toast.success('Em breve', { toastId: element.url });
                       }
                       setShowNavbarMenu(false);
                     }}
@@ -116,8 +118,9 @@ export const NavBar = ({ children }: ISidebar) => {
                       selected={
                         window.location.pathname.split('/')[1] === element.url.split('/')[1]
                       }
+                      showRedDot={element.disabled}
                     >
-                      {element.name}
+                      <span>{element.name}</span>
                     </Style.NavbarButtonMobile>
                   </Link>
                 );
@@ -145,15 +148,16 @@ export const NavBar = ({ children }: ISidebar) => {
                 title={element.disabled ? 'Em breve' : ''}
                 onClick={() => {
                   if (element.disabled) {
-                    toast.success('Em breve', { toastId: 'soon' });
+                    toast.success('Em breve', { toastId: element.url });
                   }
                 }}
               >
                 <Style.NavbarButtonWeb
                   style={{ color: element.disabled ? theme.color.gray4 : theme.color.black }}
                   selected={window.location.pathname.split('/')[1] === element.url.split('/')[1]}
+                  showRedDot={element.disabled}
                 >
-                  {element.name}
+                  <span>{element.name}</span>
                 </Style.NavbarButtonWeb>
               </Link>
             );

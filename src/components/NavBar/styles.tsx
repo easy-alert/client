@@ -49,7 +49,7 @@ export const WebContent = styled.div`
   }
 `;
 
-export const NavbarButtonWeb = styled.header<{ selected: boolean }>`
+export const NavbarButtonWeb = styled.div<{ selected: boolean; showRedDot?: boolean }>`
   padding: ${theme.size.md} ${theme.size.sm};
   color: ${theme.color.black};
   font-weight: 500;
@@ -65,6 +65,29 @@ export const NavbarButtonWeb = styled.header<{ selected: boolean }>`
   :hover {
     background: #edededcc;
   }
+
+  > span {
+    position: relative;
+
+    ${({ showRedDot }) =>
+      showRedDot &&
+      css`
+        ::before {
+          content: '';
+          background-color: ${theme.color.primary};
+          border-radius: 50%;
+          top: 0px;
+          right: -8px;
+          width: 8px;
+          height: 8px;
+          position: absolute;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      `}
+  }
 `;
 
 export const HamburguerWrapper = styled.div`
@@ -78,7 +101,7 @@ export const HamburguerWrapper = styled.div`
   }
 `;
 
-export const NavbarButtonMobile = styled.header<{ selected: boolean }>`
+export const NavbarButtonMobile = styled.div<{ selected: boolean; showRedDot?: boolean }>`
   padding: ${theme.size.sm};
   color: ${theme.color.black};
   font-weight: 500;
@@ -92,6 +115,29 @@ export const NavbarButtonMobile = styled.header<{ selected: boolean }>`
 
   :hover {
     background: #ededed80;
+  }
+
+  > span {
+    position: relative;
+
+    ${({ showRedDot }) =>
+      showRedDot &&
+      css`
+        ::before {
+          content: '';
+          background-color: ${theme.color.primary};
+          border-radius: 50%;
+          top: 0px;
+          right: -8px;
+          width: 8px;
+          height: 8px;
+          position: absolute;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      `}
   }
 `;
 
