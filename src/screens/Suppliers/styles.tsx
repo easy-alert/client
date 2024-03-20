@@ -67,7 +67,7 @@ export const Container = styled.div`
 
 export const Wrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(325px, 1fr));
   margin-top: ${theme.size.sm};
   gap: ${theme.size.md};
 `;
@@ -112,6 +112,7 @@ export const CardContent = styled.div`
 
 export const CardFooter = styled.div`
   color: #3f3e3e;
+  margin-top: auto;
 `;
 
 export const ImageDiv = styled.div`

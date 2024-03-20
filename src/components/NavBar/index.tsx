@@ -47,10 +47,8 @@ export const NavBar = ({ children }: ISidebar) => {
 
     {
       name: 'Checklists',
-      // url: `/checklists/${buildingNanoId}${window.location.search}`,
-      url: `/soon2`,
+      url: `/checklists/${buildingNanoId}${window.location.search}`,
       restricted: true,
-      disabled: true,
     },
 
     {

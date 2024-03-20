@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { icon } from '../../assets/icons';
 import { Image } from '../../components/Image';
 import { Api } from '../../services/api';
-import { catchHandler } from '../../utils/functions';
+import { applyMask, catchHandler } from '../../utils/functions';
 import * as Style from './styles';
 import { DotSpinLoading } from '../../components/Loadings/DotSpinLoading';
 
@@ -81,7 +81,9 @@ export const Suppliers = () => {
 
               <Style.CardFooter>
                 <Style.Line />
-                <p className="p4">{supplier.phone || '-'}</p>
+                <p className="p4">
+                  {supplier.phone ? applyMask({ mask: 'TEL', value: supplier.phone }).value : '-'}
+                </p>
                 <p className="p4">{supplier.email || '-'}</p>
               </Style.CardFooter>
             </Style.Card>
