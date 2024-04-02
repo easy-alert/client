@@ -12,6 +12,7 @@ import {
   capitalizeFirstLetter,
   catchHandler,
   convertToFormikDate,
+  uploadManyFiles,
 } from '../../../utils/functions';
 import { FormikSelect } from '../../../components/Form/FormikSelect';
 import { Input } from '../../../components/Inputs/Input';
@@ -21,6 +22,10 @@ import { DotSpinLoading } from '../../../components/Loadings/DotSpinLoading';
 import { InputRadio } from '../../../components/Inputs/InputRadio';
 import { PopoverButton } from '../../../components/Buttons/PopoverButton';
 import { theme } from '../../../styles/theme';
+import { DragAndDropFiles } from '../../../components/DragAndDropFiles';
+import { ImagePreview } from '../../../components/ImagePreview';
+import { DotLoading } from '../../../components/Loadings/DotLoading';
+import { Row, FileAndImageRow, ImageLoadingTag } from '../ModalChecklistDetails/styles';
 
 interface IModalUpdateChecklist {
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -93,6 +98,12 @@ export const ModalUpdateChecklist = ({
     frequencyTimeInterval: { id: '' },
   });
   const [loading, setLoading] = useState<boolean>(true);
+  const [onImageQuery, setOnImageQuery] = useState<boolean>(false);
+  const [imagesToUploadCount, setImagesToUploadCount] = useState<number>(0);
+
+  const [checklistDetailImages, setChecklistDetailImages] = useState<
+    { url: string; name: string }[]
+  >([]);
 
   const listSyndics = async (buildingNanoId: string) => {
     // rota diferente pro company,essa já existia
@@ -109,6 +120,7 @@ export const ModalUpdateChecklist = ({
     await Api.get(`/checklists/${checklistId}`)
       .then(async (res) => {
         setChecklist(res.data.checklist);
+        setChecklistDetailImages(res.data.checklist.detailImages);
         await listSyndics(res.data.checklist.building.nanoId);
       })
       .catch((err) => {
@@ -175,6 +187,7 @@ export const ModalUpdateChecklist = ({
                 ...values,
                 frequency: values.frequency ? Number(values.frequency) : null,
                 mode: updateMode,
+                detailImages: checklistDetailImages,
               })
                 .then((res) => {
                   onThenRequest();
@@ -230,6 +243,61 @@ export const ModalUpdateChecklist = ({
                   error={touched.description && (errors.description || null)}
                 />
 
+                <Row>
+                  <h6>Imagens da checklist</h6>
+                  <FileAndImageRow>
+                    <DragAndDropFiles
+                      disabled={onImageQuery}
+                      width="132px"
+                      height="136px"
+                      onlyImages
+                      getAcceptedFiles={async ({ acceptedFiles }) => {
+                        setImagesToUploadCount(acceptedFiles.length);
+                        setOnImageQuery(true);
+                        const uploadedFiles = await uploadManyFiles(acceptedFiles);
+                        setOnImageQuery(false);
+                        setImagesToUploadCount(0);
+
+                        const formattedUploadedFiles = uploadedFiles.map(
+                          ({ Location, originalname }) => ({
+                            name: originalname,
+                            url: Location,
+                          }),
+                        );
+
+                        setChecklistDetailImages((prev) => [...prev, ...formattedUploadedFiles]);
+                      }}
+                    />
+                    {checklistDetailImages.length > 0 &&
+                      checklistDetailImages.map(
+                        (image: { name: string; url: string }, index: number) => (
+                          <ImagePreview
+                            key={image.url}
+                            src={image.url}
+                            downloadUrl={image.url}
+                            imageCustomName={image.name}
+                            width="132px"
+                            height="136px"
+                            onTrashClick={() => {
+                              setChecklistDetailImages((prev) => {
+                                const newState = [...prev];
+                                newState.splice(index, 1);
+                                return newState;
+                              });
+                            }}
+                          />
+                        ),
+                      )}
+
+                    {onImageQuery &&
+                      [...Array(imagesToUploadCount).keys()].map((e) => (
+                        <ImageLoadingTag key={e}>
+                          <DotLoading />
+                        </ImageLoadingTag>
+                      ))}
+                  </FileAndImageRow>
+                </Row>
+
                 <FormikInput
                   name="date"
                   label="Data *"
@@ -282,7 +350,7 @@ export const ModalUpdateChecklist = ({
                 <Style.ButtonDiv>
                   <PopoverButton
                     loading={onQuery}
-                    disabled={onQuery}
+                    disabled={onQuery || onImageQuery}
                     actionButtonBgColor={theme.color.actionDanger}
                     type="Button"
                     label="Salvar"

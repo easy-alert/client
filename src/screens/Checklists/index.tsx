@@ -107,7 +107,7 @@ export const Checklists = () => {
       <Style.Container>
         <Style.Header>
           <Style.HeaderLeftSide>
-            <h2>Checklists / {buildingName}</h2>
+            <h2>Checklists{buildingName ? ` / ${buildingName}` : ''}</h2>
           </Style.HeaderLeftSide>
           <IconButton
             disabled={loading}
