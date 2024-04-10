@@ -1,3 +1,3 @@
 export interface ITagsArray {
-  data: string[];
+  data?: string[];
 }

@@ -11,9 +11,43 @@ export const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: ${theme.size.xsm};
+  gap: ${theme.size.xxsm};
 
   @media (max-width: 900px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`;
+
+export const HeaderSide = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${theme.size.xsm};
+
+  @media (max-width: 600px) {
+    gap: ${theme.size.sm};
+  }
+
+  > label {
+    display: flex;
+    align-items: center;
+    gap: ${theme.size.xxsm};
+
+    cursor: pointer;
+    color: ${theme.color.gray4};
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 14px;
+  }
+`;
+
+export const HeaderWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${theme.size.xsm};
+  width: 100%;
+
+  @media (max-width: 600px) {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -32,7 +66,13 @@ export const Card = styled.div`
 
   display: flex;
   flex-direction: column;
-  gap: ${theme.size.sm};
+  gap: ${theme.size.xsm};
+
+  cursor: pointer;
+  transition: 0.1s;
+  :hover {
+    scale: 1.05;
+  }
 `;
 
 export const CardHeader = styled.div`
@@ -55,7 +95,7 @@ export const CardHeaderRightSide = styled.div`
 export const CardRow = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${theme.size.xsm};
+  gap: ${theme.size.xxsm};
 
   > p {
     font-weight: 500;
@@ -63,5 +103,32 @@ export const CardRow = styled.div`
 
   > :first-child {
     color: ${theme.color.gray4};
+  }
+`;
+
+export const FilterWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 0.6fr 0.6fr 0.8fr 71px;
+
+  align-items: flex-end;
+  gap: ${theme.size.xsm};
+  max-width: 70%;
+
+  > :last-child {
+    margin-left: ${theme.size.xsm};
+  }
+
+  @media (max-width: 900px) {
+    max-width: 100%;
+    grid-template-columns: 1fr;
+
+    background-color: ${theme.color.white};
+    padding: ${theme.size.sm};
+    border-radius: ${theme.size.xxsm};
+
+    > :last-child {
+      margin-left: auto;
+      margin-top: ${theme.size.xsm};
+    }
   }
 `;
