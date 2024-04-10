@@ -15,11 +15,13 @@ import { requestBuildingAccess, requestHomeInformations } from './functions';
 
 // TYPES
 import { IInformations } from './types';
+import { ModalCreateTicket } from '../Tickets/ModalCreateTicket';
 
 export const Home = () => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
   const [search] = useSearchParams();
   const syndicNanoId = search.get('syndicNanoId') ?? '';
+  const [modalCreateTicketOpen, setModalCreateTicketOpen] = useState(false);
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -40,78 +42,84 @@ export const Home = () => {
 
     if (!syndicNanoId) requestBuildingAccess(buildingNanoId);
   }, []);
-
   return (
-    <Style.Container>
-      <Style.Wrapper>
-        {loading ? <Skeleton height="24px" width="248px" /> : <h2>{informations.name}</h2>}
-        {informations.Banners.map(
-          (banner) =>
-            banner.type === 'Web' && (
-              <Style.WebBanner
-                redirectUrl={banner.redirectUrl}
-                key={banner.id}
-                src={banner.url}
-                alt="Web banner"
-                onClick={() => {
-                  if (banner.redirectUrl) {
-                    window.open(banner.redirectUrl, '_blank');
-                  }
-                }}
-              />
-            ),
-        )}
+    <>
+      {modalCreateTicketOpen && (
+        <ModalCreateTicket
+          setModal={setModalCreateTicketOpen}
+          buildingNanoId={buildingNanoId}
+          buildingName={informations.name}
+        />
+      )}
+      <Style.Container>
+        <Style.Wrapper>
+          {loading ? <Skeleton height="24px" width="248px" /> : <h2>{informations.name}</h2>}
+          {informations.Banners.map(
+            (banner) =>
+              banner.type === 'Web' && (
+                <Style.WebBanner
+                  redirectUrl={banner.redirectUrl}
+                  key={banner.id}
+                  src={banner.url}
+                  alt="Web banner"
+                  onClick={() => {
+                    if (banner.redirectUrl) {
+                      window.open(banner.redirectUrl, '_blank');
+                    }
+                  }}
+                />
+              ),
+          )}
 
-        {informations.Banners.map(
-          (banner) =>
-            banner.type === 'Mobile' && (
-              <Style.MobileBanner
-                key={banner.id}
-                src={banner.url}
-                alt="Mobile banner"
-                onClick={() => {
-                  if (banner.redirectUrl) {
-                    window.open(banner.redirectUrl, '_blank');
-                  }
-                }}
-              />
-            ),
-        )}
+          {informations.Banners.map(
+            (banner) =>
+              banner.type === 'Mobile' && (
+                <Style.MobileBanner
+                  key={banner.id}
+                  src={banner.url}
+                  alt="Mobile banner"
+                  onClick={() => {
+                    if (banner.redirectUrl) {
+                      window.open(banner.redirectUrl, '_blank');
+                    }
+                  }}
+                />
+              ),
+          )}
 
-        <Style.ButtonGrid hasSupportLink={!!informations.Company.supportLink}>
-          <Link to={`/maintenancesplan/${buildingNanoId}${window.location.search}`}>
-            <button type="button">Plano de manutenção</button>
-          </Link>
+          <Style.ButtonGrid hasSupportLink={!!informations.Company.supportLink}>
+            <Link to={`/maintenancesplan/${buildingNanoId}${window.location.search}`}>
+              <button type="button">Plano de manutenção</button>
+            </Link>
 
-          <Link to={`/informations/${buildingNanoId}${window.location.search}`}>
-            <button type="button">Informações</button>
-          </Link>
+            <Link to={`/informations/${buildingNanoId}${window.location.search}`}>
+              <button type="button">Informações</button>
+            </Link>
 
-          <Link to={`/annex/${buildingNanoId}${window.location.search}`}>
-            <button type="button">Anexos</button>
-          </Link>
+            <Link to={`/annex/${buildingNanoId}${window.location.search}`}>
+              <button type="button">Anexos</button>
+            </Link>
 
-          {informations.Company.supportLink && (
-            <a
-              className="supportLink"
-              href={informations.Company.supportLink}
-              target="_blank"
-              rel="noreferrer"
+            <button
+              type="button"
+              onClick={() => {
+                setModalCreateTicketOpen(true);
+              }}
             >
               Abrir chamado
-            </a>
-          )}
-        </Style.ButtonGrid>
-      </Style.Wrapper>
-      <Style.ImageDiv>
-        <img
-          src={icon.logoTextBlack}
-          alt=""
-          onClick={() => {
-            window.open('https://easyalert.com.br/', '_blank');
-          }}
-        />
-      </Style.ImageDiv>
-    </Style.Container>
+            </button>
+          </Style.ButtonGrid>
+        </Style.Wrapper>
+        <Style.ImageDiv>
+          <img
+            src={icon.logoTextBlack}
+            alt=""
+            onClick={() => {
+              window.open('https://easyalert.com.br/', '_blank');
+            }}
+          />
+        </Style.ImageDiv>
+      </Style.Container>
+    </>
   );
 };
