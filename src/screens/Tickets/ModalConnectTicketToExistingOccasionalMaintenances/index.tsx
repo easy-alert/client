@@ -186,7 +186,13 @@ export const ModalConnectTicketToExistingOccasionalMaintenances = ({
             )}
           </Scroll>
         </ModalSelectMethodContainer>
-        <Button label="Concluir" center onClick={answerTickets} loading={onQuery} />
+        <Button
+          label="Concluir"
+          center
+          onClick={answerTickets}
+          loading={onQuery}
+          disable={!selectedMaintenanceHistoryId}
+        />
       </>
     </Modal>
   );
