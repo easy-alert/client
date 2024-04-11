@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import {
   ICategories,
   IRequestAuxiliaryDataForCreateOccasionalMaintenance,
-  IRequestCreateOccasionalMaintenance
+  IRequestCreateOccasionalMaintenance,
 } from './types';
 import { catchHandler, unMaskBRL } from '../../../utils/functions';
 import { Api } from '../../../services/api';
@@ -15,7 +15,8 @@ export const requestCreateOccasionalMaintenance = async ({
   onThenRequest,
   data: { buildingId, executionDate, maintenanceData, categoryData, reportData, inProgress },
   syndicNanoId,
-  ticketIds
+  ticketIds,
+  resetSelectedTickets,
 }: IRequestCreateOccasionalMaintenance) => {
   if (!buildingId) return toast.error('Edificação não informada.');
   if (!categoryData) return toast.error('Categoria não informada.');
@@ -34,23 +35,25 @@ export const requestCreateOccasionalMaintenance = async ({
     responsibleSyndicId: syndicNanoId,
     executionDate: new Date(new Date(executionDate).setUTCHours(3, 0, 0, 0)) || null,
     categoryData: {
-      name: categoryData.name || null
+      name: categoryData.name || null,
     },
     maintenanceData: {
       ...maintenanceData,
       element: maintenanceData.element || null,
       activity: maintenanceData.activity || null,
-      responsible: maintenanceData.responsible || null
+      responsible: maintenanceData.responsible || null,
     },
     inProgress,
     reportData: {
       cost: unMaskBRL(reportData.cost) || null,
       observation: reportData.observation || null,
       files: reportData.files || null,
-      images: reportData.images || null
-    }
+      images: reportData.images || null,
+    },
+    ticketIds,
   })
     .then((res) => {
+      resetSelectedTickets();
       setOnQuery(false);
 
       onThenRequest();
@@ -69,7 +72,7 @@ export const requestCreateOccasionalMaintenance = async ({
 export const requestAuxiliaryDataForCreateOccasionalMaintenance = async ({
   setAuxiliaryData,
   setLoading,
-  buildingNanoId
+  buildingNanoId,
 }: IRequestAuxiliaryDataForCreateOccasionalMaintenance) => {
   await Api.get(`/buildings/maintenances/occasional/auxiliarydata/${buildingNanoId}`)
 
@@ -86,7 +89,7 @@ export const requestAuxiliaryDataForCreateOccasionalMaintenance = async ({
 
 export const findCategoryById = ({
   id,
-  categoriesData
+  categoriesData,
 }: {
   id: string;
   categoriesData: ICategories[];

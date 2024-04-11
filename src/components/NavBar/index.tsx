@@ -35,7 +35,7 @@ export const NavBar = ({ children }: ISidebar) => {
     {
       name: 'Chamados',
       url: `/tickets/${buildingNanoId}${window.location.search}`,
-      restricted: true,
+      restricted: false,
     },
 
     {

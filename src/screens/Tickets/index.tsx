@@ -1,6 +1,6 @@
 /* eslint-disable import/no-cycle */
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as Style from './styles';
 import { catchHandler, dateFormatter } from '../../utils/functions';
@@ -20,6 +20,7 @@ import { Input } from '../../components/Inputs/Input';
 import { Pagination } from '../../components/Pagination';
 import { ModalChooseAnswerType } from './ModalChooseAnswerType';
 import { ModalCreateOccasionalMaintenanceForTicket } from './ModalCreateOccasionalMaintenanceForTicket';
+import { ModalConnectTicketToExistingOccasionalMaintenances } from './ModalConnectTicketToExistingOccasionalMaintenances';
 
 interface IImage {
   id: string;
@@ -89,10 +90,17 @@ export const Tickets = () => {
   const [modalChooseAnswerType, setModalChooseAnswerType] = useState<boolean>(false);
   const [modalCreateOccasionalMaintenanceForTicket, setModalCreateOccasionalMaintenanceForTicket] =
     useState<boolean>(false);
+  const [
+    modalConnectTicketToExistingOccasionalMaintenances,
+    setModalConnectTicketToExistingOccasionalMaintenances,
+  ] = useState<boolean>(false);
 
   const [count, setCount] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const take = 12;
+
+  const [search] = useSearchParams();
+  const syndicNanoId = search.get('syndicNanoId') ?? '';
 
   const findManyTickets = async (pageParam?: number) => {
     setOnQuery(true);
@@ -100,7 +108,7 @@ export const Tickets = () => {
     await Api.get(
       `/tickets/buildings/${buildingNanoId}?statusName=${statusName}&initialCreatedAt=${initialCreatedAt}&finalCreatedAt=${finalCreatedAt}&page=${
         pageParam || page
-      }&take=${take}`
+      }&take=${take}`,
     )
       .then((res) => {
         setTickets(res.data.tickets);
@@ -121,6 +129,10 @@ export const Tickets = () => {
     findManyTickets();
   }, []);
 
+  const resetSelectedTickets = () => {
+    setTicketsToAnswer([]);
+  };
+
   const ticketsToAnswerString = `Chamados selecionados: ${ticketsToAnswer
     .map(({ ticketNumber }) => `#${ticketNumber}`)
     .join(', ')}`;
@@ -136,7 +148,9 @@ export const Tickets = () => {
         <ModalChooseAnswerType
           setModal={setModalChooseAnswerType}
           setModalCreateOccasionalMaintenance={setModalCreateOccasionalMaintenanceForTicket}
-          setModalSelectOccasionalMaintenance={setModalChooseAnswerType}
+          setModalSelectOccasionalMaintenance={
+            setModalConnectTicketToExistingOccasionalMaintenances
+          }
           ticketsToAnswer={ticketsToAnswerString}
         />
       )}
@@ -146,6 +160,16 @@ export const Tickets = () => {
           onThenRequest={findManyTickets}
           ticketsToAnswer={ticketsToAnswerString}
           ticketIds={ticketIds}
+          resetSelectedTickets={resetSelectedTickets}
+        />
+      )}
+      {modalConnectTicketToExistingOccasionalMaintenances && (
+        <ModalConnectTicketToExistingOccasionalMaintenances
+          setModal={setModalConnectTicketToExistingOccasionalMaintenances}
+          ticketsToAnswer={ticketsToAnswerString}
+          ticketIds={ticketIds}
+          resetSelectedTickets={resetSelectedTickets}
+          onThenRequest={findManyTickets}
         />
       )}
       <Style.Container>
@@ -165,17 +189,19 @@ export const Tickets = () => {
             </Style.HeaderSide>
           </Style.HeaderWrapper>
 
-          <IconButton
-            icon={icon.siren}
-            label="Responder chamados"
-            onClick={() => {
-              if (ticketsToAnswer.length === 0) {
-                toast.error('Selecione pelo menos um chamado.');
-                return;
-              }
-              setModalChooseAnswerType(true);
-            }}
-          />
+          {syndicNanoId && (
+            <IconButton
+              icon={icon.siren}
+              label="Responder chamados"
+              onClick={() => {
+                if (ticketsToAnswer.length === 0) {
+                  toast.error('Selecione pelo menos um chamado.');
+                  return;
+                }
+                setModalChooseAnswerType(true);
+              }}
+            />
+          )}
         </Style.Header>
         {showFilter && (
           <Style.FilterWrapper>
@@ -228,7 +254,7 @@ export const Tickets = () => {
 
             {ticketsToAnswer.map(
               ({ ticketNumber }, i) =>
-                `#${ticketNumber}${i === ticketsToAnswer.length - 1 ? '' : ', '}`
+                `#${ticketNumber}${i === ticketsToAnswer.length - 1 ? '' : ', '}`,
             )}
           </Style.SelectedTickets>
         )}
@@ -262,7 +288,7 @@ export const Tickets = () => {
                       padding="2px 4px"
                       fontSize="12px"
                     />
-                    {status.name === 'open' && (
+                    {syndicNanoId && status.name === 'open' && (
                       <InputCheckbox
                         size="18px"
                         checked={ticketsToAnswer.some((e) => e.id === id)}
@@ -273,8 +299,9 @@ export const Tickets = () => {
                           } else {
                             setTicketsToAnswer((prev) =>
                               prev.filter(
-                                (ticket) => ticket.id !== id || ticket.ticketNumber !== ticketNumber
-                              )
+                                (ticket) =>
+                                  ticket.id !== id || ticket.ticketNumber !== ticketNumber,
+                              ),
                             );
                           }
                         }}

@@ -25,7 +25,7 @@ import { IAuxiliaryData, ICreateOccasionalMaintenanceData } from './types';
 import {
   findCategoryById,
   requestAuxiliaryDataForCreateOccasionalMaintenance,
-  requestCreateOccasionalMaintenance
+  requestCreateOccasionalMaintenance,
 } from './functions';
 
 import { applyMask, uploadManyFiles } from '../../../utils/functions';
@@ -36,13 +36,15 @@ interface IModalCreateOccasionalMaintenanceForTicket {
   ticketsToAnswer: string;
   ticketIds: string[];
   onThenRequest: () => Promise<void>;
+  resetSelectedTickets: () => void;
 }
 
 export const ModalCreateOccasionalMaintenanceForTicket = ({
   setModal,
   onThenRequest,
   ticketsToAnswer,
-  ticketIds
+  ticketIds,
+  resetSelectedTickets,
 }: IModalCreateOccasionalMaintenanceForTicket) => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
 
@@ -55,25 +57,25 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
   const [onImageQuery, setOnImageQuery] = useState<boolean>(false);
 
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
-    disabled: onFileQuery
+    disabled: onFileQuery,
   });
 
   const {
     acceptedFiles: acceptedImages,
     getRootProps: getRootPropsImages,
-    getInputProps: getInputPropsImages
+    getInputProps: getInputPropsImages,
   } = useDropzone({
     accept: {
       'image/png': ['.png'],
       'image/jpg': ['.jpg'],
-      'image/jpeg': ['.jpeg']
+      'image/jpeg': ['.jpeg'],
     },
-    disabled: onImageQuery
+    disabled: onImageQuery,
   });
 
   const [auxiliaryData, setAuxiliaryData] = useState<IAuxiliaryData>({
     Buildings: [],
-    Categories: []
+    Categories: [],
   });
 
   const [data, setData] = useState<ICreateOccasionalMaintenanceData>({
@@ -82,7 +84,7 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
 
     categoryData: {
       id: '',
-      name: ''
+      name: '',
     },
 
     inProgress: false,
@@ -90,21 +92,21 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
     maintenanceData: {
       element: '',
       activity: '',
-      responsible: ''
+      responsible: '',
     },
     reportData: {
       cost: 'R$ 0,00',
       observation: '',
       files: [],
-      images: []
-    }
+      images: [],
+    },
   });
 
   useEffect(() => {
     requestAuxiliaryDataForCreateOccasionalMaintenance({
       setAuxiliaryData,
       setLoading,
-      buildingNanoId
+      buildingNanoId,
     });
   }, []);
 
@@ -118,15 +120,15 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
         const formattedFiles = uploadedFiles.map((file) => ({
           name: file.originalname,
           originalName: file.originalname,
-          url: file.Location
+          url: file.Location,
         }));
 
         setData((prevState) => ({
           ...prevState,
           reportData: {
             ...prevState.reportData,
-            files: [...prevState.reportData.files, ...formattedFiles]
-          }
+            files: [...prevState.reportData.files, ...formattedFiles],
+          },
         }));
         setOnFileQuery(false);
       };
@@ -145,15 +147,15 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
         const formattedImages = uploadedImages.map((file) => ({
           name: file.originalname,
           originalName: file.originalname,
-          url: file.Location
+          url: file.Location,
         }));
 
         setData((prevState) => ({
           ...prevState,
           reportData: {
             ...prevState.reportData,
-            images: [...prevState.reportData.images, ...formattedImages]
-          }
+            images: [...prevState.reportData.images, ...formattedImages],
+          },
         }));
 
         setOnImageQuery(false);
@@ -184,8 +186,8 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
                     id: value,
                     name:
                       findCategoryById({ id: value, categoriesData: auxiliaryData.Categories })
-                        ?.name ?? ''
-                  }
+                        ?.name ?? '',
+                  },
                   // maintenanceData: {
                   //   activity: '',
                   //   element: '',
@@ -195,8 +197,8 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
               createLabel: 'Criar categoria',
               options: auxiliaryData.Categories.map((category) => ({
                 value: category.id,
-                label: category.name
-              }))
+                label: category.name,
+              })),
             }}
             input={{
               placeholder: 'Digite o nome da categoria',
@@ -205,22 +207,22 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
                   ...prevState,
                   categoryData: {
                     ...prevState.categoryData,
-                    name: value
-                  }
+                    name: value,
+                  },
                 })),
               onXClick: () =>
                 setData((prevState) => ({
                   ...prevState,
                   categoryData: {
                     id: '',
-                    name: ''
-                  }
+                    name: '',
+                  },
                   // maintenanceData: {
                   //   activity: '',
                   //   element: '',
                   //   responsible: '',
                   // },
-                }))
+                })),
             }}
           />
 
@@ -285,7 +287,7 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
             onChange={(evt) =>
               setData((prevState) => ({
                 ...prevState,
-                maintenanceData: { ...prevState.maintenanceData, element: evt.target.value }
+                maintenanceData: { ...prevState.maintenanceData, element: evt.target.value },
               }))
             }
           />
@@ -297,7 +299,7 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
             onChange={(evt) =>
               setData((prevState) => ({
                 ...prevState,
-                maintenanceData: { ...prevState.maintenanceData, activity: evt.target.value }
+                maintenanceData: { ...prevState.maintenanceData, activity: evt.target.value },
               }))
             }
           />
@@ -309,7 +311,7 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
             onChange={(evt) =>
               setData((prevState) => ({
                 ...prevState,
-                maintenanceData: { ...prevState.maintenanceData, responsible: evt.target.value }
+                maintenanceData: { ...prevState.maintenanceData, responsible: evt.target.value },
               }))
             }
           />
@@ -321,7 +323,7 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
             onChange={(evt) =>
               setData((prevState) => ({
                 ...prevState,
-                executionDate: evt.target.value
+                executionDate: evt.target.value,
               }))
             }
           />
@@ -353,8 +355,8 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
                     reportData: {
                       ...prevState.reportData,
 
-                      cost: applyMask({ mask: 'BRL', value: evt.target.value }).value
-                    }
+                      cost: applyMask({ mask: 'BRL', value: evt.target.value }).value,
+                    },
                   }));
                 }}
               />
@@ -369,8 +371,8 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
                     ...prevState,
                     reportData: {
                       ...prevState.reportData,
-                      observation: evt.target.value
-                    }
+                      observation: evt.target.value,
+                    },
                   }));
                 }}
               />
@@ -399,9 +401,9 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
                                 reportData: {
                                   ...prevState.reportData,
                                   files: prevState.reportData.files.filter(
-                                    (_, index) => index !== i
-                                  )
-                                }
+                                    (_, index) => index !== i,
+                                  ),
+                                },
                               }));
                             }}
                           />
@@ -441,8 +443,8 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
                           ...prevState,
                           reportData: {
                             ...prevState.reportData,
-                            images: prevState.reportData.images.filter((_, index) => index !== i)
-                          }
+                            images: prevState.reportData.images.filter((_, index) => index !== i),
+                          },
                         }));
                       }}
                     />
@@ -472,7 +474,8 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
                   setOnQuery,
                   origin: 'Client',
                   syndicNanoId,
-                  ticketIds
+                  ticketIds,
+                  resetSelectedTickets,
                 })
               }
             />

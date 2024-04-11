@@ -62,6 +62,7 @@ export interface IRequestCreateOccasionalMaintenance {
   onThenRequest: () => Promise<void>;
   syndicNanoId: string;
   ticketIds: string[];
+  resetSelectedTickets: () => void;
 }
 
 export interface IModalCreateOccasionalMaintenanceInstructions {
