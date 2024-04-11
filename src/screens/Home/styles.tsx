@@ -71,10 +71,9 @@ export const MobileBanner = styled.img`
   }
 `;
 
-export const ButtonGrid = styled.div<{ hasSupportLink: boolean }>`
+export const ButtonGrid = styled.div`
   display: grid;
-  grid-template-columns: ${({ hasSupportLink }) =>
-    hasSupportLink ? '1fr 1fr 1fr 1fr;' : '1fr 1fr 1fr;'};
+  grid-template-columns: 1fr 1fr 1fr 1fr;
 
   gap: ${theme.size.sm};
 

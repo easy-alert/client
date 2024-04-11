@@ -87,7 +87,7 @@ export const Home = () => {
               ),
           )}
 
-          <Style.ButtonGrid hasSupportLink={!!informations.Company.supportLink}>
+          <Style.ButtonGrid>
             <Link to={`/maintenancesplan/${buildingNanoId}${window.location.search}`}>
               <button type="button">Plano de manutenção</button>
             </Link>
