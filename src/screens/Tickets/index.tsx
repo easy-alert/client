@@ -18,6 +18,8 @@ import { Select } from '../../components/Inputs/Select';
 import { ModalTicketDetails } from './ModalTicketDetails';
 import { Input } from '../../components/Inputs/Input';
 import { Pagination } from '../../components/Pagination';
+import { ModalChooseAnswerType } from './ModalChooseAnswerType';
+import { ModalCreateOccasionalMaintenanceForTicket } from './ModalCreateOccasionalMaintenanceForTicket';
 
 interface IImage {
   id: string;
@@ -84,6 +86,10 @@ export const Tickets = () => {
   const [statusName, setStatusName] = useState<string>('');
   const [ticketsToAnswer, setTicketsToAnswer] = useState<ITicketsToAnswer[]>([]);
 
+  const [modalChooseAnswerType, setModalChooseAnswerType] = useState<boolean>(false);
+  const [modalCreateOccasionalMaintenanceForTicket, setModalCreateOccasionalMaintenanceForTicket] =
+    useState<boolean>(false);
+
   const [count, setCount] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const take = 12;
@@ -94,7 +100,7 @@ export const Tickets = () => {
     await Api.get(
       `/tickets/buildings/${buildingNanoId}?statusName=${statusName}&initialCreatedAt=${initialCreatedAt}&finalCreatedAt=${finalCreatedAt}&page=${
         pageParam || page
-      }&take=${take}`,
+      }&take=${take}`
     )
       .then((res) => {
         setTickets(res.data.tickets);
@@ -115,10 +121,32 @@ export const Tickets = () => {
     findManyTickets();
   }, []);
 
+  const ticketsToAnswerString = `Chamados selecionados: ${ticketsToAnswer
+    .map(({ ticketNumber }) => `#${ticketNumber}`)
+    .join(', ')}`;
+
+  const ticketIds = ticketsToAnswer.map(({ id }) => id);
+
   return (
     <Style.PaginationContainer>
       {modalTicketDetailsOpen && (
         <ModalTicketDetails setModal={setModalTicketDetailsOpen} ticketId={selectedTicketId} />
+      )}
+      {modalChooseAnswerType && (
+        <ModalChooseAnswerType
+          setModal={setModalChooseAnswerType}
+          setModalCreateOccasionalMaintenance={setModalCreateOccasionalMaintenanceForTicket}
+          setModalSelectOccasionalMaintenance={setModalChooseAnswerType}
+          ticketsToAnswer={ticketsToAnswerString}
+        />
+      )}
+      {modalCreateOccasionalMaintenanceForTicket && (
+        <ModalCreateOccasionalMaintenanceForTicket
+          setModal={setModalCreateOccasionalMaintenanceForTicket}
+          onThenRequest={findManyTickets}
+          ticketsToAnswer={ticketsToAnswerString}
+          ticketIds={ticketIds}
+        />
       )}
       <Style.Container>
         <Style.Header>
@@ -145,8 +173,7 @@ export const Tickets = () => {
                 toast.error('Selecione pelo menos um chamado.');
                 return;
               }
-              // eslint-disable-next-line no-console
-              console.log('aa');
+              setModalChooseAnswerType(true);
             }}
           />
         </Style.Header>
@@ -201,7 +228,7 @@ export const Tickets = () => {
 
             {ticketsToAnswer.map(
               ({ ticketNumber }, i) =>
-                `#${ticketNumber}${i === ticketsToAnswer.length - 1 ? '' : ', '}`,
+                `#${ticketNumber}${i === ticketsToAnswer.length - 1 ? '' : ', '}`
             )}
           </Style.SelectedTickets>
         )}
@@ -235,22 +262,24 @@ export const Tickets = () => {
                       padding="2px 4px"
                       fontSize="12px"
                     />
-                    <InputCheckbox
-                      size="18px"
-                      checked={ticketsToAnswer.some((e) => e.id === id)}
-                      onChange={(evt) => {
-                        const isChecked = evt.target.checked;
-                        if (isChecked) {
-                          setTicketsToAnswer((prev) => [...prev, { id, ticketNumber }]);
-                        } else {
-                          setTicketsToAnswer((prev) =>
-                            prev.filter(
-                              (ticket) => ticket.id !== id || ticket.ticketNumber !== ticketNumber,
-                            ),
-                          );
-                        }
-                      }}
-                    />
+                    {status.name === 'open' && (
+                      <InputCheckbox
+                        size="18px"
+                        checked={ticketsToAnswer.some((e) => e.id === id)}
+                        onChange={(evt) => {
+                          const isChecked = evt.target.checked;
+                          if (isChecked) {
+                            setTicketsToAnswer((prev) => [...prev, { id, ticketNumber }]);
+                          } else {
+                            setTicketsToAnswer((prev) =>
+                              prev.filter(
+                                (ticket) => ticket.id !== id || ticket.ticketNumber !== ticketNumber
+                              )
+                            );
+                          }
+                        }}
+                      />
+                    )}
                   </Style.CardHeaderRightSide>
                 </Style.CardHeader>
 
