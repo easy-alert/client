@@ -166,7 +166,7 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
   }, [acceptedImages]);
 
   return (
-    <Modal title="Manutenção avulsa" setModal={setModal}>
+    <Modal title="Nova manutenção para chamados" setModal={setModal}>
       {loading ? (
         <Style.OnQueryContainer>
           <DotSpinLoading />

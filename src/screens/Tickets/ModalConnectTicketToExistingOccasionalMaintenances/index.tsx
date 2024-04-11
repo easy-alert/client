@@ -122,7 +122,7 @@ export const ModalConnectTicketToExistingOccasionalMaintenances = ({
   }, []);
 
   return (
-    <Modal setModal={setModal} title="Selecionar manutenções">
+    <Modal setModal={setModal} title="Selecionar manutenções para chamados">
       <>
         <ModalSelectMethodContainer>
           <Text>
@@ -178,7 +178,6 @@ export const ModalConnectTicketToExistingOccasionalMaintenances = ({
               ))
             ) : (
               <NoDataDayWrapper>
-                <DayInfo />
                 <NoMaintenanceCard>
                   <h6>Nenhuma manutenção encontrada</h6>
                 </NoMaintenanceCard>
