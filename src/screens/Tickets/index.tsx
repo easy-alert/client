@@ -1,6 +1,7 @@
 /* eslint-disable import/no-cycle */
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import * as Style from './styles';
 import { catchHandler, dateFormatter } from '../../utils/functions';
 import { Api } from '../../services/api';
@@ -16,6 +17,7 @@ import { Button } from '../../components/Buttons/Button';
 import { Select } from '../../components/Inputs/Select';
 import { ModalTicketDetails } from './ModalTicketDetails';
 import { Input } from '../../components/Inputs/Input';
+import { Pagination } from '../../components/Pagination';
 
 interface IImage {
   id: string;
@@ -62,6 +64,11 @@ interface IStatusOptions {
   label: string;
 }
 
+interface ITicketsToAnswer {
+  id: string;
+  ticketNumber: number;
+}
+
 export const Tickets = () => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
   const [loading, setLoading] = useState<boolean>(true);
@@ -75,15 +82,23 @@ export const Tickets = () => {
   const [initialCreatedAt, setInitialCreatedAt] = useState<string>('');
   const [finalCreatedAt, setFinalCreatedAt] = useState<string>('');
   const [statusName, setStatusName] = useState<string>('');
+  const [ticketsToAnswer, setTicketsToAnswer] = useState<ITicketsToAnswer[]>([]);
 
-  const findManyTickets = async () => {
+  const [count, setCount] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
+  const take = 12;
+
+  const findManyTickets = async (pageParam?: number) => {
     setOnQuery(true);
 
     await Api.get(
-      `/tickets/buildings/${buildingNanoId}?statusName=${statusName}&initialCreatedAt=${initialCreatedAt}&finalCreatedAt=${finalCreatedAt}`,
+      `/tickets/buildings/${buildingNanoId}?statusName=${statusName}&initialCreatedAt=${initialCreatedAt}&finalCreatedAt=${finalCreatedAt}&page=${
+        pageParam || page
+      }&take=${take}`,
     )
       .then((res) => {
         setTickets(res.data.tickets);
+        setCount(res.data.ticketsCount);
         setBuildingName(res.data.buildingName);
         setStatusOptions(res.data.status);
       })
@@ -101,7 +116,7 @@ export const Tickets = () => {
   }, []);
 
   return (
-    <>
+    <Style.PaginationContainer>
       {modalTicketDetailsOpen && (
         <ModalTicketDetails setModal={setModalTicketDetailsOpen} ticketId={selectedTicketId} />
       )}
@@ -126,7 +141,12 @@ export const Tickets = () => {
             icon={icon.siren}
             label="Responder chamados"
             onClick={() => {
-              //
+              if (ticketsToAnswer.length === 0) {
+                toast.error('Selecione pelo menos um chamado.');
+                return;
+              }
+              // eslint-disable-next-line no-console
+              console.log('aa');
             }}
           />
         </Style.Header>
@@ -163,8 +183,27 @@ export const Tickets = () => {
                 </option>
               ))}
             </Select>
-            <Button type="button" label="Filtrar" disable={onQuery} onClick={findManyTickets} />
+            <Button
+              type="button"
+              label="Filtrar"
+              disable={onQuery}
+              onClick={() => {
+                setPage(1);
+                findManyTickets(1);
+              }}
+            />
           </Style.FilterWrapper>
+        )}
+
+        {ticketsToAnswer.length > 0 && (
+          <Style.SelectedTickets>
+            <h5>Chamados selecionados:</h5>
+
+            {ticketsToAnswer.map(
+              ({ ticketNumber }, i) =>
+                `#${ticketNumber}${i === ticketsToAnswer.length - 1 ? '' : ', '}`,
+            )}
+          </Style.SelectedTickets>
         )}
 
         <Style.Wrapper>
@@ -196,7 +235,22 @@ export const Tickets = () => {
                       padding="2px 4px"
                       fontSize="12px"
                     />
-                    <InputCheckbox size="18px" />
+                    <InputCheckbox
+                      size="18px"
+                      checked={ticketsToAnswer.some((e) => e.id === id)}
+                      onChange={(evt) => {
+                        const isChecked = evt.target.checked;
+                        if (isChecked) {
+                          setTicketsToAnswer((prev) => [...prev, { id, ticketNumber }]);
+                        } else {
+                          setTicketsToAnswer((prev) =>
+                            prev.filter(
+                              (ticket) => ticket.id !== id || ticket.ticketNumber !== ticketNumber,
+                            ),
+                          );
+                        }
+                      }}
+                    />
                   </Style.CardHeaderRightSide>
                 </Style.CardHeader>
 
@@ -231,9 +285,20 @@ export const Tickets = () => {
         </Style.Wrapper>
 
         {!loading && tickets.length === 0 && (
-          <NoDataFound label="Nehum chamado cadastrado" height="70dvh" />
+          <NoDataFound label="Nehum chamado encontrado" height="70dvh" />
         )}
       </Style.Container>
-    </>
+      <Style.PaginationFooter>
+        <Pagination
+          totalCountOfRegister={count}
+          currentPage={page}
+          registerPerPage={take}
+          onPageChange={(pageParam) => {
+            setPage(pageParam);
+            findManyTickets(pageParam);
+          }}
+        />
+      </Style.PaginationFooter>
+    </Style.PaginationContainer>
   );
 };

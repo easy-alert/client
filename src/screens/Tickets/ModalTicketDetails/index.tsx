@@ -110,6 +110,11 @@ export const ModalTicketDetails = ({ setModal, ticketId }: IModalTicketDetails) 
             </Style.Row>
 
             <Style.Row>
+              <h6>E-mail do morador</h6>
+              <p className="p2">{ticket?.residentEmail || '-'}</p>
+            </Style.Row>
+
+            <Style.Row>
               <h6>Local da ocorrência</h6>
               <ListTag
                 label={ticket?.place.label || '-'}

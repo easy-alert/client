@@ -132,3 +132,26 @@ export const FilterWrapper = styled.div`
     }
   }
 `;
+
+export const SelectedTickets = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: ${theme.color.primary};
+  font-weight: 500;
+`;
+
+export const PaginationFooter = styled.footer`
+  margin-top: 8px;
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  justify-content: flex-end;
+`;
+
+export const PaginationContainer = styled.div`
+  min-height: calc(100vh - 110px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
