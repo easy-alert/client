@@ -27,18 +27,6 @@ export const HeaderSide = styled.div`
   @media (max-width: 600px) {
     gap: ${theme.size.sm};
   }
-
-  > label {
-    display: flex;
-    align-items: center;
-    gap: ${theme.size.xxsm};
-
-    cursor: pointer;
-    color: ${theme.color.gray4};
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 14px;
-  }
 `;
 
 export const HeaderWrapper = styled.div`
