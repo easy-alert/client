@@ -43,15 +43,6 @@ export const SearchField = styled.div`
   }
 `;
 
-export const PaginationFooter = styled.footer`
-  margin-top: 8px;
-  padding-right: 16px;
-  width: 100%;
-  height: fit-content;
-  display: flex;
-  justify-content: flex-end;
-`;
-
 export const Container = styled.div`
   display: flex;
   align-items: center;

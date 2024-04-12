@@ -26,7 +26,7 @@ export const NavBar = ({ children }: ISidebar) => {
 
   const [companyLogo, setCompanyLogo] = useState<string | null>(null);
 
-  const SidebarContent: SidebarContentProps[] = [
+  const sidebarContent: SidebarContentProps[] = [
     {
       name: 'QRCode',
       url: `/home/${buildingNanoId}${window.location.search}`,
@@ -34,9 +34,8 @@ export const NavBar = ({ children }: ISidebar) => {
     },
     {
       name: 'Chamados',
-      url: `/soon`,
+      url: `/tickets/${buildingNanoId}${window.location.search}`,
       restricted: false,
-      disabled: true,
     },
 
     {
@@ -91,7 +90,7 @@ export const NavBar = ({ children }: ISidebar) => {
           />
           {showNavbarMenu && (
             <Style.MobileContent>
-              {SidebarContent.map((element) => {
+              {sidebarContent.map((element) => {
                 if (!syndicNanoId && element.restricted) {
                   return null;
                 }
@@ -132,7 +131,7 @@ export const NavBar = ({ children }: ISidebar) => {
         </Style.CompanyLogo>
 
         <Style.WebContent>
-          {SidebarContent.map((element) => {
+          {sidebarContent.map((element) => {
             if (!syndicNanoId && element.restricted) {
               return null;
             }
