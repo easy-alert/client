@@ -26,11 +26,6 @@ export interface ICalendarDates {
   completed: { date: string }[];
 }
 
-export interface IBuildingOptions {
-  name: string;
-  nanoId: string;
-}
-
 export const Checklists = () => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
   const [date, setDate] = useState(new Date());

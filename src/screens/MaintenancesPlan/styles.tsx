@@ -96,10 +96,19 @@ export const MonthSection = styled.div`
   gap: ${theme.size.xsm};
 `;
 
-export const DayWrapper = styled.div`
+export const DayWrapper = styled.div<{ reduceOpacity?: boolean }>`
   display: flex;
   align-items: center;
   transition: 0.25s;
+
+  ${({ reduceOpacity }) =>
+    reduceOpacity &&
+    css`
+      opacity: 0.3;
+      :hover {
+        opacity: 0.3 !important;
+      }
+    `}
 
   :hover {
     opacity: 0.7;
@@ -113,12 +122,12 @@ export const NoDataDayWrapper = styled.div`
   transition: 0.25s;
 `;
 
-export const DayInfo = styled.div`
+export const DayInfo = styled.div<{ width?: string }>`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: ${theme.size.xxsm};
-  width: 45px;
+  width: ${({ width }) => width || '45px'};
 
   > p {
     color: ${theme.color.gray4};

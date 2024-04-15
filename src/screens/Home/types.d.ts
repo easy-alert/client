@@ -10,6 +10,7 @@ export interface IInformations {
 
   Company: {
     supportLink: string;
+    canAccessTickets: boolean;
   };
 
   name: string;

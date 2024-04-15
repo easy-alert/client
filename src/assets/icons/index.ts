@@ -59,6 +59,7 @@ import prestadoresDeServicos from './prestadoresDeServicos.svg';
 import pro6 from './pro6.svg';
 import checklistChecked from './checklistChecked.svg';
 import checklistUnchecked from './checklistUnchecked.svg';
+import siren from './siren.svg';
 
 export const icon = {
   leftArrow,
@@ -122,4 +123,5 @@ export const icon = {
   pro6,
   checklistChecked,
   checklistUnchecked,
+  siren,
 };
