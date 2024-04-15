@@ -71,9 +71,10 @@ export const MobileBanner = styled.img`
   }
 `;
 
-export const ButtonGrid = styled.div`
+export const ButtonGrid = styled.div<{ canAccessTickets: boolean }>`
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: ${({ canAccessTickets }) =>
+    canAccessTickets ? '1fr 1fr 1fr 1fr' : '1fr 1fr 1fr'};
 
   gap: ${theme.size.sm};
 

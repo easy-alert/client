@@ -30,6 +30,7 @@ export const Home = () => {
     name: '',
     Company: {
       supportLink: '',
+      canAccessTickets: false,
     },
   });
 
@@ -87,7 +88,7 @@ export const Home = () => {
               ),
           )}
 
-          <Style.ButtonGrid>
+          <Style.ButtonGrid canAccessTickets={informations.Company.canAccessTickets}>
             <Link to={`/maintenancesplan/${buildingNanoId}${window.location.search}`}>
               <button type="button">Plano de manutenção</button>
             </Link>
@@ -100,14 +101,16 @@ export const Home = () => {
               <button type="button">Anexos</button>
             </Link>
 
-            <button
-              type="button"
-              onClick={() => {
-                setModalCreateTicketOpen(true);
-              }}
-            >
-              Abrir chamado
-            </button>
+            {informations.Company.canAccessTickets && (
+              <button
+                type="button"
+                onClick={() => {
+                  setModalCreateTicketOpen(true);
+                }}
+              >
+                Abrir chamado
+              </button>
+            )}
           </Style.ButtonGrid>
         </Style.Wrapper>
         <Style.ImageDiv>
