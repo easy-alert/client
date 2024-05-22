@@ -1,6 +1,6 @@
 /* eslint-disable import/no-cycle */
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import * as Style from './styles';
 import { catchHandler, dateFormatter } from '../../utils/functions';
@@ -127,14 +127,6 @@ export const Tickets = () => {
 
   useEffect(() => {
     findManyTickets();
-  }, []);
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!syndicNanoId) {
-      navigate(`/public-tickets/${buildingNanoId}${window.location.search}`);
-    }
   }, []);
 
   const resetSelectedTickets = () => {

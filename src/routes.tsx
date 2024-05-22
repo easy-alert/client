@@ -1,4 +1,6 @@
+/* eslint-disable react/jsx-fragments */
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+import React from 'react';
 import { NavBar } from './components/NavBar';
 import { MaintenancesPlan } from './screens/MaintenancesPlan';
 import { Informations } from './screens/Informations';
@@ -12,6 +14,8 @@ import { Videos } from './screens/Videos';
 import { Checklists } from './screens/Checklists';
 import { Tickets } from './screens/Tickets';
 import { PublicTickets } from './screens/PublicTickets';
+import { ResponsibleRequireAuth } from './contexts/ResponsibleAuth/ResponsibleRequireAuth';
+import { ResidentRequireAuth } from './contexts/ResidentAuth/ResidentRequireAuth';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -33,18 +37,35 @@ const AppRoutes = () => (
           </NavBar>
         }
       >
-        <Route path="/home/:buildingNanoId" element={<Home />} />
-        <Route path="/maintenancesplan/:buildingNanoId" element={<MaintenancesPlan />} />
-        <Route path="/informations/:buildingNanoId" element={<Informations />} />
-        <Route path="/annex/:buildingNanoId" element={<Annexes />} />
-        <Route path="/suppliers/:buildingNanoId" element={<Suppliers />} />
-        <Route path="/checklists/:buildingNanoId" element={<Checklists />} />
-        <Route path="/tickets/:buildingNanoId" element={<Tickets />} />
-        <Route path="/public-tickets/:buildingNanoId" element={<PublicTickets />} />
-        <Route path="/videos/:buildingNanoId" element={<Videos />} />
-        <Route path="/syndicarea/:buildingNanoId" element={<SyndicArea />} />
-        <Route path="/settings/:buildingNanoId" element={<Settings />} />
-        <Route path="/choose/:buildingNanoId/:categoryId" element={<ChooseSyndic />} />
+        <Route
+          element={
+            <ResidentRequireAuth>
+              <Outlet />
+            </ResidentRequireAuth>
+          }
+        >
+          <Route path="/home/:buildingNanoId" element={<Home />} />
+          <Route path="/maintenancesplan/:buildingNanoId" element={<MaintenancesPlan />} />
+          <Route path="/informations/:buildingNanoId" element={<Informations />} />
+          <Route path="/annex/:buildingNanoId" element={<Annexes />} />
+          <Route path="/public-tickets/:buildingNanoId" element={<PublicTickets />} />
+          <Route path="/videos/:buildingNanoId" element={<Videos />} />
+        </Route>
+
+        <Route
+          element={
+            <ResponsibleRequireAuth>
+              <Outlet />
+            </ResponsibleRequireAuth>
+          }
+        >
+          <Route path="/tickets/:buildingNanoId" element={<Tickets />} />
+          <Route path="/syndicarea/:buildingNanoId" element={<SyndicArea />} />
+          <Route path="/checklists/:buildingNanoId" element={<Checklists />} />
+          <Route path="/settings/:buildingNanoId" element={<Settings />} />
+          <Route path="/suppliers/:buildingNanoId" element={<Suppliers />} />
+          <Route path="/choose/:buildingNanoId/:categoryId" element={<ChooseSyndic />} />
+        </Route>
       </Route>
     </Routes>
   </BrowserRouter>
