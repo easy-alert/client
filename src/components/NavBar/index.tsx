@@ -35,7 +35,14 @@ export const NavBar = ({ children }: ISidebar) => {
     {
       name: 'Chamados',
       url: `/tickets/${buildingNanoId}${window.location.search}`,
+      restricted: true,
+    },
+
+    {
+      name: 'Chamados',
+      url: `/public-tickets/${buildingNanoId}${window.location.search}`,
       restricted: false,
+      restrictedForSyndic: true,
     },
 
     {
@@ -95,6 +102,10 @@ export const NavBar = ({ children }: ISidebar) => {
                   return null;
                 }
 
+                if (syndicNanoId && element.restrictedForSyndic) {
+                  return null;
+                }
+
                 return (
                   <Link
                     key={element.url}
@@ -135,6 +146,11 @@ export const NavBar = ({ children }: ISidebar) => {
             if (!syndicNanoId && element.restricted) {
               return null;
             }
+
+            if (syndicNanoId && element.restrictedForSyndic) {
+              return null;
+            }
+
             return (
               <Link
                 className="p3"
