@@ -3,6 +3,7 @@ export interface SidebarContentProps {
   url: string;
   restricted: boolean;
   disabled?: boolean;
+  restrictedForSyndic?: boolean;
 }
 
 export interface ISidebar {
