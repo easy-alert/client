@@ -10,11 +10,11 @@ export const Container = styled.div`
 
 export const Wrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: ${theme.size.md};
 
   @media (max-width: 900px) {
-    grid-template-columns: repeat(auto-fit, minmax(248px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
   }
 `;
 
@@ -44,9 +44,8 @@ export const Card = styled.a`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
 
-  gap: ${theme.size.md};
+  gap: ${theme.size.xsm};
 
   height: 100%;
 
