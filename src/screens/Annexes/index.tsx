@@ -54,7 +54,7 @@ export const Annexes = () => {
       {loading ? <Skeleton height="24px" width="248px" /> : <h2>{buildingName}</h2>}
       <Style.Card>
         <Style.Header>
-          <h4>Anexos</h4>
+          <h4>Documentos</h4>
           <Style.BreadcrumbWrapper>
             {breadcrumb.map((element, i) => (
               <React.Fragment key={element.id}>

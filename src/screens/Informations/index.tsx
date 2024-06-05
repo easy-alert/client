@@ -39,7 +39,7 @@ export const Informations = () => {
       {loading ? <Skeleton height="24px" width="248px" /> : <h2>{informations.name}</h2>}
 
       <Style.Card>
-        <h4>Dados dos responsáveis</h4>
+        <h4>Dados dos colaboradores</h4>
         <Style.RowWrapper>
           {loading && (
             <ContactTable
@@ -115,7 +115,7 @@ export const Informations = () => {
             ))}
 
           {!loading && informations.NotificationsConfigurations.length === 0 && (
-            <h6 style={{ color: theme.color.gray4 }}>Nenhum responsável cadastrado.</h6>
+            <h6 style={{ color: theme.color.gray4 }}>Nenhum colaborador cadastrado.</h6>
           )}
         </Style.RowWrapper>
       </Style.Card>
