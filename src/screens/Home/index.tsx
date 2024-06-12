@@ -94,11 +94,11 @@ export const Home = () => {
             </Link>
 
             <Link to={`/informations/${buildingNanoId}${window.location.search}`}>
-              <button type="button">Informações</button>
+              <button type="button">Colaboradores</button>
             </Link>
 
             <Link to={`/annex/${buildingNanoId}${window.location.search}`}>
-              <button type="button">Anexos</button>
+              <button type="button">Documentos</button>
             </Link>
 
             {informations.Company.canAccessTickets && (
