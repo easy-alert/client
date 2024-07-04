@@ -102,7 +102,7 @@ export const ImageDiv = styled.div`
 `;
 
 export const PaginationContainer = styled.div`
-  min-height: calc(100vh - 80px);
+  min-height: calc(100vh - 160px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
