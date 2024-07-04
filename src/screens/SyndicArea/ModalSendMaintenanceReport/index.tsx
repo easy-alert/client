@@ -30,6 +30,7 @@ import { requestReportProgress, requestSendReport, requestSaveReportProgress } f
 import { InProgressTag } from '../../../components/InProgressTag';
 import { PopoverButton } from '../../../components/Buttons/PopoverButton';
 import { theme } from '../../../styles/theme';
+import { LinkSupplierToMaintenanceHistory } from '../../../components/LinkSupplierToMaintenanceHistory';
 
 export const ModalSendMaintenanceReport = ({
   setModal,
@@ -246,6 +247,8 @@ export const ModalSendMaintenanceReport = ({
                 <p className="p2">{dateFormatter(maintenance.dueDate)}</p>
               </Style.Row>
             )}
+
+            <LinkSupplierToMaintenanceHistory maintenanceHistoryId={maintenance.id} />
 
             {!!maintenance.daysInAdvance && (
               <Style.Row>

@@ -15,6 +15,8 @@ import { Tickets } from './screens/Tickets';
 import { PublicTickets } from './screens/PublicTickets';
 import { ResponsibleRequireAuth } from './contexts/ResponsibleAuth/ResponsibleRequireAuth';
 import { ResidentRequireAuth } from './contexts/ResidentAuth/ResidentRequireAuth';
+import { SupplierDetails } from './screens/Suppliers/Details';
+import { SuppliersList } from './screens/Suppliers/List';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -62,8 +64,8 @@ const AppRoutes = () => (
           <Route path="/syndicarea/:buildingNanoId" element={<SyndicArea />} />
           <Route path="/checklists/:buildingNanoId" element={<Checklists />} />
           <Route path="/settings/:buildingNanoId" element={<Settings />} />
-          {/* Desativado em função das tasks SA-6535 em diante que mudou tudo */}
-          {/* <Route path="/suppliers/:buildingNanoId" element={<Suppliers />} /> */}
+          <Route path="/suppliers/:buildingNanoId" element={<SuppliersList />} />
+          <Route path="/suppliers/:buildingNanoId/:supplierId" element={<SupplierDetails />} />
           <Route path="/choose/:buildingNanoId/:categoryId" element={<ChooseSyndic />} />
         </Route>
       </Route>

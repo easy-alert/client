@@ -1,12 +1,12 @@
 import styled from 'styled-components';
-import { theme } from '../../styles/theme';
+import { Link } from 'react-router-dom';
+import { theme } from '../../../styles/theme';
 
 export const Header = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: ${theme.size.sm};
-  padding-top: ${theme.size.sm};
 
   @media (max-width: 900px) {
     align-items: flex-start;
@@ -45,10 +45,7 @@ export const SearchField = styled.div`
 
 export const Container = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
   flex-direction: column;
-  height: 80%;
   gap: ${theme.size.xxsm};
   > h3 {
     color: ${theme.color.gray4};
@@ -59,12 +56,10 @@ export const Container = styled.div`
 export const Wrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(325px, 1fr));
-  margin-top: ${theme.size.sm};
   gap: ${theme.size.md};
 `;
 
-export const Card = styled.button`
-  all: unset;
+export const Card = styled(Link)`
   background-color: ${theme.color.white};
   padding: ${theme.size.md};
   border-radius: ${theme.size.xsm};
@@ -89,11 +84,6 @@ export const Line = styled.div`
   margin-bottom: ${theme.size.xsm};
 `;
 
-export const CardHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
 export const CardContent = styled.div`
   > p {
     margin-top: ${theme.size.xsm};
@@ -109,4 +99,31 @@ export const CardFooter = styled.div`
 export const ImageDiv = styled.div`
   display: flex;
   justify-content: center;
+`;
+
+export const PaginationContainer = styled.div`
+  min-height: calc(100vh - 160px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+export const Tags = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${theme.size.xxsm};
+  margin-top: ${theme.size.xsm};
+`;
+
+export const NoDataContainer = styled.footer`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  height: 84%;
+  gap: ${theme.size.xxsm};
+  > h3 {
+    color: ${theme.color.gray4};
+    text-align: center;
+  }
 `;

@@ -21,6 +21,7 @@ import { requestMaintenanceDetails } from '../../functions';
 import { applyMask, dateFormatter } from '../../../utils/functions';
 import { ImagePreview } from '../../../components/ImagePreview';
 import { InProgressTag } from '../../../components/InProgressTag';
+import { LinkSupplierToMaintenanceHistory } from '../../../components/LinkSupplierToMaintenanceHistory';
 
 export const ModalMaintenanceDetails = ({
   setModal,
@@ -178,6 +179,8 @@ export const ModalMaintenanceDetails = ({
                 <p className="p2">{maintenance.daysInAdvance}</p>
               </Style.Row>
             )}
+
+            <LinkSupplierToMaintenanceHistory maintenanceHistoryId={maintenance.id} />
 
             {maintenance.MaintenanceReport.length > 0 && (
               <>

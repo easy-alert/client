@@ -63,11 +63,11 @@ export const NavBar = ({ children }: ISidebar) => {
       restricted: true,
     },
 
-    // {
-    //   name: 'Fornecedores',
-    //   url: `/suppliers/${buildingNanoId}${window.location.search}`,
-    //   restricted: true,
-    // },
+    {
+      name: 'Fornecedores',
+      url: `/suppliers/${buildingNanoId}${window.location.search}`,
+      restricted: true,
+    },
 
     // {
     //   name: 'Videoaulas',

@@ -66,7 +66,7 @@ export const ModalCreateOccasionalMaintenance = ({
   });
 
   const [view, setView] = useState<number>(0);
-  // MODAL EDITAR/ENVIAR RELATO AVULSO
+  // MODAL CRIAR MANUTENÇÃO AVULSA
 
   const [auxiliaryData, setAuxiliaryData] = useState<IAuxiliaryData>({
     Buildings: [],
