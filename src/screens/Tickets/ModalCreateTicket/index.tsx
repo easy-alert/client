@@ -125,7 +125,6 @@ export const ModalCreateTicket = ({
                 name="residentName"
                 label="Nome do morador *"
                 placeholder="Ex: Informe o nome"
-                maxLength={250}
                 error={touched.residentName && (errors.residentName || null)}
               />
 
@@ -133,7 +132,6 @@ export const ModalCreateTicket = ({
                 name="residentApartment"
                 label="Apartamento do morador *"
                 placeholder="Ex: Informe o apartamento"
-                maxLength={15}
                 error={touched.residentName && (errors.residentName || null)}
               />
 
@@ -141,7 +139,6 @@ export const ModalCreateTicket = ({
                 name="residentEmail"
                 label="E-mail do morador"
                 placeholder="Ex: Informe o e-mail"
-                maxLength={200}
                 error={touched.residentEmail && (errors.residentEmail || null)}
               />
 
@@ -185,7 +182,6 @@ export const ModalCreateTicket = ({
                 label="Descrição *"
                 placeholder="Informe a descrição"
                 name="description"
-                maxLength={500}
                 error={touched.description && (errors.description || null)}
               />
 

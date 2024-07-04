@@ -66,6 +66,7 @@ export const ModalCreateOccasionalMaintenance = ({
   });
 
   const [view, setView] = useState<number>(0);
+  // MODAL EDITAR/ENVIAR RELATO AVULSO
 
   const [auxiliaryData, setAuxiliaryData] = useState<IAuxiliaryData>({
     Buildings: [],
@@ -358,7 +359,6 @@ export const ModalCreateOccasionalMaintenance = ({
               <TextArea
                 label="Observação do relato"
                 placeholder="Digite aqui"
-                maxLength={600}
                 value={data.reportData.observation}
                 onChange={(evt) => {
                   setData((prevState) => ({

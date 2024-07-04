@@ -138,7 +138,6 @@ export const ModalCreateChecklist = ({
                 name="name"
                 label="Nome *"
                 placeholder="Ex: Retirar o lixo"
-                maxLength={200}
                 error={touched.name && (errors.name || null)}
               />
 
@@ -162,7 +161,6 @@ export const ModalCreateChecklist = ({
                 label="Descrição"
                 placeholder="Insira a descrição"
                 name="description"
-                maxLength={200}
                 error={touched.description && (errors.description || null)}
               />
 
