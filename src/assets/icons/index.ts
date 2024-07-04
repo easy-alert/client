@@ -61,8 +61,16 @@ import checklistChecked from './checklistChecked.svg';
 import checklistUnchecked from './checklistUnchecked.svg';
 import siren from './siren.svg';
 import eyeGray from './eyeGray.svg';
+import letter from './letter.svg';
+import whatsApp from './whatsApp.svg';
+import link from './link.svg';
+import unlink from './unlink.svg';
 
 export const icon = {
+  link,
+  unlink,
+  letter,
+  whatsApp,
   leftArrow,
   paper,
   eye,

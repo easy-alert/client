@@ -28,6 +28,7 @@ export const ModalMaintenanceDetails = ({
 }: IModalMaintenanceDetails) => {
   const [modalLoading, setModalLoading] = useState<boolean>(true);
 
+  // MODAL DETALHE DE MANUTENÇÃO
   const [maintenance, setMaintenance] = useState<IMaintenance>({
     Building: {
       name: '',

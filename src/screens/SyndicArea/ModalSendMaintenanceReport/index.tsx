@@ -76,6 +76,7 @@ export const ModalSendMaintenanceReport = ({
     MaintenanceReport: [{ cost: 0, id: '', observation: '', ReportAnnexes: [], ReportImages: [] }],
   });
 
+  // MODAL EDITAR/ENVIAR RELATO
   const [maintenanceReport, setMaintenanceReport] = useState<IMaintenanceReport>({
     cost: 'R$ 0,00',
     observation: '',
@@ -272,7 +273,6 @@ export const ModalSendMaintenanceReport = ({
                 <TextArea
                   label="Observação do relato"
                   placeholder="Digite aqui"
-                  maxLength={600}
                   value={maintenanceReport.observation}
                   onChange={(e) => {
                     setMaintenanceReport((prevState) => {
