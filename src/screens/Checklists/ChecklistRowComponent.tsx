@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 // eslint-disable-next-line import/no-cycle
 import { IChecklist } from '.';
 import { icon } from '../../assets/icons';
@@ -12,6 +13,7 @@ import { theme } from '../../styles/theme';
 import { ModalDeleteChecklist } from './ModalDeleteChecklist';
 import { ModalUpdateChecklist } from './ModalUpdateChecklist';
 import { ITimeInterval } from '../../utils/types';
+import { ModalCreateOccasionalMaintenance } from '../SyndicArea/ModalCreateOccasionalMaintenance';
 
 interface IChecklistRow {
   checklist: IChecklist;
@@ -24,9 +26,13 @@ export const ChecklistRowComponent = ({
   onThenRequest,
   timeIntervals,
 }: IChecklistRow) => {
+  const [search] = useSearchParams();
+  const syndicNanoId = search.get('syndicNanoId') ?? '';
   const [modalChecklistDetailsOpen, setModalChecklistDetailsOpen] = useState(false);
   const [modalDeleteChecklistOpen, setModalDeleteChecklistOpen] = useState(false);
   const [modalUpdateChecklistOpen, setModalUpdateChecklistOpen] = useState(false);
+  const [modalCreateOccasionalMaintenance, setModalCreateOccasionalMaintenance] =
+    useState<boolean>(false);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -70,6 +76,19 @@ export const ChecklistRowComponent = ({
           timeIntervals={timeIntervals}
           onThenRequest={onThenRequest}
           checklistId={id}
+        />
+      )}
+      {modalCreateOccasionalMaintenance && (
+        <ModalCreateOccasionalMaintenance
+          syndicNanoId={syndicNanoId}
+          checklistTitle={name}
+          setModal={setModalCreateOccasionalMaintenance}
+          getCalendarData={() =>
+            new Promise<void>((resolve) => {
+              // Não faz nada
+              resolve();
+            })
+          }
         />
       )}
       <Style.ChecklistBackground ref={dropdownRef}>
@@ -130,6 +149,19 @@ export const ChecklistRowComponent = ({
                 setDropdownOpen(false);
               }}
               label="Editar"
+            />
+
+            <IconButton
+              fontWeight="400"
+              color={theme.color.gray5}
+              labelPos="right"
+              icon={icon.addWithCircle}
+              size="16px"
+              onClick={() => {
+                setModalCreateOccasionalMaintenance(true);
+                setDropdownOpen(false);
+              }}
+              label="Manutenção"
             />
           </Style.Dropdown>
         )}

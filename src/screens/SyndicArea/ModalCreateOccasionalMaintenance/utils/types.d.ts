@@ -67,6 +67,7 @@ export interface IModalCreateOccasionalMaintenance {
   setModal: (setModal: boolean) => void;
   getCalendarData: () => Promise<void>;
   syndicNanoId: string;
+  checklistTitle?: string;
 }
 
 export interface IModalCreateOccasionalMaintenanceInstructions {

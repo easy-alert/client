@@ -40,6 +40,7 @@ export const ModalCreateOccasionalMaintenance = ({
   setModal,
   getCalendarData,
   syndicNanoId,
+  checklistTitle,
 }: IModalCreateOccasionalMaintenance) => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
   const [loading, setLoading] = useState<boolean>(true);
@@ -60,7 +61,7 @@ export const ModalCreateOccasionalMaintenance = ({
 
     maintenanceData: {
       element: '',
-      activity: '',
+      activity: checklistTitle || '',
       responsible: '',
     },
     reportData: {
