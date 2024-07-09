@@ -47,32 +47,6 @@ export const ModalCreateOccasionalMaintenance = ({
   const [onFileQuery, setOnFileQuery] = useState<boolean>(false);
   const [onImageQuery, setOnImageQuery] = useState<boolean>(false);
 
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
-    disabled: onFileQuery,
-  });
-
-  const {
-    acceptedFiles: acceptedImages,
-    getRootProps: getRootPropsImages,
-    getInputProps: getInputPropsImages,
-  } = useDropzone({
-    accept: {
-      'image/png': ['.png'],
-      'image/jpg': ['.jpg'],
-      'image/jpeg': ['.jpeg'],
-      'audio/flac': ['.flac'], // Colocado isso pro celular abrir as opções de camera corretamente.
-    },
-    disabled: onImageQuery,
-  });
-
-  const [view, setView] = useState<number>(0);
-  // MODAL CRIAR MANUTENÇÃO AVULSA
-
-  const [auxiliaryData, setAuxiliaryData] = useState<IAuxiliaryData>({
-    Buildings: [],
-    Categories: [],
-  });
-
   const [data, setData] = useState<ICreateOccasionalMaintenanceData>({
     buildingId: buildingNanoId,
     executionDate: '',
@@ -95,6 +69,32 @@ export const ModalCreateOccasionalMaintenance = ({
       files: [],
       images: [],
     },
+  });
+
+  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+    disabled: onFileQuery || data.inProgress,
+  });
+
+  const {
+    acceptedFiles: acceptedImages,
+    getRootProps: getRootPropsImages,
+    getInputProps: getInputPropsImages,
+  } = useDropzone({
+    accept: {
+      'image/png': ['.png'],
+      'image/jpg': ['.jpg'],
+      'image/jpeg': ['.jpeg'],
+      'audio/flac': ['.flac'], // Colocado isso pro celular abrir as opções de camera corretamente.
+    },
+    disabled: onImageQuery || data.inProgress,
+  });
+
+  const [view, setView] = useState<number>(0);
+  // MODAL CRIAR MANUTENÇÃO AVULSA
+
+  const [auxiliaryData, setAuxiliaryData] = useState<IAuxiliaryData>({
+    Buildings: [],
+    Categories: [],
   });
 
   useEffect(() => {
@@ -323,23 +323,31 @@ export const ModalCreateOccasionalMaintenance = ({
             }
           />
 
-          {new Date(data.executionDate) > new Date() && (
-            <Style.Label htmlFor="inProgress">
-              <input
-                id="inProgress"
-                type="checkbox"
-                checked={data.inProgress}
-                onChange={() => {
-                  setData((prevState) => ({ ...prevState, inProgress: !prevState.inProgress }));
-                }}
-              />
-              Iniciar em execução
-            </Style.Label>
-          )}
+          <Style.Label htmlFor="inProgress">
+            <input
+              id="inProgress"
+              type="checkbox"
+              checked={data.inProgress}
+              onChange={() => {
+                setData((prevState) => ({
+                  ...prevState,
+                  inProgress: !prevState.inProgress,
+                  reportData: {
+                    cost: 'R$ 0,00',
+                    observation: '',
+                    files: [],
+                    images: [],
+                  },
+                }));
+              }}
+            />
+            Iniciar em execução
+          </Style.Label>
 
           {new Date(data.executionDate) < new Date() && (
             <>
               <Input
+                disabled={data.inProgress}
                 label="Custo"
                 placeholder="Ex: R$ 100,00"
                 maxLength={20}
@@ -357,6 +365,7 @@ export const ModalCreateOccasionalMaintenance = ({
               />
 
               <TextArea
+                disabled={data.inProgress}
                 label="Observação do relato"
                 placeholder="Digite aqui"
                 value={data.reportData.observation}
