@@ -107,7 +107,7 @@ export const ChecklistRowComponent = ({
               />
               <Style.ChecklistContent>
                 <p className="p4">{name}</p>
-                <p className="p5">{syndic.name}</p>
+                <p className="p5">{syndic?.name || 'Nenhum responsável vinculado'}</p>
               </Style.ChecklistContent>
             </Style.ChecklistRowLeftSide>
           </Style.ChecklistRow>
