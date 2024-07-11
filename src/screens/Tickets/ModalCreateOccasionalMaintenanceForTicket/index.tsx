@@ -321,6 +321,7 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
             label="Data de execução *"
             type="date"
             value={data.executionDate}
+            typeDatePlaceholderValue={data.executionDate}
             onChange={(evt) =>
               setData((prevState) => ({
                 ...prevState,

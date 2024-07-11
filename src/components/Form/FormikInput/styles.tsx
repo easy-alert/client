@@ -26,7 +26,7 @@ export const InputContainer = styled.div<{
     `
       input {
         border-color: ${theme.color.gray3};
-        color: #757575
+        color: #757575;
       }
       `}
 
