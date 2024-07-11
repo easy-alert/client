@@ -65,8 +65,10 @@ import letter from './letter.svg';
 import whatsApp from './whatsApp.svg';
 import link from './link.svg';
 import unlink from './unlink.svg';
+import addWithCircle from './addWithCircle.svg';
 
 export const icon = {
+  addWithCircle,
   link,
   unlink,
   letter,

@@ -159,6 +159,7 @@ export const ModalCreateTicket = ({
               </FormikSelect>
 
               <ReactSelectComponent
+                selectPlaceholderValue={values.types.length}
                 isMulti
                 isClearable={false}
                 label="Tipo da manutenção *"
