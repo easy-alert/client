@@ -33,11 +33,11 @@ export const SuppliersList = () => {
   const [page, setPage] = useState<number>(1);
   const [loading, setLoading] = useState(true);
 
-  const findManySuppliers = async () => {
-    await Api.get(`/suppliers?buildingNanoId=${buildingNanoId}`)
+  const findManySuppliers = async (pageParam?: number) => {
+    await Api.get(`/suppliers?buildingNanoId=${buildingNanoId}&page=${pageParam || page}`)
       .then((res) => {
         setSuppliers(res.data.suppliers);
-        setSupplierCounts(res.data.supplierCounts);
+        setSupplierCounts(res.data.suppliersCount);
       })
       .catch((err) => {
         catchHandler(err);
@@ -136,7 +136,7 @@ export const SuppliersList = () => {
                 registerPerPage={10}
                 onPageChange={(pageParam) => {
                   setPage(pageParam);
-                  findManySuppliers();
+                  findManySuppliers(pageParam);
                 }}
               />
             </PaginationFooter>
