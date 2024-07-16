@@ -2,13 +2,19 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import * as Style from './styles';
 import { Api } from '../../../services/api';
-import { applyMask, catchHandler } from '../../../utils/functions';
+import { applyMask, catchHandler, convertStateName } from '../../../utils/functions';
 import { Image } from '../../../components/Image';
 import { icon } from '../../../assets/icons';
 import { DotSpinLoading } from '../../../components/Loadings/DotSpinLoading';
 import { Pagination } from '../../../components/Pagination';
 import { PaginationFooter } from '../../Tickets/styles';
 import { ListTag } from '../../../components/ListTag';
+import { useBrasilCities } from '../../../hooks/useBrasilCities';
+import { useBrasilStates } from '../../../hooks/useBrasilStates';
+import { useServiceTypes } from '../../../hooks/useServiceTypes';
+import { Button } from '../../../components/Buttons/Button';
+import { Select } from '../../../components/Inputs/Select';
+import { Input } from '../../../components/Inputs/Input';
 
 interface ISupplier {
   id: string;
@@ -33,8 +39,18 @@ export const SuppliersList = () => {
   const [page, setPage] = useState<number>(1);
   const [loading, setLoading] = useState(true);
 
+  const { states, selectedStateAcronym, setSelectedStateAcronym } = useBrasilStates();
+  const { cities } = useBrasilCities({ UF: selectedStateAcronym });
+  const { serviceTypes } = useServiceTypes();
+  const [onQuery, setOnQuery] = useState(false);
+  const [filter, setFilter] = useState({ search: '', serviceTypeLabel: '', state: '', city: '' });
+
   const findManySuppliers = async (pageParam?: number) => {
-    await Api.get(`/suppliers?buildingNanoId=${buildingNanoId}&page=${pageParam || page}`)
+    await Api.get(
+      `/suppliers?buildingNanoId=${buildingNanoId}&page=${
+        pageParam || page
+      }&filter=${JSON.stringify(filter)}`,
+    )
       .then((res) => {
         setSuppliers(res.data.suppliers);
         setSupplierCounts(res.data.suppliersCount);
@@ -44,12 +60,15 @@ export const SuppliersList = () => {
       })
       .finally(() => {
         setLoading(false);
+        setOnQuery(false);
       });
   };
 
   useEffect(() => {
-    findManySuppliers();
-  }, []);
+    if (filter.search === '') {
+      findManySuppliers();
+    }
+  }, [filter.search]);
 
   return loading ? (
     <DotSpinLoading />
@@ -87,6 +106,83 @@ export const SuppliersList = () => {
           </Style.SearchField> */}
           </Style.LeftSide>
         </Style.Header>
+
+        <Style.FilterWrapper>
+          <h5>Filtros</h5>
+          <Style.FilterInputs>
+            <Input
+              label="Busca"
+              placeholder="Digite o parâmetro de busca"
+              value={filter.search}
+              onChange={(evt) => {
+                setFilter((prev) => ({ ...prev, search: evt.target.value }));
+              }}
+              onKeyUp={({ key }) => {
+                if (key === 'Enter') {
+                  findManySuppliers();
+                }
+              }}
+            />
+
+            <Select
+              label="Área de atuação"
+              value={filter.serviceTypeLabel}
+              selectPlaceholderValue={filter.serviceTypeLabel}
+              onChange={(evt) => {
+                setFilter((prev) => ({ ...prev, serviceTypeLabel: evt.target.value }));
+              }}
+            >
+              <option value="">Todas</option>
+              {serviceTypes.map(({ label }) => (
+                <option value={label} key={label}>
+                  {label}
+                </option>
+              ))}
+            </Select>
+
+            <Select
+              value={filter.state}
+              selectPlaceholderValue={filter.state}
+              label="Estado"
+              onChange={(evt) => {
+                setFilter((prev) => ({ ...prev, state: evt.target.value, city: '' }));
+
+                setSelectedStateAcronym(convertStateName(evt.target.value));
+              }}
+            >
+              <option value="">Todos</option>
+              {states.map(({ nome }) => (
+                <option value={nome} key={nome}>
+                  {nome}
+                </option>
+              ))}
+            </Select>
+
+            <Select
+              label="Cidade"
+              value={filter.city}
+              selectPlaceholderValue={filter.city}
+              onChange={(evt) => {
+                setFilter((prev) => ({ ...prev, city: evt.target.value }));
+              }}
+            >
+              <option value="">Todas</option>
+              {cities.map(({ nome }) => (
+                <option value={nome} key={nome}>
+                  {nome}
+                </option>
+              ))}
+            </Select>
+            <Button
+              loading={onQuery}
+              label="Filtrar"
+              onClick={() => {
+                setOnQuery(true);
+                findManySuppliers();
+              }}
+            />
+          </Style.FilterInputs>
+        </Style.FilterWrapper>
 
         {suppliers?.length > 0 && (
           <Style.PaginationContainer>
