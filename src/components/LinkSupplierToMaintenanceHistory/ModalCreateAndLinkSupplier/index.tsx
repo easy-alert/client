@@ -18,7 +18,7 @@ import { FormikImageInput } from '../../Form/FormikImageInput';
 import { FormikInput } from '../../Form/FormikInput';
 import { ReactSelectComponent } from '../../ReactSelectComponent';
 import { ReactSelectCreatableComponent } from '../../ReactSelectCreatableComponent ';
-import { CustomModal } from '../CustomModal';
+import { CustomModal } from '../../CustomModal';
 import { useBrasilCities } from '../../../hooks/useBrasilCities';
 import { useBrasilStates } from '../../../hooks/useBrasilStates';
 import { useServiceTypes } from '../../../hooks/useServiceTypes';
@@ -75,7 +75,7 @@ export const ModalCreateAndLinkSupplier = ({
   const { serviceTypes } = useServiceTypes();
 
   return (
-    <CustomModal title="Cadastrar e vincular fornecedor" setModal={setModal}>
+    <CustomModal title="Cadastrar e vincular fornecedor" setModal={setModal} zIndex={22}>
       <Formik
         initialValues={{
           image: '',
