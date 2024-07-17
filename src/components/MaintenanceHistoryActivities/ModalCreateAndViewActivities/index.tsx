@@ -25,12 +25,11 @@ export const ModalCreateAndViewActivities = ({
 }: IModalCreateAndViewActivities) => {
   const [comment, setComment] = useState('');
   const [onQuery, setOnQuery] = useState(false);
+  const [activities, setActivities] = useState<IActivity[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const [query] = useSearchParams();
   const syndicNanoId = query.get('syndicNanoId') || '';
-
-  const [activities, setActivities] = useState<IActivity[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
 
   const findMaintenanceHistoryActivities = async () => {
     await Api.get(
