@@ -124,6 +124,7 @@ export const MaintenancesPlan = () => {
         <ModalMaintenanceDetails
           setModal={setModalMaintenanceDetailsOpen}
           modalAdditionalInformations={modalAdditionalInformations}
+          accessBy="resident"
         />
       )}
       <Style.Container>

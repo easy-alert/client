@@ -22,10 +22,12 @@ import { applyMask, dateFormatter } from '../../../utils/functions';
 import { ImagePreview } from '../../../components/ImagePreview';
 import { InProgressTag } from '../../../components/InProgressTag';
 import { LinkSupplierToMaintenanceHistory } from '../../../components/LinkSupplierToMaintenanceHistory';
+import { MaintenanceHistoryActivities } from '../../../components/MaintenanceHistoryActivities';
 
 export const ModalMaintenanceDetails = ({
   setModal,
   modalAdditionalInformations,
+  accessBy,
 }: IModalMaintenanceDetails) => {
   const [modalLoading, setModalLoading] = useState<boolean>(true);
 
@@ -180,7 +182,15 @@ export const ModalMaintenanceDetails = ({
               </Style.Row>
             )}
 
-            <LinkSupplierToMaintenanceHistory maintenanceHistoryId={maintenance.id} />
+            {!modalAdditionalInformations.isFuture && (
+              <>
+                <LinkSupplierToMaintenanceHistory maintenanceHistoryId={maintenance.id} />
+                <MaintenanceHistoryActivities
+                  maintenanceHistoryId={maintenance.id}
+                  accessBy={accessBy}
+                />
+              </>
+            )}
 
             {maintenance.MaintenanceReport.length > 0 && (
               <>
