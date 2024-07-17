@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Api } from '../../../services/api';
 import { catchHandler, dateTimeFormatter } from '../../../utils/functions';
@@ -17,23 +17,39 @@ import { ImageComponent } from '../../ImageComponent';
 interface IModalCreateAndViewActivities {
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
   maintenanceHistoryId: string;
-  loading: boolean;
-  activities: IActivity[];
-  findMaintenanceHistoryActivitiesCall: () => Promise<void>;
+  accessBy?: string;
 }
 
 export const ModalCreateAndViewActivities = ({
   setModal,
   maintenanceHistoryId,
-  activities,
-  loading,
-  findMaintenanceHistoryActivitiesCall,
+  accessBy,
 }: IModalCreateAndViewActivities) => {
   const [comment, setComment] = useState('');
   const [onQuery, setOnQuery] = useState(false);
 
   const [query] = useSearchParams();
   const syndicNanoId = query.get('syndicNanoId');
+
+  const [activities, setActivities] = useState<IActivity[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const findMaintenanceHistoryActivities = async () => {
+    await Api.get(
+      `/maintenance-history-activities/${maintenanceHistoryId}?accessBy=${
+        !syndicNanoId ? accessBy : null
+      }`,
+    )
+      .then((res) => {
+        setActivities(res.data.maintenanceHistoryActivities);
+      })
+      .catch((err) => {
+        catchHandler(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   const createActivity = async () => {
     setOnQuery(true);
@@ -44,7 +60,7 @@ export const ModalCreateAndViewActivities = ({
       syndicNanoId,
     })
       .then(() => {
-        findMaintenanceHistoryActivitiesCall();
+        findMaintenanceHistoryActivities();
         setComment('');
         // toast.success(res.data.ServerMessage.message);
       })
@@ -56,6 +72,10 @@ export const ModalCreateAndViewActivities = ({
       });
   };
 
+  useEffect(() => {
+    findMaintenanceHistoryActivities();
+  }, []);
+
   return (
     <CustomModal setModal={setModal} title="Atividades" id="activities" zIndex={20}>
       {loading ? (
@@ -64,29 +84,32 @@ export const ModalCreateAndViewActivities = ({
         </LoadingWrapper>
       ) : (
         <Style.Container>
-          <Style.InputRow>
-            <Input
-              name="activity"
-              label="Comentário"
-              placeholder="Escreva seu comentário"
-              value={comment}
-              onChange={(evt) => {
-                setComment(evt.target.value);
-              }}
-              onKeyUp={(evt) => {
-                if (evt.key === 'Enter') {
+          {syndicNanoId && (
+            <Style.InputRow>
+              <Input
+                name="activity"
+                label="Comentário"
+                placeholder="Escreva seu comentário"
+                value={comment}
+                onChange={(evt) => {
+                  setComment(evt.target.value);
+                }}
+                onKeyUp={(evt) => {
+                  if (evt.key === 'Enter' && comment) {
+                    createActivity();
+                  }
+                }}
+              />
+              <IconButton
+                disabled={!comment}
+                loading={onQuery}
+                icon={icon.send}
+                onClick={() => {
                   createActivity();
-                }
-              }}
-            />
-            <IconButton
-              loading={onQuery}
-              icon={icon.send}
-              onClick={() => {
-                createActivity();
-              }}
-            />
-          </Style.InputRow>
+                }}
+              />
+            </Style.InputRow>
+          )}
 
           {activities.length > 0 ? (
             <Style.ScrollDiv>
