@@ -6,12 +6,10 @@ import { ButtonContainer } from './styles';
 
 interface IMaintenanceHistoryActivities {
   maintenanceHistoryId: string;
-  accessBy?: string;
 }
 
 export const MaintenanceHistoryActivities = ({
   maintenanceHistoryId,
-  accessBy,
 }: IMaintenanceHistoryActivities) => {
   const [modalCreateAndViewActivitiesOpen, setModalCreateAndViewActivitiesOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -24,7 +22,6 @@ export const MaintenanceHistoryActivities = ({
         <ModalCreateAndViewActivities
           setModal={setModalCreateAndViewActivitiesOpen}
           maintenanceHistoryId={maintenanceHistoryId}
-          accessBy={accessBy}
         />
       )}
 

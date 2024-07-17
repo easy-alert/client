@@ -17,28 +17,24 @@ import { ImageComponent } from '../../ImageComponent';
 interface IModalCreateAndViewActivities {
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
   maintenanceHistoryId: string;
-  accessBy?: string;
 }
 
 export const ModalCreateAndViewActivities = ({
   setModal,
   maintenanceHistoryId,
-  accessBy,
 }: IModalCreateAndViewActivities) => {
   const [comment, setComment] = useState('');
   const [onQuery, setOnQuery] = useState(false);
 
   const [query] = useSearchParams();
-  const syndicNanoId = query.get('syndicNanoId');
+  const syndicNanoId = query.get('syndicNanoId') || '';
 
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const findMaintenanceHistoryActivities = async () => {
     await Api.get(
-      `/maintenance-history-activities/${maintenanceHistoryId}?accessBy=${
-        !syndicNanoId ? accessBy : null
-      }`,
+      `/maintenance-history-activities/${maintenanceHistoryId}?syndicNanoId=${syndicNanoId}`,
     )
       .then((res) => {
         setActivities(res.data.maintenanceHistoryActivities);

@@ -27,7 +27,6 @@ import { MaintenanceHistoryActivities } from '../../../components/MaintenanceHis
 export const ModalMaintenanceDetails = ({
   setModal,
   modalAdditionalInformations,
-  accessBy,
 }: IModalMaintenanceDetails) => {
   const [modalLoading, setModalLoading] = useState<boolean>(true);
 
@@ -185,10 +184,7 @@ export const ModalMaintenanceDetails = ({
             {!modalAdditionalInformations.isFuture && (
               <>
                 <LinkSupplierToMaintenanceHistory maintenanceHistoryId={maintenance.id} />
-                <MaintenanceHistoryActivities
-                  maintenanceHistoryId={maintenance.id}
-                  accessBy={accessBy}
-                />
+                <MaintenanceHistoryActivities maintenanceHistoryId={maintenance.id} />
               </>
             )}
 
