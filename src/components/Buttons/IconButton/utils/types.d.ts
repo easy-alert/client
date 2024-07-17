@@ -8,9 +8,11 @@ export interface IIconButton {
   labelPos?: 'left' | 'right' | 'top' | 'bottom';
   selected?: boolean;
   onClick: (evt?) => void;
-  onAuxClick?: () => void;
+  onAuxClick?: (evt?) => void;
   hideLabelOnMedia?: boolean;
   fontWeight?: string;
   size?: string;
   disabled?: boolean;
+  title?: string;
+  loading?: boolean;
 }

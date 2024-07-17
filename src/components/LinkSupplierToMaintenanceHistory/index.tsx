@@ -33,8 +33,8 @@ export const LinkSupplierToMaintenanceHistory = ({
   const whatsappLink = (phone: string) => `https://api.whatsapp.com/send?phone=${phone}`;
   const ref = useRef<HTMLDivElement>(null);
   const [onQuery, setOnQuery] = useState(false);
-  const [query] = useSearchParams();
 
+  const [query] = useSearchParams();
   const syndicNanoId = query.get('syndicNanoId');
 
   const [suppliers, setSuppliers] = useState<ISupplier[]>([]);
