@@ -22,6 +22,7 @@ import { applyMask, dateFormatter } from '../../../utils/functions';
 import { ImagePreview } from '../../../components/ImagePreview';
 import { InProgressTag } from '../../../components/InProgressTag';
 import { LinkSupplierToMaintenanceHistory } from '../../../components/LinkSupplierToMaintenanceHistory';
+import { MaintenanceHistoryActivities } from '../../../components/MaintenanceHistoryActivities';
 
 export const ModalMaintenanceDetails = ({
   setModal,
@@ -180,7 +181,12 @@ export const ModalMaintenanceDetails = ({
               </Style.Row>
             )}
 
-            <LinkSupplierToMaintenanceHistory maintenanceHistoryId={maintenance.id} />
+            {!modalAdditionalInformations.isFuture && (
+              <>
+                <LinkSupplierToMaintenanceHistory maintenanceHistoryId={maintenance.id} />
+                <MaintenanceHistoryActivities maintenanceHistoryId={maintenance.id} />
+              </>
+            )}
 
             {maintenance.MaintenanceReport.length > 0 && (
               <>
