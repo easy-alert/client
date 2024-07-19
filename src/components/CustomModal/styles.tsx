@@ -44,7 +44,7 @@ export const Background = styled.div<{ zIndex: number }>`
   top: -48px;
 
   width: 100vw;
-  min-height: 150%;
+  min-height: 200%;
   overflow: hidden;
 
   transform: translateX(-50%);
@@ -62,10 +62,6 @@ export const Background = styled.div<{ zIndex: number }>`
     100% {
       opacity: 1;
     }
-  }
-
-  @media only screen and (max-width: 900px) {
-    padding: 0;
   }
 
   scrollbar-width: none;
