@@ -68,8 +68,10 @@ import unlink from './unlink.svg';
 import addWithCircle from './addWithCircle.svg';
 import send from './send.svg';
 import activityComment from './activityComment.svg';
+import upload from './upload.svg';
 
 export const icon = {
+  upload,
   send,
   activityComment,
   addWithCircle,
