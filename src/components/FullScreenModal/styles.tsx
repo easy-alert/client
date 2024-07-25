@@ -20,7 +20,6 @@ export const Container = styled.div`
 `;
 
 export const Body = styled.div`
-  max-width: 250px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -34,4 +33,9 @@ export const Header = styled.header`
   align-items: center;
   margin-bottom: ${theme.size.sm};
   text-align: center;
+`;
+
+export const Children = styled.div`
+  max-width: 300px;
+  width: 100%;
 `;

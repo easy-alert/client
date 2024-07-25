@@ -20,6 +20,7 @@ const schema = yup
 
 export const ResidentRequireAuth = ({ children }: IRequireAuth) => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
+  const [buildingName, setBuildingName] = useState('');
   const [loading, setLoading] = useState<boolean>(true);
   const [onQuery, setOnQuery] = useState<boolean>(false);
   const [needPassword, setNeedPassword] = useState<boolean>(true);
@@ -31,6 +32,7 @@ export const ResidentRequireAuth = ({ children }: IRequireAuth) => {
     await Api.get(`/check-password-existence/${buildingNanoId}/resident`)
       .then((res) => {
         setNeedPassword(res.data.needPassword);
+        setBuildingName(res.data.buildingName);
       })
       .catch((err) => {
         catchHandler(err);
@@ -69,7 +71,7 @@ export const ResidentRequireAuth = ({ children }: IRequireAuth) => {
       )}
 
       {!loading && needPassword && !syndicNanoId && (
-        <FullScreenModal title="Acesso - Morador">
+        <FullScreenModal title={`Acesso - Morador ${buildingName}`}>
           <Formik
             initialValues={{ password: '' }}
             validationSchema={schema}

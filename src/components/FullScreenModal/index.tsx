@@ -9,7 +9,7 @@ export const FullScreenModal = ({ children, title }: IModal) => (
       <Style.Header>
         <h2>{title}</h2>
       </Style.Header>
-      {children}
+      <Style.Children>{children}</Style.Children>
     </Style.Body>
   </Style.Container>
 );

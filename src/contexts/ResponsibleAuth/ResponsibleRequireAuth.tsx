@@ -20,6 +20,7 @@ const schema = yup
 
 export const ResponsibleRequireAuth = ({ children }: IRequireAuth) => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
+  const [buildingName, setBuildingName] = useState('');
   const [loading, setLoading] = useState<boolean>(true);
   const [onQuery, setOnQuery] = useState<boolean>(false);
   const [needPassword, setNeedPassword] = useState<boolean>(true);
@@ -28,6 +29,7 @@ export const ResponsibleRequireAuth = ({ children }: IRequireAuth) => {
     await Api.get(`/check-password-existence/${buildingNanoId}/responsible`)
       .then((res) => {
         setNeedPassword(res.data.needPassword);
+        setBuildingName(res.data.buildingName);
       })
       .catch((err) => {
         catchHandler(err);
@@ -66,7 +68,7 @@ export const ResponsibleRequireAuth = ({ children }: IRequireAuth) => {
       )}
 
       {!loading && needPassword && (
-        <FullScreenModal title="Acesso - Responsável">
+        <FullScreenModal title={`Acesso - Responsável ${buildingName}`}>
           <Formik
             initialValues={{ password: '' }}
             validationSchema={schema}
