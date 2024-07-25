@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 
 // COMPONENTS
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '../../components/Buttons/Button';
 import { IconButton } from '../../components/Buttons/IconButton';
 import { EventTag } from '../../components/EventTag';
@@ -39,7 +39,7 @@ interface IBuildingsBySyndic {
 }
 
 export const SyndicArea = () => {
-  const { buildingNanoId } = useParams() as { buildingNanoId: string };
+  // const { buildingNanoId } = useParams() as { buildingNanoId: string };
 
   const navigate = useNavigate();
 
@@ -112,7 +112,7 @@ export const SyndicArea = () => {
       setKanban,
       setBuildingName,
     });
-  }, [buildingNanoId, syndicNanoId]);
+  }, []);
 
   return loading ? (
     <DotSpinLoading />
@@ -173,6 +173,8 @@ export const SyndicArea = () => {
                   navigate(
                     `/syndicarea/${foundData.buildingNanoId}?syndicNanoId=${foundData.syndicNanoId}`,
                   );
+                  // Gambiarra pra forçar a buscar se precisa de senha
+                  window.location.reload();
                 }
               }}
             >
