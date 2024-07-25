@@ -36,6 +36,7 @@ interface IBuildingsBySyndic {
   syndicName: string;
   buildingNanoId: string;
   companyName: string;
+  label: string;
 }
 
 export const SyndicArea = () => {
@@ -183,7 +184,7 @@ export const SyndicArea = () => {
               </option>
               {buildingsBySyndic.map((opt) => (
                 <option key={opt.syndicNanoId} value={opt.syndicNanoId}>
-                  {opt.buildingName}
+                  {opt.label}
                 </option>
               ))}
             </Select>
