@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 
 // COMPONENTS
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Button } from '../../components/Buttons/Button';
 import { IconButton } from '../../components/Buttons/IconButton';
 import { EventTag } from '../../components/EventTag';
@@ -40,7 +40,7 @@ interface IBuildingsBySyndic {
 }
 
 export const SyndicArea = () => {
-  // const { buildingNanoId } = useParams() as { buildingNanoId: string };
+  const { buildingNanoId } = useParams() as { buildingNanoId: string };
 
   const navigate = useNavigate();
 
@@ -160,34 +160,43 @@ export const SyndicArea = () => {
       <Style.Container>
         <Style.Header>
           <Style.HeaderWrapper>
-            <h2>{buildingName}</h2>
-            <Select
-              selectPlaceholderValue=""
-              value=""
-              onChange={(evt) => {
-                const foundData = buildingsBySyndic.find(
-                  (data) => data.syndicNanoId === evt.target.value,
-                );
-                setFilter((prev) => ({ ...prev, categoryId: '' }));
-
-                if (foundData) {
-                  navigate(
-                    `/syndicarea/${foundData.buildingNanoId}?syndicNanoId=${foundData.syndicNanoId}`,
-                  );
-                  // Gambiarra pra forçar a buscar se precisa de senha
-                  window.location.reload();
+            {buildingsBySyndic.length > 1 ? (
+              <Select
+                className="select"
+                selectPlaceholderValue=" "
+                value={
+                  buildingsBySyndic.find(
+                    (e) => e.buildingNanoId === buildingNanoId && e.syndicNanoId === syndicNanoId,
+                  )?.syndicNanoId || ''
                 }
-              }}
-            >
-              <option value="" disabled hidden>
-                Selecione uma edificação
-              </option>
-              {buildingsBySyndic.map((opt) => (
-                <option key={opt.syndicNanoId} value={opt.syndicNanoId}>
-                  {opt.label}
+                onChange={(evt) => {
+                  const foundData = buildingsBySyndic.find(
+                    (data) => data.syndicNanoId === evt.target.value,
+                  );
+                  setFilter((prev) => ({ ...prev, categoryId: '' }));
+
+                  if (foundData) {
+                    navigate(
+                      `/syndicarea/${foundData.buildingNanoId}?syndicNanoId=${foundData.syndicNanoId}`,
+                    );
+                    // Gambiarra pra forçar a buscar se precisa de senha
+                    window.location.reload();
+                  }
+                }}
+              >
+                <option value="" disabled hidden>
+                  Selecione uma edificação
                 </option>
-              ))}
-            </Select>
+                {buildingsBySyndic.map((opt) => (
+                  <option key={opt.syndicNanoId} value={opt.syndicNanoId}>
+                    {opt.label}
+                  </option>
+                ))}
+              </Select>
+            ) : (
+              <h2>{buildingName}</h2>
+            )}
+
             <IconButton
               icon={icon.filter}
               size="16px"

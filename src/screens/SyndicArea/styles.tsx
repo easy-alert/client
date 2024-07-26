@@ -25,10 +25,7 @@ export const HeaderWrapper = styled.div`
   align-items: center;
   gap: ${theme.size.xsm};
   width: 100%;
-
-  > :nth-child(2) {
-    max-width: 280px;
-  }
+  max-width: 300px;
 
   @media (max-width: 600px) {
     flex-direction: column;

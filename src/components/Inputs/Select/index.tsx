@@ -10,7 +10,8 @@ const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, ISelect> = (
   ref,
 ) => (
   <SelectContainer selectPlaceholderValue={selectPlaceholderValue}>
-    <h6>{label}</h6>
+    {label && <h6>{label}</h6>}
+
     <select id={name} name={name} ref={ref} {...rest} />
   </SelectContainer>
 );
