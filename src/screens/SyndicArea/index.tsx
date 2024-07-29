@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 
 // COMPONENTS
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Button } from '../../components/Buttons/Button';
 import { IconButton } from '../../components/Buttons/IconButton';
 import { EventTag } from '../../components/EventTag';
@@ -15,7 +15,7 @@ import { Skeleton } from '../../components/Skeleton';
 
 // FUNCTIONS
 import { requestSyndicKanban } from './functions';
-import { capitalizeFirstLetter, dateFormatter } from '../../utils/functions';
+import { capitalizeFirstLetter, catchHandler, dateFormatter } from '../../utils/functions';
 
 // TYPES
 import { IFilter, IFilterOptions, IKanban } from './types';
@@ -28,8 +28,22 @@ import * as Style from './styles';
 import { FutureMaintenanceTag } from '../../components/FutureMaintenanceTag';
 import { ModalCreateOccasionalMaintenance } from './ModalCreateOccasionalMaintenance';
 import { InProgressTag } from '../../components/InProgressTag';
+import { Api } from '../../services/api';
+
+interface IBuildingsBySyndic {
+  buildingName: string;
+  syndicNanoId: string;
+  syndicName: string;
+  buildingNanoId: string;
+  companyName: string;
+  label: string;
+}
 
 export const SyndicArea = () => {
+  const { buildingNanoId } = useParams() as { buildingNanoId: string };
+
+  const navigate = useNavigate();
+
   const [showFilter, setShowFilter] = useState<boolean>(false);
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -68,6 +82,7 @@ export const SyndicArea = () => {
   const [search, setSearch] = useSearchParams();
   const syndicNanoId = search.get('syndicNanoId') ?? '';
   const categoryId = search.get('categoryId') ?? '';
+  const [buildingsBySyndic, setBuildingsBySyndic] = useState<IBuildingsBySyndic[]>([]);
 
   const [filter, setFilter] = useState<IFilter>({
     months: '',
@@ -76,7 +91,19 @@ export const SyndicArea = () => {
     categoryId,
   });
 
+  const getBuildingsBySyndic = async () => {
+    await Api.get(`/find-buildings-by-syndic-nano-id/${syndicNanoId}`)
+      .then((res) => {
+        setBuildingsBySyndic(res.data.buildings);
+      })
+      .catch((err) => {
+        catchHandler(err);
+      });
+  };
+
   useEffect(() => {
+    getBuildingsBySyndic();
+
     requestSyndicKanban({
       setLoading,
       syndicNanoId,
@@ -133,18 +160,52 @@ export const SyndicArea = () => {
       <Style.Container>
         <Style.Header>
           <Style.HeaderWrapper>
-            <h2>{buildingName}</h2>
-            <Style.HeaderSide>
-              <IconButton
-                icon={icon.filter}
-                size="16px"
-                label={showFilter ? 'Ocultar' : 'Filtrar'}
-                color={theme.color.gray5}
-                onClick={() => {
-                  setShowFilter(!showFilter);
+            {buildingsBySyndic.length > 1 ? (
+              <Select
+                className="select"
+                selectPlaceholderValue=" "
+                value={
+                  buildingsBySyndic.find(
+                    (e) => e.buildingNanoId === buildingNanoId && e.syndicNanoId === syndicNanoId,
+                  )?.syndicNanoId || ''
+                }
+                onChange={(evt) => {
+                  const foundData = buildingsBySyndic.find(
+                    (data) => data.syndicNanoId === evt.target.value,
+                  );
+                  setFilter((prev) => ({ ...prev, categoryId: '' }));
+
+                  if (foundData) {
+                    navigate(
+                      `/syndicarea/${foundData.buildingNanoId}?syndicNanoId=${foundData.syndicNanoId}`,
+                    );
+                    // Gambiarra pra forçar a buscar se precisa de senha
+                    window.location.reload();
+                  }
                 }}
-              />
-            </Style.HeaderSide>
+              >
+                <option value="" disabled hidden>
+                  Selecione uma edificação
+                </option>
+                {buildingsBySyndic.map((opt) => (
+                  <option key={opt.syndicNanoId} value={opt.syndicNanoId}>
+                    {opt.label}
+                  </option>
+                ))}
+              </Select>
+            ) : (
+              <h2>{buildingName}</h2>
+            )}
+
+            <IconButton
+              icon={icon.filter}
+              size="16px"
+              label={showFilter ? 'Ocultar' : 'Filtrar'}
+              color={theme.color.gray5}
+              onClick={() => {
+                setShowFilter(!showFilter);
+              }}
+            />
           </Style.HeaderWrapper>
 
           <IconButton

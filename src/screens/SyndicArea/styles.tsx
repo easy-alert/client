@@ -20,33 +20,12 @@ export const Header = styled.div`
   }
 `;
 
-export const HeaderSide = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${theme.size.xsm};
-
-  @media (max-width: 600px) {
-    gap: ${theme.size.sm};
-  }
-
-  > label {
-    display: flex;
-    align-items: center;
-    gap: ${theme.size.xxsm};
-
-    cursor: pointer;
-    color: ${theme.color.gray4};
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 14px;
-  }
-`;
-
 export const HeaderWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: ${theme.size.xsm};
   width: 100%;
+  max-width: 300px;
 
   @media (max-width: 600px) {
     flex-direction: column;
