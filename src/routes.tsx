@@ -12,7 +12,7 @@ import { ChooseSyndic } from './screens/ChooseSyndic';
 import { Videos } from './screens/Videos';
 import { Checklists } from './screens/Checklists';
 import { Tickets } from './screens/Tickets';
-import { PublicTickets } from './screens/PublicTickets';
+// import { PublicTickets } from './screens/PublicTickets';
 import { ResponsibleRequireAuth } from './contexts/ResponsibleAuth/ResponsibleRequireAuth';
 import { ResidentRequireAuth } from './contexts/ResidentAuth/ResidentRequireAuth';
 import { SupplierDetails } from './screens/Suppliers/Details';
