@@ -1,6 +1,4 @@
-/* eslint-disable react/jsx-fragments */
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
-import React from 'react';
 import { NavBar } from './components/NavBar';
 import { MaintenancesPlan } from './screens/MaintenancesPlan';
 import { Informations } from './screens/Informations';
