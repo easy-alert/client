@@ -38,12 +38,12 @@ export const NavBar = ({ children }: ISidebar) => {
       restricted: true,
     },
 
-    {
-      name: 'Chamados',
-      url: `/public-tickets/${buildingNanoId}${window.location.search}`,
-      restricted: false,
-      restrictedForSyndic: true,
-    },
+    // {
+    //   name: 'Chamados',
+    //   url: `/public-tickets/${buildingNanoId}${window.location.search}`,
+    //   restricted: false,
+    //   restrictedForSyndic: true,
+    // },
 
     {
       name: 'Manutenções',

@@ -49,7 +49,7 @@ const AppRoutes = () => (
           <Route path="/maintenancesplan/:buildingNanoId" element={<MaintenancesPlan />} />
           <Route path="/informations/:buildingNanoId" element={<Informations />} />
           <Route path="/annex/:buildingNanoId" element={<Annexes />} />
-          <Route path="/public-tickets/:buildingNanoId" element={<PublicTickets />} />
+          {/* <Route path="/public-tickets/:buildingNanoId" element={<PublicTickets />} /> */}
           <Route path="/videos/:buildingNanoId" element={<Videos />} />
         </Route>
 
