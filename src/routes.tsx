@@ -1,6 +1,4 @@
-/* eslint-disable react/jsx-fragments */
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
-import React from 'react';
 import { NavBar } from './components/NavBar';
 import { MaintenancesPlan } from './screens/MaintenancesPlan';
 import { Informations } from './screens/Informations';
@@ -12,7 +10,7 @@ import { ChooseSyndic } from './screens/ChooseSyndic';
 import { Videos } from './screens/Videos';
 import { Checklists } from './screens/Checklists';
 import { Tickets } from './screens/Tickets';
-import { PublicTickets } from './screens/PublicTickets';
+// import { PublicTickets } from './screens/PublicTickets';
 import { ResponsibleRequireAuth } from './contexts/ResponsibleAuth/ResponsibleRequireAuth';
 import { ResidentRequireAuth } from './contexts/ResidentAuth/ResidentRequireAuth';
 import { SupplierDetails } from './screens/Suppliers/Details';
@@ -49,7 +47,7 @@ const AppRoutes = () => (
           <Route path="/maintenancesplan/:buildingNanoId" element={<MaintenancesPlan />} />
           <Route path="/informations/:buildingNanoId" element={<Informations />} />
           <Route path="/annex/:buildingNanoId" element={<Annexes />} />
-          <Route path="/public-tickets/:buildingNanoId" element={<PublicTickets />} />
+          {/* <Route path="/public-tickets/:buildingNanoId" element={<PublicTickets />} /> */}
           <Route path="/videos/:buildingNanoId" element={<Videos />} />
         </Route>
 
