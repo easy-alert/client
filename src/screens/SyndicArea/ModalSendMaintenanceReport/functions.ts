@@ -22,12 +22,11 @@ export const requestSendReport = async ({
   setKanban,
   setLoading,
   syndicNanoId,
-  origin = 'Client',
 }: IRequestSendReport) => {
   setOnQuery(true);
 
   await Api.post('/maintenances/create/report', {
-    origin,
+    origin: 'Client',
     maintenanceHistoryId,
     cost: Number(unMaskBRL(maintenanceReport.cost)),
     observation: maintenanceReport.observation !== '' ? maintenanceReport.observation : null,

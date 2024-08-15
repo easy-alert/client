@@ -19,7 +19,6 @@ export interface IMaintenanceReport {
 }
 
 export interface IRequestSendReport {
-  origin?: string;
   maintenanceReport: IMaintenanceReport;
   setModal: (setModal: boolean) => void;
   maintenanceHistoryId: string;

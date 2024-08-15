@@ -79,7 +79,7 @@ export const NavBar = ({ children }: ISidebar) => {
   useEffect(() => {
     if (window.location.href.endsWith('/')) {
       window.open('https://easyalert.com.br/', '_self');
-    } else {
+    } else if (buildingNanoId) {
       requestCompanyLogo({ setCompanyLogo, buildingNanoId });
     }
   }, []);

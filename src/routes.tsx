@@ -31,7 +31,11 @@ const AppRoutes = () => (
 
       <Route
         path="/guest-maintenance-history/:maintenanceHistoryId"
-        element={<GuestMaintenanceHistory />}
+        element={
+          <NavBar>
+            <GuestMaintenanceHistory />
+          </NavBar>
+        }
       />
 
       <Route

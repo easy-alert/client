@@ -1,6 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import { useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { toast } from 'react-toastify';
 import { Input } from '../../../components/Inputs/Input';
 import * as Style from '../../SyndicArea/ModalSendMaintenanceReport/styles';
 import { icon } from '../../../assets/icons';
@@ -17,27 +18,25 @@ import { DotSpinLoading } from '../../../components/Loadings/DotSpinLoading';
 import { MaintenanceHistoryActivities } from '../../../components/MaintenanceHistoryActivities';
 import { Modal } from '../../../components/Modal';
 import { theme } from '../../../styles/theme';
-import { uploadManyFiles, dateFormatter, applyMask } from '../../../utils/functions';
-import { requestMaintenanceDetails } from '../../functions';
 import {
-  requestReportProgress,
-  requestSaveReportProgress,
-  requestSendReport,
-} from '../../SyndicArea/ModalSendMaintenanceReport/functions';
+  uploadManyFiles,
+  dateFormatter,
+  applyMask,
+  catchHandler,
+  unMaskBRL,
+} from '../../../utils/functions';
+import { requestMaintenanceDetails } from '../../functions';
+import { requestReportProgress } from '../../SyndicArea/ModalSendMaintenanceReport/functions';
 import {
   IModalSendMaintenanceReport,
   IMaintenanceReport,
 } from '../../SyndicArea/ModalSendMaintenanceReport/types';
 import { IMaintenance, AnnexesAndImages } from '../../types';
+import { Api } from '../../../services/api';
 
 export const ModalGuestSendMaintenanceReport = ({
   setModal,
   modalAdditionalInformations,
-  filter,
-  setBuildingName,
-  setFilterOptions,
-  setKanban,
-  setLoading,
   syndicNanoId,
 }: IModalSendMaintenanceReport) => {
   const [maintenance, setMaintenance] = useState<IMaintenance>({
@@ -172,6 +171,60 @@ export const ModalGuestSendMaintenanceReport = ({
     });
   }, []);
 
+  const requestSendReport = async () => {
+    setOnQuery(true);
+
+    await Api.post('/maintenances/create/report', {
+      origin: 'Convidado',
+      maintenanceHistoryId: modalAdditionalInformations.id,
+      cost: Number(unMaskBRL(maintenanceReport.cost)),
+      observation: maintenanceReport.observation !== '' ? maintenanceReport.observation : null,
+      ReportAnnexes: files,
+      ReportImages: images,
+      responsibleSyndicId: syndicNanoId,
+    })
+      .then(async (res) => {
+        toast.success(res.data.ServerMessage.message);
+        await requestMaintenanceDetails({
+          maintenanceHistoryId: modalAdditionalInformations.id,
+          setMaintenance,
+          setModalLoading,
+        });
+      })
+      .catch((err) => {
+        catchHandler(err);
+      })
+      .finally(() => {
+        setOnQuery(false);
+      });
+  };
+
+  const requestSaveReportProgress = async () => {
+    setOnQuery(true);
+
+    await Api.post('/maintenances/create/report/progress', {
+      maintenanceHistoryId: modalAdditionalInformations.id,
+      cost: Number(unMaskBRL(maintenanceReport.cost)),
+      observation: maintenanceReport.observation !== '' ? maintenanceReport.observation : null,
+      ReportAnnexes: files,
+      ReportImages: images,
+    })
+      .then(async (res) => {
+        toast.success(res.data.ServerMessage.message);
+        await requestMaintenanceDetails({
+          maintenanceHistoryId: modalAdditionalInformations.id,
+          setMaintenance,
+          setModalLoading,
+        });
+      })
+      .catch((err) => {
+        catchHandler(err);
+      })
+      .finally(() => {
+        setOnQuery(false);
+      });
+  };
+
   return (
     <Modal
       title={maintenance.canReport ? 'Enviar relato' : 'Detalhes de manutenção'}
@@ -262,110 +315,114 @@ export const ModalGuestSendMaintenanceReport = ({
 
             <MaintenanceHistoryActivities maintenanceHistoryId={maintenance.id} />
 
-            {maintenance.canReport && (
-              <>
-                <Input
-                  label="Custo"
-                  placeholder="Ex: R$ 100,00"
-                  maxLength={14}
-                  value={maintenanceReport.cost}
-                  onChange={(e) => {
-                    setMaintenanceReport((prevState) => {
-                      const newState = { ...prevState };
-                      newState.cost = applyMask({ mask: 'BRL', value: e.target.value }).value;
-                      return newState;
-                    });
-                  }}
-                />
+            {maintenance.canReport &&
+              ['expired', 'pending'].includes(maintenance.MaintenancesStatus.name) && (
+                <>
+                  <Input
+                    label="Custo"
+                    placeholder="Ex: R$ 100,00"
+                    maxLength={14}
+                    value={maintenanceReport.cost}
+                    onChange={(e) => {
+                      setMaintenanceReport((prevState) => {
+                        const newState = { ...prevState };
+                        newState.cost = applyMask({ mask: 'BRL', value: e.target.value }).value;
+                        return newState;
+                      });
+                    }}
+                  />
 
-                <TextArea
-                  label="Observação do relato"
-                  placeholder="Digite aqui"
-                  value={maintenanceReport.observation}
-                  onChange={(e) => {
-                    setMaintenanceReport((prevState) => {
-                      const newState = { ...prevState };
-                      newState.observation = e.target.value;
-                      return newState;
-                    });
-                  }}
-                />
+                  <TextArea
+                    label="Observação do relato"
+                    placeholder="Digite aqui"
+                    value={maintenanceReport.observation}
+                    onChange={(e) => {
+                      setMaintenanceReport((prevState) => {
+                        const newState = { ...prevState };
+                        newState.observation = e.target.value;
+                        return newState;
+                      });
+                    }}
+                  />
 
-                <Style.Row disabled={onFileQuery}>
-                  <h6>Anexar</h6>
-                  <Style.FileRow>
-                    <Style.DragAndDropZoneFile {...getRootProps({ className: 'dropzone' })}>
-                      <input {...getInputProps()} />
+                  <Style.Row disabled={onFileQuery}>
+                    <h6>Anexar</h6>
+                    <Style.FileRow>
+                      <Style.DragAndDropZoneFile {...getRootProps({ className: 'dropzone' })}>
+                        <input {...getInputProps()} />
 
-                      <Image img={icon.addFile} width="60px" height="48px" radius="0" />
-                    </Style.DragAndDropZoneFile>
+                        <Image img={icon.addFile} width="60px" height="48px" radius="0" />
+                      </Style.DragAndDropZoneFile>
 
-                    {(files.length > 0 || onFileQuery) && (
-                      <Style.FileAndImageRow>
-                        {files.map((e, i: number) => (
-                          <Style.Tag title={e.name} key={i}>
-                            <p className="p3">{e.name}</p>
-                            <IconButton
-                              size="16px"
-                              icon={icon.xBlack}
-                              onClick={() => {
-                                setFiles((prevState) => {
-                                  const newState = [...prevState];
-                                  newState.splice(i, 1);
-                                  return newState;
-                                });
-                              }}
-                            />
-                          </Style.Tag>
-                        ))}
-                        {onFileQuery &&
-                          acceptedFiles.map((e) => (
-                            <Style.FileLoadingTag key={e.name}>
-                              <DotLoading />
-                            </Style.FileLoadingTag>
+                      {(files.length > 0 || onFileQuery) && (
+                        <Style.FileAndImageRow>
+                          {files.map((e, i: number) => (
+                            <Style.Tag title={e.name} key={i}>
+                              <p className="p3">{e.name}</p>
+                              <IconButton
+                                size="16px"
+                                icon={icon.xBlack}
+                                onClick={() => {
+                                  setFiles((prevState) => {
+                                    const newState = [...prevState];
+                                    newState.splice(i, 1);
+                                    return newState;
+                                  });
+                                }}
+                              />
+                            </Style.Tag>
                           ))}
-                      </Style.FileAndImageRow>
-                    )}
-                  </Style.FileRow>
-                </Style.Row>
-                <Style.Row disabled={onImageQuery}>
-                  <h6>Imagens</h6>
+                          {onFileQuery &&
+                            acceptedFiles.map((e) => (
+                              <Style.FileLoadingTag key={e.name}>
+                                <DotLoading />
+                              </Style.FileLoadingTag>
+                            ))}
+                        </Style.FileAndImageRow>
+                      )}
+                    </Style.FileRow>
+                  </Style.Row>
+                  <Style.Row disabled={onImageQuery}>
+                    <h6>Imagens</h6>
 
-                  <Style.FileAndImageRow>
-                    <Style.DragAndDropZoneImage {...getRootPropsImages({ className: 'dropzone' })}>
-                      <input {...getInputPropsImages()} />
-                      <Image img={icon.addImage} width="48px" height="46px" radius="0" />
-                    </Style.DragAndDropZoneImage>
+                    <Style.FileAndImageRow>
+                      <Style.DragAndDropZoneImage
+                        {...getRootPropsImages({ className: 'dropzone' })}
+                      >
+                        <input {...getInputPropsImages()} />
+                        <Image img={icon.addImage} width="48px" height="46px" radius="0" />
+                      </Style.DragAndDropZoneImage>
 
-                    {images.map((e, i: number) => (
-                      <ImagePreview
-                        key={e.name + i}
-                        width="132px"
-                        height="136px"
-                        imageCustomName={e.name}
-                        src={e.url}
-                        onTrashClick={() => {
-                          setImages((prevState) => {
-                            const newState = [...prevState];
-                            newState.splice(i, 1);
-                            return newState;
-                          });
-                        }}
-                      />
-                    ))}
-
-                    {onImageQuery &&
-                      acceptedImages.map((e) => (
-                        <Style.ImageLoadingTag key={e.name}>
-                          <DotLoading />
-                        </Style.ImageLoadingTag>
+                      {images.map((e, i: number) => (
+                        <ImagePreview
+                          key={e.name + i}
+                          width="132px"
+                          height="136px"
+                          imageCustomName={e.name}
+                          src={e.url}
+                          onTrashClick={() => {
+                            setImages((prevState) => {
+                              const newState = [...prevState];
+                              newState.splice(i, 1);
+                              return newState;
+                            });
+                          }}
+                        />
                       ))}
-                  </Style.FileAndImageRow>
-                </Style.Row>
-              </>
-            )}
+
+                      {onImageQuery &&
+                        acceptedImages.map((e) => (
+                          <Style.ImageLoadingTag key={e.name}>
+                            <DotLoading />
+                          </Style.ImageLoadingTag>
+                        ))}
+                    </Style.FileAndImageRow>
+                  </Style.Row>
+                </>
+              )}
           </Style.Content>
-          {maintenance.canReport ? (
+          {maintenance.canReport &&
+          ['expired', 'pending'].includes(maintenance.MaintenancesStatus.name) ? (
             <Style.ButtonContainer>
               {/* {!onQuery && (
                 <PopoverButton
@@ -400,22 +457,7 @@ export const ModalGuestSendMaintenanceReport = ({
               {!onQuery && (
                 <PopoverButton
                   disabled={onFileQuery || onImageQuery || onQuery}
-                  actionButtonClick={() => {
-                    requestSaveReportProgress({
-                      files,
-                      images,
-                      maintenanceHistoryId: modalAdditionalInformations.id,
-                      maintenanceReport,
-                      setModal,
-                      setOnQuery,
-                      filter,
-                      setBuildingName,
-                      setFilterOptions,
-                      setKanban,
-                      setLoading,
-                      syndicNanoId,
-                    });
-                  }}
+                  actionButtonClick={requestSaveReportProgress}
                   textColor={theme.color.actionBlue}
                   borderless
                   label="Salvar progresso"
@@ -429,23 +471,7 @@ export const ModalGuestSendMaintenanceReport = ({
               <PopoverButton
                 disabled={onFileQuery || onImageQuery}
                 loading={onQuery}
-                actionButtonClick={() => {
-                  requestSendReport({
-                    files,
-                    images,
-                    maintenanceHistoryId: modalAdditionalInformations.id,
-                    maintenanceReport,
-                    setModal,
-                    setOnQuery,
-                    filter,
-                    setBuildingName,
-                    setFilterOptions,
-                    setKanban,
-                    setLoading,
-                    syndicNanoId,
-                    origin: 'Convidado',
-                  });
-                }}
+                actionButtonClick={requestSendReport}
                 label="Finalizar manutenção"
                 message={{
                   title: 'Tem certeza que deseja enviar o relato?',
