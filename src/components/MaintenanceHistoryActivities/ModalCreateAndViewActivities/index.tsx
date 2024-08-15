@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import { Api } from '../../../services/api';
 import { catchHandler, dateTimeFormatter, uploadManyFiles } from '../../../utils/functions';
@@ -31,13 +31,19 @@ export const ModalCreateAndViewActivities = ({
   setModal,
   maintenanceHistoryId,
 }: IModalCreateAndViewActivities) => {
+  const location = useLocation();
+
   const [comment, setComment] = useState('');
   const [onQuery, setOnQuery] = useState(false);
   const [activities, setActivities] = useState<IActivity[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const [query] = useSearchParams();
-  const syndicNanoId = query.get('syndicNanoId') || '';
+
+  // Gambiarra, ver lá na nas rotas de atividades
+  const isGuest = location.pathname.includes('guest-maintenance-history');
+  const syndicNanoId = query.get('syndicNanoId') || (isGuest ? 'true' : '');
+
   const [imagesToUpload, setImagesToUpload] = useState<AnnexesAndImages[]>([]);
 
   const findMaintenanceHistoryActivities = async () => {

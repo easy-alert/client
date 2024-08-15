@@ -1,40 +1,36 @@
 /* eslint-disable react/no-array-index-key */
-// LIBS
+import { useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
-
-// COMPONENTS
-import { useEffect, useState } from 'react';
-import { EventTag } from '../../../components/EventTag';
 import { Input } from '../../../components/Inputs/Input';
-import { Button } from '../../../components/Buttons/Button';
-import { Modal } from '../../../components/Modal';
-import { Image } from '../../../components/Image';
-import { DotLoading } from '../../../components/Loadings/DotLoading';
-import { ImagePreview } from '../../../components/ImagePreview';
-import { IconButton } from '../../../components/Buttons/IconButton';
-import { DotSpinLoading } from '../../../components/Loadings/DotSpinLoading';
-import { TextArea } from '../../../components/Inputs/TextArea';
-
-// STYLES
-import * as Style from './styles';
+import * as Style from '../../SyndicArea/ModalSendMaintenanceReport/styles';
 import { icon } from '../../../assets/icons';
-
-// TYPES
-import { IMaintenanceReport, IModalSendMaintenanceReport } from './types';
-import { AnnexesAndImages, IMaintenance } from '../../types';
-
-// FUNCTIONS
-import { applyMask, dateFormatter, uploadManyFiles } from '../../../utils/functions';
-import { requestMaintenanceDetails } from '../../functions';
-import { requestReportProgress, requestSendReport, requestSaveReportProgress } from './functions';
-import { InProgressTag } from '../../../components/InProgressTag';
+import { Button } from '../../../components/Buttons/Button';
+import { IconButton } from '../../../components/Buttons/IconButton';
 import { PopoverButton } from '../../../components/Buttons/PopoverButton';
-import { theme } from '../../../styles/theme';
-import { LinkSupplierToMaintenanceHistory } from '../../../components/LinkSupplierToMaintenanceHistory';
+import { EventTag } from '../../../components/EventTag';
+import { ImagePreview } from '../../../components/ImagePreview';
+import { InProgressTag } from '../../../components/InProgressTag';
+import { Image } from '../../../components/Image';
+import { TextArea } from '../../../components/Inputs/TextArea';
+import { DotLoading } from '../../../components/Loadings/DotLoading';
+import { DotSpinLoading } from '../../../components/Loadings/DotSpinLoading';
 import { MaintenanceHistoryActivities } from '../../../components/MaintenanceHistoryActivities';
-import { ShareMaintenanceHistoryButton } from '../../../components/ShareMaintenanceHistoryButton';
+import { Modal } from '../../../components/Modal';
+import { theme } from '../../../styles/theme';
+import { uploadManyFiles, dateFormatter, applyMask } from '../../../utils/functions';
+import { requestMaintenanceDetails } from '../../functions';
+import {
+  requestReportProgress,
+  requestSaveReportProgress,
+  requestSendReport,
+} from '../../SyndicArea/ModalSendMaintenanceReport/functions';
+import {
+  IModalSendMaintenanceReport,
+  IMaintenanceReport,
+} from '../../SyndicArea/ModalSendMaintenanceReport/types';
+import { IMaintenance, AnnexesAndImages } from '../../types';
 
-export const ModalSendMaintenanceReport = ({
+export const ModalGuestSendMaintenanceReport = ({
   setModal,
   modalAdditionalInformations,
   filter,
@@ -79,7 +75,7 @@ export const ModalSendMaintenanceReport = ({
     MaintenanceReport: [{ cost: 0, id: '', observation: '', ReportAnnexes: [], ReportImages: [] }],
   });
 
-  // MODAL ENVIAR RELATO
+  // MODAL ENVIAR RELATO - CONVIDADO
   const [maintenanceReport, setMaintenanceReport] = useState<IMaintenanceReport>({
     cost: 'R$ 0,00',
     observation: '',
@@ -187,8 +183,6 @@ export const ModalSendMaintenanceReport = ({
         </Style.LoadingContainer>
       ) : (
         <Style.Container>
-          <ShareMaintenanceHistoryButton maintenanceHistoryId={modalAdditionalInformations.id} />
-
           <h3>{maintenance?.Building.name}</h3>
           <Style.StatusTagWrapper>
             {maintenance.MaintenancesStatus.name === 'overdue' && <EventTag status="completed" />}
@@ -232,23 +226,30 @@ export const ModalSendMaintenanceReport = ({
               <Style.Row>
                 <h6>Periodicidade</h6>
                 <p className="p2">
-                  A cada{' '}
-                  {maintenance.Maintenance.frequency > 1
-                    ? `${maintenance.Maintenance.frequency} ${maintenance.Maintenance.FrequencyTimeInterval.pluralLabel}`
-                    : `${maintenance.Maintenance.frequency} ${maintenance.Maintenance.FrequencyTimeInterval.singularLabel}`}
+                  {!!maintenance.Maintenance.frequency &&
+                    `A cada${' '}
+                    ${
+                      maintenance.Maintenance.frequency > 1
+                        ? `${maintenance.Maintenance.frequency} ${maintenance.Maintenance.FrequencyTimeInterval.pluralLabel}`
+                        : `${maintenance.Maintenance.frequency} ${maintenance.Maintenance.FrequencyTimeInterval.singularLabel}`
+                    }`}
                 </p>
               </Style.Row>
             )}
 
             <Style.Row>
               <h6>Data de notificação</h6>
-              <p className="p2">{dateFormatter(maintenance.notificationDate)}</p>
+              <p className="p2">
+                {maintenance.notificationDate ? dateFormatter(maintenance.notificationDate) : ''}
+              </p>
             </Style.Row>
 
             {maintenance.Maintenance.MaintenanceType.name !== 'occasional' && (
               <Style.Row>
                 <h6>Data de vencimento</h6>
-                <p className="p2">{dateFormatter(maintenance.dueDate)}</p>
+                <p className="p2">
+                  {maintenance.dueDate ? dateFormatter(maintenance.dueDate) : ''}
+                </p>
               </Style.Row>
             )}
 
@@ -259,7 +260,6 @@ export const ModalSendMaintenanceReport = ({
               </Style.Row>
             )}
 
-            <LinkSupplierToMaintenanceHistory maintenanceHistoryId={maintenance.id} />
             <MaintenanceHistoryActivities maintenanceHistoryId={maintenance.id} />
 
             {maintenance.canReport && (
@@ -443,6 +443,7 @@ export const ModalSendMaintenanceReport = ({
                     setKanban,
                     setLoading,
                     syndicNanoId,
+                    origin: 'Convidado',
                   });
                 }}
                 label="Finalizar manutenção"
