@@ -210,12 +210,12 @@ export const ModalGuestSendMaintenanceReport = ({
       ReportImages: images,
     })
       .then(async (res) => {
-        toast.success(res.data.ServerMessage.message);
         await requestMaintenanceDetails({
           maintenanceHistoryId: modalAdditionalInformations.id,
           setMaintenance,
           setModalLoading,
         });
+        toast.success(res.data.ServerMessage.message);
       })
       .catch((err) => {
         catchHandler(err);
