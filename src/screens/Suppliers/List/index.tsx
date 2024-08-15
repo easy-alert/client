@@ -11,10 +11,10 @@ import { PaginationFooter } from '../../Tickets/styles';
 import { ListTag } from '../../../components/ListTag';
 import { useBrasilCities } from '../../../hooks/useBrasilCities';
 import { useBrasilStates } from '../../../hooks/useBrasilStates';
-import { useServiceTypes } from '../../../hooks/useServiceTypes';
 import { Button } from '../../../components/Buttons/Button';
 import { Select } from '../../../components/Inputs/Select';
 import { Input } from '../../../components/Inputs/Input';
+import { useAreaOfActivities } from '../../../hooks/useAreaOfActivities';
 
 interface ISupplier {
   id: string;
@@ -26,8 +26,8 @@ interface ISupplier {
   phone: string | null;
   email: string | null;
 
-  serviceTypes: {
-    type: { label: string };
+  areaOfActivities: {
+    areaOfActivity: { label: string };
   }[];
 }
 
@@ -41,7 +41,7 @@ export const SuppliersList = () => {
 
   const { states, selectedStateAcronym, setSelectedStateAcronym } = useBrasilStates();
   const { cities } = useBrasilCities({ UF: selectedStateAcronym });
-  const { serviceTypes } = useServiceTypes();
+  const { areaOfActivities } = useAreaOfActivities({ findAll: true });
   const [onQuery, setOnQuery] = useState(false);
   const [filter, setFilter] = useState({ search: '', serviceTypeLabel: '', state: '', city: '' });
 
@@ -133,7 +133,7 @@ export const SuppliersList = () => {
               }}
             >
               <option value="">Todas</option>
-              {serviceTypes.map(({ label }) => (
+              {areaOfActivities.map(({ label }) => (
                 <option value={label} key={label}>
                   {label}
                 </option>
@@ -200,10 +200,10 @@ export const SuppliersList = () => {
                     <h5>{supplier.name}</h5>
 
                     <Style.Tags>
-                      {supplier.serviceTypes.map(({ type }) => (
+                      {supplier.areaOfActivities.map(({ areaOfActivity }) => (
                         <ListTag
-                          key={type.label}
-                          label={type.label}
+                          key={areaOfActivity.label}
+                          label={areaOfActivity.label}
                           fontSize="14px"
                           lineHeight="16px"
                         />
