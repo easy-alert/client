@@ -24,8 +24,10 @@ export const HeaderWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: ${theme.size.xsm};
-  width: 100%;
-  max-width: 300px;
+
+  .select {
+    max-width: 300px;
+  }
 
   @media (max-width: 600px) {
     flex-direction: column;
