@@ -12,6 +12,7 @@ import editWithBg from './editWithBackground.svg';
 import block from './block.svg';
 import rightArrow from './rightArrow.svg';
 import search from './search.svg';
+import uploadLine from './uploadLine.svg';
 import imageBackplate from './imageBackplate.svg';
 import downArrow from './downArrow.svg';
 import logoWhite from './logoWhite.svg';
@@ -71,6 +72,7 @@ import activityComment from './activityComment.svg';
 import upload from './upload.svg';
 
 export const icon = {
+  uploadLine,
   upload,
   send,
   activityComment,

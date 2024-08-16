@@ -15,6 +15,7 @@ import { ResponsibleRequireAuth } from './contexts/ResponsibleAuth/ResponsibleRe
 import { ResidentRequireAuth } from './contexts/ResidentAuth/ResidentRequireAuth';
 import { SupplierDetails } from './screens/Suppliers/Details';
 import { SuppliersList } from './screens/Suppliers/List';
+import { GuestMaintenanceHistory } from './screens/GuestMaintenanceHistory';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -24,6 +25,15 @@ const AppRoutes = () => (
         element={
           <NavBar>
             <MaintenancesPlan />
+          </NavBar>
+        }
+      />
+
+      <Route
+        path="/guest-maintenance-history/:maintenanceHistoryId"
+        element={
+          <NavBar>
+            <GuestMaintenanceHistory />
           </NavBar>
         }
       />
