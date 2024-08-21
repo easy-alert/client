@@ -1,29 +1,23 @@
 /* eslint-disable react/no-array-index-key */
 import { useState, useEffect } from 'react';
-import { useDropzone } from 'react-dropzone';
 import { toast } from 'react-toastify';
+import { useDropzone } from 'react-dropzone';
 import { Input } from '../../../components/Inputs/Input';
 import * as Style from '../../SyndicArea/ModalSendMaintenanceReport/styles';
-import { icon } from '../../../assets/icons';
 import { Button } from '../../../components/Buttons/Button';
-import { IconButton } from '../../../components/Buttons/IconButton';
 import { PopoverButton } from '../../../components/Buttons/PopoverButton';
 import { EventTag } from '../../../components/EventTag';
-import { ImagePreview } from '../../../components/ImagePreview';
 import { InProgressTag } from '../../../components/InProgressTag';
-import { Image } from '../../../components/Image';
-import { TextArea } from '../../../components/Inputs/TextArea';
-import { DotLoading } from '../../../components/Loadings/DotLoading';
 import { DotSpinLoading } from '../../../components/Loadings/DotSpinLoading';
 import { MaintenanceHistoryActivities } from '../../../components/MaintenanceHistoryActivities';
 import { Modal } from '../../../components/Modal';
 import { theme } from '../../../styles/theme';
 import {
-  uploadManyFiles,
   dateFormatter,
   applyMask,
   catchHandler,
   unMaskBRL,
+  uploadManyFiles,
 } from '../../../utils/functions';
 import { requestMaintenanceDetails } from '../../functions';
 import { requestReportProgress } from '../../SyndicArea/ModalSendMaintenanceReport/functions';
@@ -31,8 +25,13 @@ import {
   IModalSendMaintenanceReport,
   IMaintenanceReport,
 } from '../../SyndicArea/ModalSendMaintenanceReport/types';
-import { IMaintenance, AnnexesAndImages } from '../../types';
+import { AnnexesAndImages, IMaintenance } from '../../types';
 import { Api } from '../../../services/api';
+import { icon } from '../../../assets/icons';
+import { IconButton } from '../../../components/Buttons/IconButton';
+import { ImagePreview } from '../../../components/ImagePreview';
+import { DotLoading } from '../../../components/Loadings/DotLoading';
+import { ImageComponent } from '../../../components/ImageComponent';
 
 export const ModalGuestSendMaintenanceReport = ({
   setModal,
@@ -159,9 +158,9 @@ export const ModalGuestSendMaintenanceReport = ({
   useEffect(() => {
     requestReportProgress({
       maintenanceHistoryId: modalAdditionalInformations.id,
+      setMaintenanceReport,
       setFiles,
       setImages,
-      setMaintenanceReport,
     }).then(() => {
       requestMaintenanceDetails({
         maintenanceHistoryId: modalAdditionalInformations.id,
@@ -171,6 +170,29 @@ export const ModalGuestSendMaintenanceReport = ({
     });
   }, []);
 
+  const requestToggleInProgress = async () => {
+    setOnQuery(true);
+
+    await Api.post('/maintenances/set/in-progress', {
+      maintenanceHistoryId: modalAdditionalInformations.id,
+      inProgressChange: !maintenance.inProgress,
+    })
+      .then(async (res) => {
+        await requestMaintenanceDetails({
+          maintenanceHistoryId: modalAdditionalInformations.id,
+          setMaintenance,
+          setModalLoading,
+        });
+        toast.success(res.data.ServerMessage.message);
+      })
+      .catch((err) => {
+        catchHandler(err);
+      })
+      .finally(() => {
+        setOnQuery(false);
+      });
+  };
+
   const requestSendReport = async () => {
     setOnQuery(true);
 
@@ -179,9 +201,9 @@ export const ModalGuestSendMaintenanceReport = ({
       maintenanceHistoryId: modalAdditionalInformations.id,
       cost: Number(unMaskBRL(maintenanceReport.cost)),
       observation: maintenanceReport.observation !== '' ? maintenanceReport.observation : null,
+      responsibleSyndicId: syndicNanoId,
       ReportAnnexes: files,
       ReportImages: images,
-      responsibleSyndicId: syndicNanoId,
     })
       .then(async (res) => {
         toast.success(res.data.ServerMessage.message);
@@ -240,8 +262,10 @@ export const ModalGuestSendMaintenanceReport = ({
           <Style.StatusTagWrapper>
             {maintenance.MaintenancesStatus.name === 'overdue' && <EventTag status="completed" />}
             <EventTag status={maintenance?.MaintenancesStatus.name} />
-            {maintenance?.Maintenance.MaintenanceType.name === 'occasional' && (
+            {maintenance?.Maintenance.MaintenanceType.name === 'occasional' ? (
               <EventTag status="occasional" />
+            ) : (
+              <EventTag status="common" />
             )}
             {(maintenance?.MaintenancesStatus.name === 'expired' ||
               maintenance?.MaintenancesStatus.name === 'pending') &&
@@ -332,7 +356,7 @@ export const ModalGuestSendMaintenanceReport = ({
                     }}
                   />
 
-                  <TextArea
+                  {/* <TextArea
                     label="Observação do relato"
                     placeholder="Digite aqui"
                     value={maintenanceReport.observation}
@@ -343,15 +367,15 @@ export const ModalGuestSendMaintenanceReport = ({
                         return newState;
                       });
                     }}
-                  />
+                  />  */}
 
-                  <Style.Row disabled={onFileQuery}>
+                  <Style.FileStyleRow disabled={onFileQuery}>
                     <h6>Anexar</h6>
                     <Style.FileRow>
                       <Style.DragAndDropZoneFile {...getRootProps({ className: 'dropzone' })}>
                         <input {...getInputProps()} />
 
-                        <Image img={icon.addFile} width="60px" height="48px" radius="0" />
+                        <ImageComponent src={icon.addFile} width="40px" height="32px" radius="0" />
                       </Style.DragAndDropZoneFile>
 
                       {(files.length > 0 || onFileQuery) && (
@@ -381,8 +405,8 @@ export const ModalGuestSendMaintenanceReport = ({
                         </Style.FileAndImageRow>
                       )}
                     </Style.FileRow>
-                  </Style.Row>
-                  <Style.Row disabled={onImageQuery}>
+                  </Style.FileStyleRow>
+                  <Style.FileStyleRow disabled={onImageQuery}>
                     <h6>Imagens</h6>
 
                     <Style.FileAndImageRow>
@@ -390,14 +414,14 @@ export const ModalGuestSendMaintenanceReport = ({
                         {...getRootPropsImages({ className: 'dropzone' })}
                       >
                         <input {...getInputPropsImages()} />
-                        <Image img={icon.addImage} width="48px" height="46px" radius="0" />
+                        <ImageComponent src={icon.addImage} width="40px" height="38px" radius="0" />
                       </Style.DragAndDropZoneImage>
 
                       {images.map((e, i: number) => (
                         <ImagePreview
                           key={e.name + i}
-                          width="132px"
-                          height="136px"
+                          width="97px"
+                          height="97px"
                           imageCustomName={e.name}
                           src={e.url}
                           onTrashClick={() => {
@@ -417,30 +441,17 @@ export const ModalGuestSendMaintenanceReport = ({
                           </Style.ImageLoadingTag>
                         ))}
                     </Style.FileAndImageRow>
-                  </Style.Row>
+                  </Style.FileStyleRow>
                 </>
               )}
           </Style.Content>
           {maintenance.canReport &&
           ['expired', 'pending'].includes(maintenance.MaintenancesStatus.name) ? (
             <Style.ButtonContainer>
-              {/* {!onQuery && (
+              {!onQuery && (
                 <PopoverButton
-                  disabled={onFileQuery || onImageQuery || onQuery}
-                  actionButtonClick={() => {
-                    requestToggleInProgress({
-                      maintenanceHistoryId: modalAdditionalInformations.id,
-                      setModal,
-                      setOnQuery,
-                      filter,
-                      setBuildingName,
-                      setFilterOptions,
-                      setKanban,
-                      setLoading,
-                      syndicNanoId,
-                      inProgressChange: !maintenance.inProgress,
-                    });
-                  }}
+                  disabled={onQuery}
+                  actionButtonClick={requestToggleInProgress}
                   borderless
                   textColor={theme.color.actionBlue}
                   label={maintenance.inProgress ? 'Parar execução' : 'Iniciar execução'}
@@ -452,7 +463,7 @@ export const ModalGuestSendMaintenanceReport = ({
                   }}
                   type="Button"
                 />
-              )} */}
+              )}
 
               {!onQuery && (
                 <PopoverButton
@@ -469,7 +480,6 @@ export const ModalGuestSendMaintenanceReport = ({
                 />
               )}
               <PopoverButton
-                disabled={onFileQuery || onImageQuery}
                 loading={onQuery}
                 actionButtonClick={requestSendReport}
                 label="Finalizar manutenção"

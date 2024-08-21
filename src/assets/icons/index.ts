@@ -70,6 +70,7 @@ import addWithCircle from './addWithCircle.svg';
 import send from './send.svg';
 import activityComment from './activityComment.svg';
 import upload from './upload.svg';
+import smallPaper from './smallPaper.svg';
 
 export const icon = {
   uploadLine,
@@ -144,4 +145,5 @@ export const icon = {
   checklistUnchecked,
   siren,
   eyeGray,
+  smallPaper,
 };

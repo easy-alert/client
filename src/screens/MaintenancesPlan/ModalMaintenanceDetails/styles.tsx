@@ -25,8 +25,11 @@ export const StatusTagWrapper = styled.div`
 
 export const Row = styled.div<{ disabled?: boolean }>`
   display: flex;
-  flex-direction: column;
   gap: ${theme.size.xxsm};
+  padding: ${theme.size.xsm} ${theme.size.sm};
+  border: 1px solid ${theme.color.gray4};
+  background-color: ${theme.color.gray1};
+  border-radius: ${theme.size.xsm};
 
   ${({ disabled }) =>
     disabled &&
@@ -38,6 +41,9 @@ export const Row = styled.div<{ disabled?: boolean }>`
         opacity: 1;
       }
     `}
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
 `;
 
 export const DragAndDropZoneFile = styled.div`
@@ -147,4 +153,21 @@ export const LoadingContainer = styled.div`
   align-items: center;
   justify-content: center;
   min-height: 400px;
+`;
+
+export const FileStyleRow = styled.div<{ disabled?: boolean }>`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.size.xxsm};
+
+  ${({ disabled }) =>
+    disabled &&
+    css`
+      cursor: default;
+      pointer-events: none;
+
+      :hover {
+        opacity: 1;
+      }
+    `}
 `;
