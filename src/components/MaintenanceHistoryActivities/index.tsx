@@ -35,7 +35,7 @@ export const MaintenanceHistoryActivities = ({
 
   // Gambiarra, ver lá na nas rotas de atividades
   const isGuest = location.pathname.includes('guest-maintenance-history');
-  const syndicNanoId = query.get('syndicNanoId') || (isGuest ? 'true' : '');
+  const syndicNanoId = query.get('syndicNanoId') || (isGuest ? 'guest' : '');
 
   const [imagesToUpload, setImagesToUpload] = useState<AnnexesAndImages[]>([]);
 

@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useDropzone } from 'react-dropzone';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { Input } from '../../../components/Inputs/Input';
 import * as Style from '../../SyndicArea/ModalSendMaintenanceReport/styles';
 import { Button } from '../../../components/Buttons/Button';
@@ -36,8 +37,13 @@ import { ImageComponent } from '../../../components/ImageComponent';
 export const ModalGuestSendMaintenanceReport = ({
   setModal,
   modalAdditionalInformations,
-  syndicNanoId,
 }: IModalSendMaintenanceReport) => {
+  const [query] = useSearchParams();
+  const location = useLocation();
+
+  const isGuest = location.pathname.includes('guest-maintenance-history');
+  const syndicNanoId = query.get('syndicNanoId') || (isGuest ? 'guest' : '');
+
   const [maintenance, setMaintenance] = useState<IMaintenance>({
     Building: {
       name: '',
@@ -173,7 +179,7 @@ export const ModalGuestSendMaintenanceReport = ({
   const requestToggleInProgress = async () => {
     setOnQuery(true);
 
-    await Api.post('/maintenances/set/in-progress', {
+    await Api.post(`/maintenances/set/in-progress?syndicNanoId=${syndicNanoId}`, {
       maintenanceHistoryId: modalAdditionalInformations.id,
       inProgressChange: !maintenance.inProgress,
     })

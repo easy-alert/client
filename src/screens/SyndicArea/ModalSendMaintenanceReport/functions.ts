@@ -69,7 +69,7 @@ export const requestToggleInProgress = async ({
 }: IRequestToggleInProgress) => {
   setOnQuery(true);
 
-  await Api.post('/maintenances/set/in-progress', {
+  await Api.post(`/maintenances/set/in-progress?syndicNanoId=${syndicNanoId}`, {
     maintenanceHistoryId,
     inProgressChange,
   })

@@ -50,7 +50,7 @@ export const LinkSupplierToMaintenanceHistory = ({
   const unlinkToMaintenanceHistory = async (supplierId: string) => {
     setOnQuery(true);
 
-    await Api.post(`/suppliers/unlink-to-maintenance-history`, {
+    await Api.post(`/suppliers/unlink-to-maintenance-history?syndicNanoId=${syndicNanoId}`, {
       maintenanceHistoryId,
       supplierId,
     })
