@@ -95,8 +95,8 @@ export const ImageLoadingTag = styled.div`
   padding: 8px 12px;
   background-color: ${theme.color.primaryL};
   border-radius: ${theme.size.xxsm};
-  height: 125px;
-  width: 125px;
+  height: 97px;
+  width: 97px;
 `;
 
 export const History = styled.div`

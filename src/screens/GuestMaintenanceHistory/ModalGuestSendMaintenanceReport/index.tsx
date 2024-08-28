@@ -33,6 +33,7 @@ import { IconButton } from '../../../components/Buttons/IconButton';
 import { ImagePreview } from '../../../components/ImagePreview';
 import { DotLoading } from '../../../components/Loadings/DotLoading';
 import { ImageComponent } from '../../../components/ImageComponent';
+import { Tag } from '../../MaintenancesPlan/ModalMaintenanceDetails/styles';
 
 export const ModalGuestSendMaintenanceReport = ({
   setModal,
@@ -344,6 +345,54 @@ export const ModalGuestSendMaintenanceReport = ({
             )}
 
             <MaintenanceHistoryActivities maintenanceHistoryId={maintenance.id} />
+
+            {['completed', 'overdue'].includes(maintenance.MaintenancesStatus.name) && (
+              <>
+                <Style.FileStyleRow>
+                  <h6>Anexos</h6>
+                  <Style.FileAndImageRow>
+                    {maintenance.MaintenanceReport[0].ReportAnnexes.length > 0 ? (
+                      maintenance.MaintenanceReport[0].ReportAnnexes.map((annex, i: number) => (
+                        <Tag key={annex.name + i}>
+                          <a
+                            title={annex.originalName}
+                            href={annex.url}
+                            download
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <p className="p3">{annex.name}</p>
+                            <ImageComponent size="16px" src={icon.download} />
+                          </a>
+                        </Tag>
+                      ))
+                    ) : (
+                      <p className="p2">Nenhum anexo enviado.</p>
+                    )}
+                  </Style.FileAndImageRow>
+                </Style.FileStyleRow>
+
+                <Style.FileStyleRow>
+                  <h6>Imagens</h6>
+                  <Style.FileAndImageRow>
+                    {maintenance.MaintenanceReport[0].ReportImages.length > 0 ? (
+                      maintenance.MaintenanceReport[0].ReportImages.map((image, i: number) => (
+                        <ImagePreview
+                          key={image.name + i}
+                          src={image.url}
+                          downloadUrl={image.url}
+                          imageCustomName={image.name}
+                          width="97px"
+                          height="97px"
+                        />
+                      ))
+                    ) : (
+                      <p className="p2">Nenhuma imagem enviada.</p>
+                    )}
+                  </Style.FileAndImageRow>
+                </Style.FileStyleRow>
+              </>
+            )}
 
             {maintenance.canReport &&
               ['expired', 'pending'].includes(maintenance.MaintenancesStatus.name) && (

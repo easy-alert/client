@@ -150,8 +150,8 @@ export const MaintenanceHistoryActivities = ({
               {imagesToUpload.map((e, i: number) => (
                 <ImagePreview
                   key={e.url}
-                  width="125px"
-                  height="125px"
+                  width="97px"
+                  height="97px"
                   imageCustomName={e.originalName}
                   src={e.url}
                   onTrashClick={() => {
@@ -197,8 +197,8 @@ export const MaintenanceHistoryActivities = ({
                         {images.map((e) => (
                           <ImagePreview
                             key={e.url}
-                            width="125px"
-                            height="125px"
+                            width="97px"
+                            height="97px"
                             imageCustomName={e.name}
                             src={e.url}
                             downloadUrl={e.url}

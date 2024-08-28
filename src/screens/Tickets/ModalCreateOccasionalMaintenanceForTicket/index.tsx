@@ -9,7 +9,6 @@ import * as Style from './styles';
 import { Image } from '../../../components/Image';
 
 import { DotSpinLoading } from '../../../components/Loadings/DotSpinLoading';
-import { TextArea } from '../../../components/Inputs/TextArea';
 import { Modal } from '../../../components/Modal';
 import { Input } from '../../../components/Inputs/Input';
 import { Button } from '../../../components/Buttons/Button';
@@ -370,7 +369,7 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
                   }));
                 }}
               />
-
+              {/*
               <TextArea
                 disabled={data.inProgress}
                 label="Observação do relato"
@@ -385,7 +384,7 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
                     },
                   }));
                 }}
-              />
+              /> */}
 
               <Style.Row disabled={onFileQuery}>
                 <h6>Anexar</h6>
@@ -393,7 +392,7 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
                   <Style.DragAndDropZoneFile {...getRootProps({ className: 'dropzone' })}>
                     <input {...getInputProps()} />
 
-                    <Image img={icon.addFile} width="60px" height="48px" radius="0" />
+                    <Image img={icon.addFile} width="40px" height="32px" radius="0" />
                   </Style.DragAndDropZoneFile>
 
                   {(data.reportData.files.length > 0 || onFileQuery) && (
@@ -436,15 +435,15 @@ export const ModalCreateOccasionalMaintenanceForTicket = ({
                 <Style.FileAndImageRow>
                   <Style.DragAndDropZoneImage {...getRootPropsImages({ className: 'dropzone' })}>
                     <input {...getInputPropsImages()} />
-                    <Image img={icon.addImage} width="48px" height="46px" radius="0" />
+                    <Image img={icon.addImage} width="40px" height="38px" radius="0" />
                   </Style.DragAndDropZoneImage>
 
                   {data.reportData.images.map((e, i: number) => (
                     <ImagePreview
                       // eslint-disable-next-line react/no-array-index-key
                       key={e.name + i}
-                      width="132px"
-                      height="136px"
+                      width="97px"
+                      height="97px"
                       imageCustomName={e.name}
                       src={e.url}
                       onTrashClick={() => {

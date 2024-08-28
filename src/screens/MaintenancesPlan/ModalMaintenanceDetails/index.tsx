@@ -243,8 +243,8 @@ export const ModalMaintenanceDetails = ({
                           src={image.url}
                           downloadUrl={image.url}
                           imageCustomName={image.name}
-                          width="132px"
-                          height="136px"
+                          width="97px"
+                          height="97px"
                         />
                       ))
                     ) : (

@@ -14,7 +14,7 @@ export const Container = styled.div`
 export const Content = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${theme.size.xsm};
+  gap: ${theme.size.xxsm};
 `;
 
 export const StatusTagWrapper = styled.div`
@@ -128,8 +128,8 @@ export const ImageLoadingTag = styled.div`
   padding: 8px 12px;
   background-color: ${theme.color.primaryL};
   border-radius: ${theme.size.xxsm};
-  height: 136px;
-  width: 132px;
+  height: 97px;
+  width: 97px;
 `;
 
 export const DragAndDropZoneImage = styled.div`
@@ -139,8 +139,8 @@ export const DragAndDropZoneImage = styled.div`
   border: 1px dashed ${theme.color.gray4};
   border-radius: ${theme.size.xxsm};
   padding: ${theme.size.sm} ${theme.size.md};
-  height: 136px;
-  width: 132px;
+  height: 97px;
+  width: 97px;
   cursor: pointer;
   transition: 0.25s;
   :hover {

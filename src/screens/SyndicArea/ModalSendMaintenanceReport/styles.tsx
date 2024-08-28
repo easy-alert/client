@@ -168,16 +168,3 @@ export const ButtonContainer = styled.div`
   align-items: center;
   gap: ${theme.size.sm};
 `;
-
-export const UpdateCostDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${theme.size.xxsm};
-`;
-
-export const UpdateCostButtons = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: ${theme.size.sm};
-`;
