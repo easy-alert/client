@@ -2,6 +2,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { Api } from '../../../services/api';
 import { catchHandler } from '../../../utils/functions';
 import { CustomModal } from '../../CustomModal';
@@ -36,6 +37,12 @@ export const ModalLinkSupplier = ({
   const [loading, setLoading] = useState(true);
   const [onQuery, setOnQuery] = useState(false);
 
+  const location = useLocation();
+  const [query] = useSearchParams();
+  // Gambiarra, ver lá na nas rotas de atividades
+  const isGuest = location.pathname.includes('guest-maintenance-history');
+  const syndicNanoId = query.get('syndicNanoId') || (isGuest ? 'guest' : '');
+
   // tirar o delete many no linkWithMaintenanceHistory se for vincular a mais de 1 fornecedor
   const findCompanySuppliers = async () => {
     await Api.get(`/suppliers/to-select/${maintenanceHistoryId}`)
@@ -54,7 +61,7 @@ export const ModalLinkSupplier = ({
   const linkToMaintenanceHistory = async (supplierId: string) => {
     setOnQuery(true);
 
-    await Api.post(`/suppliers/link-to-maintenance-history`, {
+    await Api.post(`/suppliers/link-to-maintenance-history?syndicNanoId=${syndicNanoId}`, {
       maintenanceHistoryId,
       supplierId,
     })

@@ -430,8 +430,10 @@ export const SyndicArea = () => {
                         >
                           <h6>
                             <span>
-                              {maintenance.type === 'occasional' && (
+                              {maintenance.type === 'occasional' ? (
                                 <EventTag status="occasional" />
+                              ) : (
+                                <EventTag status="common" />
                               )}
                               {maintenance.status === 'pending' &&
                                 new Date(maintenance.date) >

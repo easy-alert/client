@@ -298,9 +298,13 @@ export const MaintenancesPlan = () => {
                         <Style.Maintenance status={maintenance.status}>
                           <Style.MaintenanceTags>
                             {maintenance.status === 'overdue' && <EventTag status="completed" />}
-                            <EventTag status={maintenance.status} />
+                            <EventTag status={maintenance.status as any} />
 
-                            {maintenance.type === 'occasional' && <EventTag status="occasional" />}
+                            {maintenance.type === 'occasional' ? (
+                              <EventTag status="occasional" />
+                            ) : (
+                              <EventTag status="common" />
+                            )}
 
                             {(maintenance.status === 'expired' ||
                               maintenance.status === 'pending') &&

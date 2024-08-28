@@ -69,7 +69,7 @@ export const requestToggleInProgress = async ({
 }: IRequestToggleInProgress) => {
   setOnQuery(true);
 
-  await Api.post('/maintenances/set/in-progress', {
+  await Api.post(`/maintenances/set/in-progress?syndicNanoId=${syndicNanoId}`, {
     maintenanceHistoryId,
     inProgressChange,
   })
@@ -132,7 +132,7 @@ export const requestSaveReportProgress = async ({
 }: IRequestSaveReportProgress) => {
   setOnQuery(true);
 
-  await Api.post('/maintenances/create/report/progress', {
+  await Api.post(`/maintenances/create/report/progress?syndicNanoId=${syndicNanoId}`, {
     maintenanceHistoryId,
     cost: Number(unMaskBRL(maintenanceReport.cost)),
     observation: maintenanceReport.observation !== '' ? maintenanceReport.observation : null,
