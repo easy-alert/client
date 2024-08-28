@@ -230,7 +230,7 @@ export const ModalGuestSendMaintenanceReport = ({
   const requestSaveReportProgress = async () => {
     setOnQuery(true);
 
-    await Api.post('/maintenances/create/report/progress', {
+    await Api.post(`/maintenances/create/report/progress?syndicNanoId=${syndicNanoId}`, {
       maintenanceHistoryId: modalAdditionalInformations.id,
       cost: Number(unMaskBRL(maintenanceReport.cost)),
       observation: maintenanceReport.observation !== '' ? maintenanceReport.observation : null,

@@ -132,7 +132,7 @@ export const requestSaveReportProgress = async ({
 }: IRequestSaveReportProgress) => {
   setOnQuery(true);
 
-  await Api.post('/maintenances/create/report/progress', {
+  await Api.post(`/maintenances/create/report/progress?syndicNanoId=${syndicNanoId}`, {
     maintenanceHistoryId,
     cost: Number(unMaskBRL(maintenanceReport.cost)),
     observation: maintenanceReport.observation !== '' ? maintenanceReport.observation : null,
