@@ -27,6 +27,7 @@ export const ResidentRequireAuth = ({ children }: IRequireAuth) => {
 
   const [search] = useSearchParams();
   const syndicNanoId = search.get('syndicNanoId') ?? '';
+  const queryPassword = search.get('password') ?? '';
 
   const checkPasswordExistence = async () => {
     await Api.get(`/check-password-existence/${buildingNanoId}/resident`)
@@ -60,6 +61,10 @@ export const ResidentRequireAuth = ({ children }: IRequireAuth) => {
 
   useEffect(() => {
     checkPasswordExistence();
+
+    if (queryPassword && !syndicNanoId) {
+      signIn(queryPassword);
+    }
   }, []);
 
   return (
