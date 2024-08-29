@@ -27,20 +27,6 @@ export const ResponsibleRequireAuth = ({ children }: IRequireAuth) => {
   const [search] = useSearchParams();
   const queryPassword = search.get('password') ?? '';
 
-  const checkPasswordExistence = async () => {
-    await Api.get(`/check-password-existence/${buildingNanoId}/responsible`)
-      .then((res) => {
-        setNeedPassword(res.data.needPassword);
-        setBuildingName(res.data.buildingName);
-      })
-      .catch((err) => {
-        catchHandler(err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
   const signIn = async (password: string) => {
     setOnQuery(true);
 
@@ -57,12 +43,26 @@ export const ResponsibleRequireAuth = ({ children }: IRequireAuth) => {
       });
   };
 
+  const checkPasswordExistence = async () => {
+    await Api.get(`/check-password-existence/${buildingNanoId}/responsible`)
+      .then((res) => {
+        setNeedPassword(res.data.needPassword);
+        setBuildingName(res.data.buildingName);
+
+        if (queryPassword && res.data.needPassword) {
+          signIn(queryPassword);
+        }
+      })
+      .catch((err) => {
+        catchHandler(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   useEffect(() => {
     checkPasswordExistence();
-
-    if (queryPassword) {
-      signIn(queryPassword);
-    }
   }, []);
 
   return (
