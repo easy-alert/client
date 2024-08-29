@@ -29,20 +29,6 @@ export const ResidentRequireAuth = ({ children }: IRequireAuth) => {
   const syndicNanoId = search.get('syndicNanoId') ?? '';
   const queryPassword = search.get('password') ?? '';
 
-  const checkPasswordExistence = async () => {
-    await Api.get(`/check-password-existence/${buildingNanoId}/resident`)
-      .then((res) => {
-        setNeedPassword(res.data.needPassword);
-        setBuildingName(res.data.buildingName);
-      })
-      .catch((err) => {
-        catchHandler(err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
-
   const signIn = async (password: string) => {
     setOnQuery(true);
 
@@ -59,12 +45,26 @@ export const ResidentRequireAuth = ({ children }: IRequireAuth) => {
       });
   };
 
+  const checkPasswordExistence = async () => {
+    await Api.get(`/check-password-existence/${buildingNanoId}/resident`)
+      .then((res) => {
+        setNeedPassword(res.data.needPassword);
+        setBuildingName(res.data.buildingName);
+
+        if (queryPassword && !syndicNanoId && res.data.needPassword) {
+          signIn(queryPassword);
+        }
+      })
+      .catch((err) => {
+        catchHandler(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   useEffect(() => {
     checkPasswordExistence();
-
-    if (queryPassword && !syndicNanoId) {
-      signIn(queryPassword);
-    }
   }, []);
 
   return (
