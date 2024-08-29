@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Form, Formik } from 'formik';
 import * as yup from 'yup';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { Api } from '../../services/api';
 
 import { DotSpinLoading } from '../../components/Loadings/DotSpinLoading';
@@ -24,6 +24,8 @@ export const ResponsibleRequireAuth = ({ children }: IRequireAuth) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [onQuery, setOnQuery] = useState<boolean>(false);
   const [needPassword, setNeedPassword] = useState<boolean>(true);
+  const [search] = useSearchParams();
+  const queryPassword = search.get('password') ?? '';
 
   const checkPasswordExistence = async () => {
     await Api.get(`/check-password-existence/${buildingNanoId}/responsible`)
@@ -57,6 +59,10 @@ export const ResponsibleRequireAuth = ({ children }: IRequireAuth) => {
 
   useEffect(() => {
     checkPasswordExistence();
+
+    if (queryPassword) {
+      signIn(queryPassword);
+    }
   }, []);
 
   return (
