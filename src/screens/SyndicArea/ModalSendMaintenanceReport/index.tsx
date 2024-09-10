@@ -37,6 +37,7 @@ import { theme } from '../../../styles/theme';
 import { LinkSupplierToMaintenanceHistory } from '../../../components/LinkSupplierToMaintenanceHistory';
 import { MaintenanceHistoryActivities } from '../../../components/MaintenanceHistoryActivities';
 import { ShareMaintenanceHistoryButton } from '../../../components/ShareMaintenanceHistoryButton';
+import { ListTag } from '../../../components/ListTag';
 
 export const ModalSendMaintenanceReport = ({
   setModal,
@@ -58,6 +59,7 @@ export const ModalSendMaintenanceReport = ({
     id: '',
     inProgress: false,
     Maintenance: {
+      instructions: [],
       activity: '',
       Category: {
         name: '',
@@ -232,6 +234,17 @@ export const ModalSendMaintenanceReport = ({
             <Style.Row>
               <h6>Observação da manutenção</h6>
               <p className="p2">{maintenance.Maintenance.observation ?? '-'}</p>
+            </Style.Row>
+
+            <Style.Row>
+              <h6>Instruções</h6>
+              <Style.FileAndImageRow>
+                {maintenance.Maintenance.instructions.length > 0
+                  ? maintenance.Maintenance.instructions.map(({ url, name }) => (
+                      <ListTag padding="4px 12px" downloadUrl={url} key={url} label={name} />
+                    ))
+                  : '-'}
+              </Style.FileAndImageRow>
             </Style.Row>
 
             {maintenance.Maintenance.MaintenanceType.name !== 'occasional' && (
