@@ -59,8 +59,8 @@ export const DragAndDropFiles = ({
           ) : (
             <Image
               img={onlyImages ? icon.addImage : icon.addFile}
-              width={onlyImages ? '48px' : '60px'}
-              height={onlyImages ? '46px' : '48px'}
+              width="40px"
+              height={onlyImages ? '40px' : '32px'}
               radius="0"
             />
           )}

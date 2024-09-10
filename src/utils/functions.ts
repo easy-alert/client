@@ -441,3 +441,8 @@ export function ensureHttps(urlParam: string): string {
   // If it already starts with https://, return it as is
   return url;
 }
+
+export const isImage = (src: string) => {
+  const imagesExtensions = ['png', 'jpg', 'jpeg'];
+  return imagesExtensions.includes((src.split('.').pop()?.toLowerCase() || '').toLowerCase());
+};

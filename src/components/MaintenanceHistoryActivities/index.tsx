@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { Api } from '../../services/api';
-import { catchHandler, dateTimeFormatter, uploadManyFiles } from '../../utils/functions';
+import { catchHandler, dateTimeFormatter, isImage, uploadManyFiles } from '../../utils/functions';
 import { IActivity } from './types';
 import * as Style from './styles';
 import { icon } from '../../assets/icons';
@@ -11,6 +11,7 @@ import { ImageComponent } from '../ImageComponent';
 import { ImagePreview } from '../ImagePreview';
 import { DotLoading } from '../Loadings/DotLoading';
 import { TextArea } from '../Inputs/TextArea';
+import { ListTag } from '../ListTag';
 
 interface IMaintenanceHistoryActivities {
   maintenanceHistoryId: string;
@@ -147,22 +148,42 @@ export const MaintenanceHistoryActivities = ({
           </Style.InputRow>
           {(imagesToUpload.length > 0 || onImageQuery) && (
             <Style.FileAndImageRow>
-              {imagesToUpload.map((e, i: number) => (
-                <ImagePreview
-                  key={e.url}
-                  width="97px"
-                  height="97px"
-                  imageCustomName={e.originalName}
-                  src={e.url}
-                  onTrashClick={() => {
-                    setImagesToUpload((prevState) => {
-                      const newState = [...prevState];
-                      newState.splice(i, 1);
-                      return newState;
-                    });
-                  }}
-                />
-              ))}
+              {imagesToUpload.map((e, i: number) => {
+                if (isImage(e.url)) {
+                  return (
+                    <ImagePreview
+                      key={e.url}
+                      width="97px"
+                      height="97px"
+                      imageCustomName={e.originalName}
+                      src={e.url}
+                      onTrashClick={() => {
+                        setImagesToUpload((prevState) => {
+                          const newState = [...prevState];
+                          newState.splice(i, 1);
+                          return newState;
+                        });
+                      }}
+                    />
+                  );
+                }
+
+                return (
+                  <ListTag
+                    downloadUrl={e.url}
+                    key={e.url}
+                    padding="4px 12px"
+                    label={e.originalName}
+                    onClick={() => {
+                      setImagesToUpload((prevState) => {
+                        const newState = [...prevState];
+                        newState.splice(i, 1);
+                        return newState;
+                      });
+                    }}
+                  />
+                );
+              })}
 
               {onImageQuery &&
                 acceptedFiles.map((e) => (
@@ -194,16 +215,29 @@ export const MaintenanceHistoryActivities = ({
 
                     {images.length > 0 && (
                       <Style.FileAndImageRow>
-                        {images.map((e) => (
-                          <ImagePreview
-                            key={e.url}
-                            width="97px"
-                            height="97px"
-                            imageCustomName={e.name}
-                            src={e.url}
-                            downloadUrl={e.url}
-                          />
-                        ))}
+                        {images.map((e) => {
+                          if (isImage(e.url)) {
+                            return (
+                              <ImagePreview
+                                key={e.url}
+                                width="97px"
+                                height="97px"
+                                imageCustomName={e.name}
+                                src={e.url}
+                                downloadUrl={e.url}
+                              />
+                            );
+                          }
+
+                          return (
+                            <ListTag
+                              downloadUrl={e.url}
+                              key={e.url}
+                              padding="4px 12px"
+                              label={e.name}
+                            />
+                          );
+                        })}
                       </Style.FileAndImageRow>
                     )}
                   </Style.Comment>
