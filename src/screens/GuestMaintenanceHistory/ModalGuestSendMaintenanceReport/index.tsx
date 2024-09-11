@@ -72,7 +72,7 @@ export const ModalGuestSendMaintenanceReport = ({
       observation: '',
       responsible: '',
       source: '',
-      instructions:[]
+      instructions: [],
     },
     resolutionDate: '',
     notificationDate: '',
@@ -258,6 +258,7 @@ export const ModalGuestSendMaintenanceReport = ({
 
   return (
     <Modal
+      bodyWidth="475px"
       title={maintenance.canReport ? 'Enviar relato' : 'Detalhes de manutenção'}
       setModal={setModal}
     >
