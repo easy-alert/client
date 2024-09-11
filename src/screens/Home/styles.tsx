@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { theme } from '../../styles/theme';
 
 export const Container = styled.div`
@@ -37,22 +37,6 @@ export const ImageDiv = styled.div`
       opacity: 0.8;
     }
   }
-`;
-
-export const BannerDiv = styled.img<{ redirectUrl: string }>`
-  border-radius: ${theme.size.xxsm};
-  width: 100%;
-  max-height: 600px;
-  object-fit: contain;
-
-  ${({ redirectUrl }) =>
-    redirectUrl &&
-    css`
-      cursor: pointer;
-      :hover {
-        opacity: 0.9;
-      }
-    `}
 `;
 
 export const ButtonGrid = styled.div<{ canAccessTickets: boolean }>`
@@ -98,5 +82,49 @@ export const ButtonGrid = styled.div<{ canAccessTickets: boolean }>`
 
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
+  }
+`;
+
+export const Carrousel = styled.div`
+  img {
+    height: 500px;
+    max-height: 500px;
+  }
+
+  @media (max-width: 900px) {
+    height: 250px;
+    max-height: 250px;
+  }
+
+  .swiper {
+    width: 100%;
+    height: 100%;
+  }
+
+  .swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+
+    /* Center slide text vertically */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .swiper-pagination-bullet-active {
+    background-color: ${theme.color.primary}; /* Cor da bolinha ativa */
+  }
+
+  .swiper-pagination {
+    background-color: white;
+    bottom: 0;
   }
 `;

@@ -527,7 +527,7 @@ export const Settings = () => {
                       });
                     }}
                     onUpdateClick={() => {
-                      setSelectedBanner(element);
+                      setSelectedBanner({ ...element, redirectUrl: element.redirectUrl || '' });
                       setModalUpdateBannerOpen(true);
                     }}
                   />

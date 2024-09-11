@@ -4,6 +4,7 @@ export interface IImg {
   size?: string;
   width?: string;
   height?: string;
+  maxHeight?: string;
   alt?: string;
   rotate?: string;
 }

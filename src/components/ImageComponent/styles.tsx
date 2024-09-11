@@ -9,6 +9,8 @@ export const Img = styled.img<IImg>`
 
   ${({ height }) => height && `min-height: ${height}; height: ${height};`}
 
+  ${({ maxHeight }) => maxHeight && `max-height: ${maxHeight};`}
+
   ${({ radius }) => radius && `border-radius:${radius};`}
 
   ${({ rotate }) => rotate && `rotate: ${rotate};`}
