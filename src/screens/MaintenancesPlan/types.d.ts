@@ -27,7 +27,6 @@ export interface IMaintenancesPlan {
 export interface IBuilding {
   name: string;
   Banners: {
-    bannerName: string;
     id: string;
     originalName: string;
     redirectUrl: string;

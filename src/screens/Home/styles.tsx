@@ -39,7 +39,7 @@ export const ImageDiv = styled.div`
   }
 `;
 
-export const WebBanner = styled.img<{ redirectUrl: string }>`
+export const BannerDiv = styled.img<{ redirectUrl: string }>`
   border-radius: ${theme.size.xxsm};
   width: 100%;
   max-height: 600px;
@@ -53,22 +53,6 @@ export const WebBanner = styled.img<{ redirectUrl: string }>`
         opacity: 0.9;
       }
     `}
-
-  @media (max-width: 900px) {
-    display: none;
-  }
-`;
-
-export const MobileBanner = styled.img`
-  display: none;
-
-  @media (max-width: 900px) {
-    display: block;
-    border-radius: ${theme.size.xxsm};
-    object-fit: contain;
-    width: 100%;
-    max-height: 400px;
-  }
 `;
 
 export const ButtonGrid = styled.div<{ canAccessTickets: boolean }>`
