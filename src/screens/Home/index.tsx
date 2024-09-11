@@ -4,7 +4,11 @@
 // COMPONENTS
 import { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import { Skeleton } from '../../components/Skeleton';
+import 'swiper/css';
+import 'swiper/css/pagination';
 
 // STYLES
 import * as Style from './styles';
@@ -16,6 +20,7 @@ import { requestBuildingAccess, requestHomeInformations } from './functions';
 // TYPES
 import { IInformations } from './types';
 import { ModalCreateTicket } from '../Tickets/ModalCreateTicket';
+import { ImageComponent } from '../../components/ImageComponent';
 
 export const Home = () => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
@@ -55,37 +60,25 @@ export const Home = () => {
       <Style.Container>
         <Style.Wrapper>
           {loading ? <Skeleton height="24px" width="248px" /> : <h2>{informations.name}</h2>}
-          {informations.Banners.map(
-            (banner) =>
-              banner.type === 'Web' && (
-                <Style.WebBanner
-                  redirectUrl={banner.redirectUrl}
-                  key={banner.id}
-                  src={banner.url}
-                  alt="Web banner"
-                  onClick={() => {
-                    if (banner.redirectUrl) {
-                      window.open(banner.redirectUrl, '_blank');
-                    }
-                  }}
-                />
-              ),
-          )}
 
-          {informations.Banners.map(
-            (banner) =>
-              banner.type === 'Mobile' && (
-                <Style.MobileBanner
-                  key={banner.id}
-                  src={banner.url}
-                  alt="Mobile banner"
-                  onClick={() => {
-                    if (banner.redirectUrl) {
-                      window.open(banner.redirectUrl, '_blank');
-                    }
-                  }}
-                />
-              ),
+          {informations.Banners.length > 0 && (
+            <Style.Carrousel>
+              <Swiper
+                spaceBetween={30}
+                slidesPerView={1}
+                autoplay={{ delay: 2000, disableOnInteraction: false }} // Autoplay ativado com delay de 3 segundos
+                pagination // Bolinhas de navegação
+                modules={[Navigation, Pagination, Autoplay]} // Módulos necessários
+              >
+                {informations.Banners.map((banner) => (
+                  <SwiperSlide key={banner.id}>
+                    <a href={banner.redirectUrl} target="_blank" rel="noopener noreferrer">
+                      <ImageComponent src={banner.url} />
+                    </a>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </Style.Carrousel>
           )}
 
           <Style.ButtonGrid canAccessTickets={informations.Company.canAccessTickets}>

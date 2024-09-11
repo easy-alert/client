@@ -9,4 +9,5 @@ export interface IListTag {
   padding?: string;
   lineHeight?: string;
   downloadUrl?: string;
+  maxWidth?: string;
 }

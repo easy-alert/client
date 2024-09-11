@@ -10,8 +10,10 @@ export const ImageComponent = ({
   alt = '',
   radius = '0%',
   rotate = '0deg',
+  maxHeight,
 }: IImg) => (
   <Style.Img
+    maxHeight={maxHeight}
     src={src}
     alt={alt}
     radius={radius}

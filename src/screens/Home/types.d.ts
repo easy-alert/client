@@ -1,10 +1,8 @@
 export interface IInformations {
   Banners: {
-    bannerName: string;
     id: string;
     originalName: string;
     redirectUrl: string;
-    type: 'Web' | 'Mobile';
     url: string;
   }[];
 
