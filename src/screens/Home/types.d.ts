@@ -1,3 +1,5 @@
+export type TTranslateTicketType = 'none' | 'whatsapp' | 'email' | 'link' | 'platform';
+
 export interface IInformations {
   Banners: {
     id: string;
@@ -7,8 +9,9 @@ export interface IInformations {
   }[];
 
   Company: {
-    supportLink: string;
     canAccessTickets: boolean;
+    ticketType: TTranslateTicketType;
+    ticketInfo: string | null;
   };
 
   name: string;

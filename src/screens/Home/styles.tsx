@@ -39,33 +39,14 @@ export const ImageDiv = styled.div`
   }
 `;
 
-export const ButtonGrid = styled.div<{ canAccessTickets: boolean }>`
+export const ButtonGrid = styled.div`
   display: grid;
-  grid-template-columns: ${({ canAccessTickets }) =>
-    canAccessTickets ? '1fr 1fr 1fr 1fr' : '1fr 1fr 1fr'};
-
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   gap: ${theme.size.sm};
 
-  button {
-    width: 100%;
-    height: 40px;
-    font-size: 14px;
-    font-weight: 500;
-    transition: 0.5s;
-
-    :hover {
-      opacity: 0.8;
-    }
-  }
-
-  .supportLink {
-    width: 100%;
-    height: 40px;
-    font-size: 14px;
-    font-weight: 500;
-    transition: 0.5s;
+  button,
+  a {
     border-radius: ${theme.size.xxsm};
-    padding: ${theme.size.xsm} ${theme.size.sm};
     outline: none;
     border: none;
     cursor: pointer;
@@ -74,6 +55,12 @@ export const ButtonGrid = styled.div<{ canAccessTickets: boolean }>`
     display: flex;
     align-items: center;
     justify-content: center;
+
+    width: 100%;
+    height: 40px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.5s;
 
     :hover {
       opacity: 0.8;
