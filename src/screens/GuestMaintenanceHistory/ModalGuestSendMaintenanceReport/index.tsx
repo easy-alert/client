@@ -49,6 +49,7 @@ export const ModalGuestSendMaintenanceReport = ({
   const [maintenance, setMaintenance] = useState<IMaintenance>({
     Building: {
       name: '',
+      guestCanCompleteMaintenance: false,
     },
     canReport: false,
     daysInAdvance: 0,
@@ -548,17 +549,19 @@ export const ModalGuestSendMaintenanceReport = ({
                   type="Button"
                 />
               )}
-              <PopoverButton
-                loading={onQuery}
-                actionButtonClick={requestSendReport}
-                label="Finalizar manutenção"
-                message={{
-                  title: 'Tem certeza que deseja enviar o relato?',
-                  content: 'Esta ação é irreversível.',
-                  contentColor: theme.color.danger,
-                }}
-                type="Button"
-              />
+              {maintenance.Building.guestCanCompleteMaintenance && (
+                <PopoverButton
+                  loading={onQuery}
+                  actionButtonClick={requestSendReport}
+                  label="Finalizar manutenção"
+                  message={{
+                    title: 'Tem certeza que deseja enviar o relato?',
+                    content: 'Esta ação é irreversível.',
+                    contentColor: theme.color.danger,
+                  }}
+                  type="Button"
+                />
+              )}
             </Style.ButtonContainer>
           ) : (
             <Button
