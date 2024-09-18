@@ -7,6 +7,7 @@ import * as Style from './styles';
 import { ReturnButton } from '../../../components/Buttons/ReturnButton';
 import { DotSpinLoading } from '../../../components/Loadings/DotSpinLoading';
 import { Image } from '../../../components/Image';
+import { SupplierMaintenanceHistory } from './SupplierMaintenanceHistory';
 
 export interface ISupplier {
   id: string;
@@ -131,6 +132,8 @@ export const SupplierDetails = () => {
               )}
             </Style.Card>
           </Style.CardSection>
+
+          <SupplierMaintenanceHistory />
         </>
       )}
     </>
