@@ -71,8 +71,10 @@ import send from './send.svg';
 import activityComment from './activityComment.svg';
 import upload from './upload.svg';
 import smallPaper from './smallPaper.svg';
+import activityNotification from './activityNotification.svg';
 
 export const icon = {
+  activityNotification,
   uploadLine,
   upload,
   send,

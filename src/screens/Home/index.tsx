@@ -34,8 +34,9 @@ export const Home = () => {
     Banners: [],
     name: '',
     Company: {
-      supportLink: '',
       canAccessTickets: false,
+      ticketInfo: '',
+      ticketType: 'platform',
     },
   });
 
@@ -81,7 +82,7 @@ export const Home = () => {
             </Style.Carrousel>
           )}
 
-          <Style.ButtonGrid canAccessTickets={informations.Company.canAccessTickets}>
+          <Style.ButtonGrid>
             <Link to={`/maintenancesplan/${buildingNanoId}${window.location.search}`}>
               <button type="button">Plano de manutenção</button>
             </Link>
@@ -94,15 +95,36 @@ export const Home = () => {
               <button type="button">Documentos</button>
             </Link>
 
-            {informations.Company.canAccessTickets && (
-              <button
-                type="button"
-                onClick={() => {
-                  setModalCreateTicketOpen(true);
-                }}
+            {informations.Company.ticketType === 'platform' &&
+              informations.Company.canAccessTickets && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setModalCreateTicketOpen(true);
+                  }}
+                >
+                  Abrir chamado
+                </button>
+              )}
+
+            {informations.Company.ticketType === 'link' && informations.Company.ticketInfo && (
+              <a target="_blank" rel="noopener noreferrer" href={informations.Company.ticketInfo}>
+                Abrir chamado
+              </a>
+            )}
+
+            {informations.Company.ticketType === 'whatsapp' && informations.Company.ticketInfo && (
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`https://api.whatsapp.com/send?phone=${informations.Company.ticketInfo}`}
               >
                 Abrir chamado
-              </button>
+              </a>
+            )}
+
+            {informations.Company.ticketType === 'email' && informations.Company.ticketInfo && (
+              <a href={`mailto:${informations.Company.ticketInfo}`}>Abrir chamado</a>
             )}
           </Style.ButtonGrid>
         </Style.Wrapper>

@@ -7,7 +7,7 @@ import { Modal } from '../../../components/Modal';
 import { Button } from '../../../components/Buttons/Button';
 import { FormikInput } from '../../../components/Form/FormikInput';
 import { Api } from '../../../services/api';
-import { catchHandler, uploadManyFiles } from '../../../utils/functions';
+import { catchHandler, isImage, uploadManyFiles } from '../../../utils/functions';
 import { Input } from '../../../components/Inputs/Input';
 import { FormikTextArea } from '../../../components/Form/FormikTextArea';
 import { DragAndDropFiles } from '../../../components/DragAndDropFiles';
@@ -17,6 +17,7 @@ import { FormikSelect } from '../../../components/Form/FormikSelect';
 import { Row, FileAndImageRow } from '../ModalTicketDetails/styles';
 import { ReactSelectComponent } from '../../../components/ReactSelectComponent';
 import { ImageLoadingTag } from '../../Checklists/ModalChecklistDetails/styles';
+import { ListTag } from '../../../components/ListTag';
 
 interface IModalCreateTicket {
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -99,6 +100,7 @@ export const ModalCreateTicket = ({
             await Api.post(`/tickets`, {
               ...values,
               images,
+              residentEmail: values.residentEmail || null,
             })
               .then((res) => {
                 toast.success(res.data.ServerMessage.message);
@@ -187,13 +189,12 @@ export const ModalCreateTicket = ({
               />
 
               <Row>
-                <h6>Imagens *</h6>
+                <h6>Anexos *</h6>
                 <FileAndImageRow>
                   <DragAndDropFiles
                     disabled={onImageQuery}
                     width="132px"
                     height="136px"
-                    onlyImages
                     getAcceptedFiles={async ({ acceptedFiles }) => {
                       setImagesToUploadCount(acceptedFiles.length);
                       setOnImageQuery(true);
@@ -212,23 +213,44 @@ export const ModalCreateTicket = ({
                     }}
                   />
                   {images.length > 0 &&
-                    images.map((image: { name: string; url: string }, index: number) => (
-                      <ImagePreview
-                        key={image.url}
-                        src={image.url}
-                        downloadUrl={image.url}
-                        imageCustomName={image.name}
-                        width="132px"
-                        height="136px"
-                        onTrashClick={() => {
-                          setImages((prev) => {
-                            const newState = [...prev];
-                            newState.splice(index, 1);
-                            return newState;
-                          });
-                        }}
-                      />
-                    ))}
+                    images.map((image: { name: string; url: string }, index: number) => {
+                      if (isImage(image.url)) {
+                        return (
+                          <ImagePreview
+                            key={image.url}
+                            src={image.url}
+                            downloadUrl={image.url}
+                            imageCustomName={image.name}
+                            width="132px"
+                            height="136px"
+                            onTrashClick={() => {
+                              setImages((prev) => {
+                                const newState = [...prev];
+                                newState.splice(index, 1);
+                                return newState;
+                              });
+                            }}
+                          />
+                        );
+                      }
+
+                      return (
+                        <ListTag
+                          downloadUrl={image.url}
+                          key={image.url}
+                          padding="4px 12px"
+                          label={image.name}
+                          maxWidth="100px"
+                          onClick={() => {
+                            setImages((prev) => {
+                              const newState = [...prev];
+                              newState.splice(index, 1);
+                              return newState;
+                            });
+                          }}
+                        />
+                      );
+                    })}
 
                   {onImageQuery &&
                     [...Array(imagesToUploadCount).keys()].map((e) => (

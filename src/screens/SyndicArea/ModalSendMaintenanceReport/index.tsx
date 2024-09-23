@@ -52,6 +52,7 @@ export const ModalSendMaintenanceReport = ({
   const [maintenance, setMaintenance] = useState<IMaintenance>({
     Building: {
       name: '',
+      guestCanCompleteMaintenance: false,
     },
     canReport: false,
     daysInAdvance: 0,

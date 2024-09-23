@@ -18,6 +18,7 @@ export interface MaintenancesStatus {
 
 export interface Building {
   name: string;
+  guestCanCompleteMaintenance: boolean;
 }
 
 export interface Category {

@@ -1,5 +1,5 @@
 import { AnnexesAndImages } from '../../types';
-import { IFilterOptions, IKanban } from '../types';
+import { IFilter, IFilterOptions, IKanban } from '../types';
 import { IModalAdditionalInformations } from '../../MaintenancesPlan/types';
 
 export interface IModalSendMaintenanceReport {
