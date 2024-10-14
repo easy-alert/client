@@ -17,7 +17,7 @@ import { Button } from '../../Buttons/Button';
 import { FormikImageInput } from '../../Form/FormikImageInput';
 import { FormikInput } from '../../Form/FormikInput';
 import { ReactSelectComponent } from '../../ReactSelectComponent';
-import { ReactSelectCreatableComponent } from '../../ReactSelectCreatableComponent ';
+import { ReactSelectCreatableComponent } from '../../ReactSelectCreatableComponent';
 import { CustomModal } from '../../CustomModal';
 import { useBrasilCities } from '../../../hooks/useBrasilCities';
 import { useBrasilStates } from '../../../hooks/useBrasilStates';
