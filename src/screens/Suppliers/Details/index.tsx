@@ -1,30 +1,30 @@
-/* eslint-disable import/no-cycle */
+// REACT
 import { useState, useEffect } from 'react';
+
+// LIBS
 import { useParams } from 'react-router-dom';
-import { Api } from '../../../services/api';
-import { applyMask, catchHandler } from '../../../utils/functions';
-import * as Style from './styles';
-import { ReturnButton } from '../../../components/Buttons/ReturnButton';
-import { DotSpinLoading } from '../../../components/Loadings/DotSpinLoading';
-import { Image } from '../../../components/Image';
+
+// SERVICES
+import { Api } from '@services/api';
+
+// GLOBAL COMPONENTS
+import { ReturnButton } from '@components/Buttons/ReturnButton';
+import { DotSpinLoading } from '@components/Loadings/DotSpinLoading';
+import { Image } from '@components/Image';
+
+// UTILS
+import { applyMask, catchHandler } from '@utils/functions';
+
+// ASSETS
+
+// GLOBAL STYLES
+import type { ISupplier } from '@customTypes/ISupplier';
+
+// COMPONENTS
 import { SupplierMaintenanceHistory } from './SupplierMaintenanceHistory';
 
-export interface ISupplier {
-  id: string;
-  image: string;
-  name: string;
-  state: string;
-  city: string;
-  cnpj: string | null;
-
-  phone: string | null;
-  email: string | null;
-  link: string | null;
-
-  areaOfActivities: {
-    areaOfActivity: { label: string };
-  }[];
-}
+// STYLES
+import * as Style from './styles';
 
 export const SupplierDetails = () => {
   const { supplierId } = useParams() as { supplierId: string };
@@ -40,8 +40,8 @@ export const SupplierDetails = () => {
     phone: '',
     cnpj: '',
     city: '',
-    areaOfActivities: [],
     state: '',
+    categories: [],
   });
 
   const findSupplierById = async () => {
@@ -58,7 +58,9 @@ export const SupplierDetails = () => {
   };
 
   useEffect(() => {
-    findSupplierById();
+    if (supplierId) {
+      findSupplierById();
+    }
   }, []);
 
   return (
@@ -103,11 +105,9 @@ export const SupplierDetails = () => {
             </Style.Card>
 
             <Style.Card>
-              <h6>Área de atuação</h6>
+              <h6>Categoria</h6>
               <p className="p2">
-                {supplier.areaOfActivities
-                  .map(({ areaOfActivity }) => areaOfActivity.label)
-                  .join(', ')}
+                {supplier.categories.map(({ category }) => category.name).join(', ')}
               </p>
             </Style.Card>
 
