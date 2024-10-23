@@ -1,47 +1,58 @@
+// REACT
 import { useEffect, useState } from 'react';
+
+// LIBS
 import { useParams } from 'react-router-dom';
+
+// SERVICES
+import { Api } from '@services/api';
+
+// CONTEXTS
+// HOOKS
+import { useBrasilCities } from '@hooks/useBrasilCities';
+import { useBrasilStates } from '@hooks/useBrasilStates';
+import { useCategoriesByNanoId } from '@hooks/useCategoriesByNanoId';
+
+// GLOBAL COMPONENTS
+import { Image } from '@components/Image';
+import { DotSpinLoading } from '@components/Loadings/DotSpinLoading';
+import { Pagination } from '@components/Pagination';
+import { ListTag } from '@components/ListTag';
+import { Button } from '@components/Buttons/Button';
+import { Select } from '@components/Inputs/Select';
+import { Input } from '@components/Inputs/Input';
+
+// UTILS
+import { applyMask, catchHandler, convertStateName } from '@utils/functions';
+
+// ASSETS
+import { icon } from '@assets/icons';
+
+// GLOBAL STYLES
+
+// GLOBAL TYPES
+import type { ISupplier } from '@customTypes/ISupplier';
+
+// COMPONENTS
+
+// STYLES
 import * as Style from './styles';
-import { Api } from '../../../services/api';
-import { applyMask, catchHandler, convertStateName } from '../../../utils/functions';
-import { Image } from '../../../components/Image';
-import { icon } from '../../../assets/icons';
-import { DotSpinLoading } from '../../../components/Loadings/DotSpinLoading';
-import { Pagination } from '../../../components/Pagination';
 import { PaginationFooter } from '../../Tickets/styles';
-import { ListTag } from '../../../components/ListTag';
-import { useBrasilCities } from '../../../hooks/useBrasilCities';
-import { useBrasilStates } from '../../../hooks/useBrasilStates';
-import { Button } from '../../../components/Buttons/Button';
-import { Select } from '../../../components/Inputs/Select';
-import { Input } from '../../../components/Inputs/Input';
-import { useAreaOfActivities } from '../../../hooks/useAreaOfActivities';
-
-interface ISupplier {
-  id: string;
-  image: string;
-  name: string;
-  state: string;
-  city: string;
-
-  phone: string | null;
-  email: string | null;
-
-  areaOfActivities: {
-    areaOfActivity: { label: string };
-  }[];
-}
 
 export const SuppliersList = () => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
+
+  const { states, selectedStateAcronym, setSelectedStateAcronym } = useBrasilStates();
+  const { cities } = useBrasilCities({ UF: selectedStateAcronym });
+  const { allCategories } = buildingNanoId
+    ? useCategoriesByNanoId(buildingNanoId)
+    : { allCategories: [] };
 
   const [suppliers, setSuppliers] = useState<ISupplier[]>([]);
   const [supplierCounts, setSupplierCounts] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [loading, setLoading] = useState(true);
 
-  const { states, selectedStateAcronym, setSelectedStateAcronym } = useBrasilStates();
-  const { cities } = useBrasilCities({ UF: selectedStateAcronym });
-  const { areaOfActivities } = useAreaOfActivities({ findAll: true });
   const [onQuery, setOnQuery] = useState(false);
   const [filter, setFilter] = useState({ search: '', serviceTypeLabel: '', state: '', city: '' });
 
@@ -125,7 +136,7 @@ export const SuppliersList = () => {
             />
 
             <Select
-              label="Área de atuação"
+              label="Categoria"
               value={filter.serviceTypeLabel}
               selectPlaceholderValue={filter.serviceTypeLabel}
               onChange={(evt) => {
@@ -133,9 +144,10 @@ export const SuppliersList = () => {
               }}
             >
               <option value="">Todas</option>
-              {areaOfActivities.map(({ label }) => (
-                <option value={label} key={label}>
-                  {label}
+
+              {allCategories.map(({ id, name }) => (
+                <option value={id} key={id}>
+                  {name}
                 </option>
               ))}
             </Select>
@@ -200,10 +212,10 @@ export const SuppliersList = () => {
                     <h5>{supplier.name}</h5>
 
                     <Style.Tags>
-                      {supplier.areaOfActivities.map(({ areaOfActivity }) => (
+                      {supplier.categories.map(({ category }) => (
                         <ListTag
-                          key={areaOfActivity.label}
-                          label={areaOfActivity.label}
+                          key={category.id}
+                          label={category.name}
                           fontSize="14px"
                           lineHeight="16px"
                         />
