@@ -1,36 +1,37 @@
-/* eslint-disable import/no-cycle */
+// REACT
 import { useState, useEffect } from 'react';
+
+// LIBS
 import { useParams } from 'react-router-dom';
-import { Api } from '../../../services/api';
-import { applyMask, catchHandler } from '../../../utils/functions';
-import * as Style from './styles';
-import { ReturnButton } from '../../../components/Buttons/ReturnButton';
-import { DotSpinLoading } from '../../../components/Loadings/DotSpinLoading';
-import { Image } from '../../../components/Image';
+
+// SERVICES
+import { Api } from '@services/api';
+
+// GLOBAL COMPONENTS
+import { ReturnButton } from '@components/Buttons/ReturnButton';
+import { DotSpinLoading } from '@components/Loadings/DotSpinLoading';
+import { Image } from '@components/Image';
+
+// UTILS
+import { applyMask, catchHandler } from '@utils/functions';
+
+// GLOBAL STYLES
+import type { ISupplier } from '@customTypes/ISupplier';
+import type { IMaintenanceReportData } from '@customTypes/IMaintenanceReportData';
+
+// COMPONENTS
 import { SupplierMaintenanceHistory } from './SupplierMaintenanceHistory';
 
-export interface ISupplier {
-  id: string;
-  image: string;
-  name: string;
-  state: string;
-  city: string;
-  cnpj: string | null;
-
-  phone: string | null;
-  email: string | null;
-  link: string | null;
-
-  areaOfActivities: {
-    areaOfActivity: { label: string };
-  }[];
-}
+// STYLES
+import * as Style from './styles';
+import { SupplierOverview } from './SupplierOverview';
 
 export const SupplierDetails = () => {
   const { supplierId } = useParams() as { supplierId: string };
 
   const [loading, setLoading] = useState(true);
 
+  const [maintenancesHistory, setMaintenancesHistory] = useState<IMaintenanceReportData[]>([]);
   const [supplier, setSupplier] = useState<ISupplier>({
     email: '',
     id: '',
@@ -40,8 +41,8 @@ export const SupplierDetails = () => {
     phone: '',
     cnpj: '',
     city: '',
-    areaOfActivities: [],
     state: '',
+    categories: [],
   });
 
   const findSupplierById = async () => {
@@ -57,8 +58,21 @@ export const SupplierDetails = () => {
       });
   };
 
+  const getMaintenanceHistory = async () => {
+    await Api.get(`/suppliers/${supplierId}/maintenance-history`)
+      .then((res) => {
+        setMaintenancesHistory(res.data.maintenances);
+      })
+      .catch((err) => {
+        catchHandler(err);
+      });
+  };
+
   useEffect(() => {
-    findSupplierById();
+    if (supplierId) {
+      findSupplierById();
+      getMaintenanceHistory();
+    }
   }, []);
 
   return (
@@ -103,11 +117,9 @@ export const SupplierDetails = () => {
             </Style.Card>
 
             <Style.Card>
-              <h6>Área de atuação</h6>
+              <h6>Categoria(s)</h6>
               <p className="p2">
-                {supplier.areaOfActivities
-                  .map(({ areaOfActivity }) => areaOfActivity.label)
-                  .join(', ')}
+                {supplier.categories.map(({ category }) => category.name).join(', ')}
               </p>
             </Style.Card>
 
@@ -133,7 +145,12 @@ export const SupplierDetails = () => {
             </Style.Card>
           </Style.CardSection>
 
-          <SupplierMaintenanceHistory />
+          <SupplierOverview maintenancesHistory={maintenancesHistory} />
+
+          <SupplierMaintenanceHistory
+            maintenancesHistory={maintenancesHistory}
+            getMaintenanceHistory={getMaintenanceHistory}
+          />
         </>
       )}
     </>

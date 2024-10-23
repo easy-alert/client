@@ -1,23 +1,26 @@
-/* eslint-disable jsx-a11y/interactive-supports-focus */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
+// REACT
 import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import { useLocation, useSearchParams } from 'react-router-dom';
-import { Api } from '../../../services/api';
-import { catchHandler } from '../../../utils/functions';
-import { CustomModal } from '../../CustomModal';
-import * as Style from './styles';
-import { DotSpinLoading } from '../../Loadings/DotSpinLoading';
-import { LoadingWrapper } from '../../Loadings/LoadingWrapper';
 
-interface ISupplier {
-  id: string;
-  name: string;
-  areaOfActivities: {
-    areaOfActivity: { label: string };
-  }[];
-  isSelected: boolean;
-}
+// LIBS
+import { useLocation, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
+// SERVICES
+import { Api } from '@services/api';
+
+// GLOBAL COMPONENTS
+import { CustomModal } from '@components/CustomModal';
+import { DotSpinLoading } from '@components/Loadings/DotSpinLoading';
+import { LoadingWrapper } from '@components/Loadings/LoadingWrapper';
+
+// UTILS
+import { catchHandler } from '@utils/functions';
+
+// GLOBAL TYPES
+import type { ISupplier } from '@customTypes/ISupplier';
+
+// STYLES
+import * as Style from './styles';
 
 interface IModalLinkSupplier {
   setModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -98,10 +101,10 @@ export const ModalLinkSupplier = ({
               <h6>Sugeridos</h6>
               {suggestedSuppliers.length > 0 ? (
                 <Style.ScrollDiv>
-                  {suggestedSuppliers.map(({ id, name, isSelected, areaOfActivities }) => (
+                  {suggestedSuppliers.map(({ id, name, categories, isSelected }) => (
                     <Style.Card
                       disabled={onQuery}
-                      selected={isSelected}
+                      selected={!!isSelected}
                       key={id}
                       onClick={() => {
                         linkToMaintenanceHistory(id);
@@ -109,9 +112,7 @@ export const ModalLinkSupplier = ({
                     >
                       <p className="p4">{name}</p>
                       <p className="p5">
-                        {areaOfActivities
-                          .map(({ areaOfActivity }) => areaOfActivity.label)
-                          .join(', ')}
+                        {categories.map(({ category }) => category.name).join(', ')}
                       </p>
                     </Style.Card>
                   ))}
@@ -125,10 +126,10 @@ export const ModalLinkSupplier = ({
               <h6>Outros</h6>
               {remainingSuppliers.length > 0 ? (
                 <Style.ScrollDiv>
-                  {remainingSuppliers.map(({ id, name, areaOfActivities, isSelected }) => (
+                  {remainingSuppliers.map(({ id, name, categories, isSelected }) => (
                     <Style.Card
                       disabled={onQuery}
-                      selected={isSelected}
+                      selected={!!isSelected}
                       key={id}
                       onClick={() => {
                         linkToMaintenanceHistory(id);
@@ -136,9 +137,7 @@ export const ModalLinkSupplier = ({
                     >
                       <p className="p4">{name}</p>
                       <p className="p5">
-                        {areaOfActivities
-                          .map(({ areaOfActivity }) => areaOfActivity.label)
-                          .join(', ')}
+                        {categories.map(({ category }) => category.name).join(', ')}
                       </p>
                     </Style.Card>
                   ))}
@@ -153,8 +152,14 @@ export const ModalLinkSupplier = ({
             Não encontrou o fornecedor que procura?{' '}
             <span
               role="button"
+              tabIndex={0}
               onClick={() => {
                 setModalCreateAndLinkSupplierOpen(true);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  setModalCreateAndLinkSupplierOpen(true);
+                }
               }}
             >
               Clique aqui para cadastrar!
