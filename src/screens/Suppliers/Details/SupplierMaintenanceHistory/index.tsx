@@ -2,17 +2,14 @@
 import { useEffect, useState } from 'react';
 
 // LIBS
-import { useParams, useSearchParams } from 'react-router-dom';
-
-// SERVICES
-import { Api } from '@services/api';
+import { useSearchParams } from 'react-router-dom';
 
 // GLOBAL COMPONENTS
 import { InProgressTag } from '@components/InProgressTag';
 import { EventTag } from '@components/EventTag';
 
 // UTILS
-import { dateFormatter, applyMask, catchHandler } from '@utils/functions';
+import { dateFormatter, applyMask } from '@utils/functions';
 
 // COMPONENTS
 import { ModalMaintenanceDetails } from '../../../MaintenancesPlan/ModalMaintenanceDetails';
@@ -23,10 +20,12 @@ import { ReportDataTable, ReportDataTableContent } from '../ReportDataTable';
 import * as Style from './styles';
 
 // TYPES
-import type { IMaintenanceReportData } from './types';
+import type { ISupplierMaintenanceHistory } from './types';
 
-export const SupplierMaintenanceHistory = () => {
-  const { supplierId } = useParams() as { supplierId: string };
+export const SupplierMaintenanceHistory = ({
+  maintenancesHistory,
+  getMaintenanceHistory,
+}: ISupplierMaintenanceHistory) => {
   const [search] = useSearchParams();
   const syndicNanoId = search.get('syndicNanoId') ?? '';
 
@@ -35,18 +34,6 @@ export const SupplierMaintenanceHistory = () => {
   const [maintenanceHistoryId, setMaintenanceHistoryId] = useState<string>('');
   const [modalSendMaintenanceReportOpen, setModalSendMaintenanceReportOpen] =
     useState<boolean>(false);
-
-  const [maintenances, setMaintenances] = useState<IMaintenanceReportData[]>([]);
-
-  const getMaintenanceHistory = async () => {
-    await Api.get(`/suppliers/${supplierId}/maintenance-history`)
-      .then((res) => {
-        setMaintenances(res.data.maintenances);
-      })
-      .catch((err) => {
-        catchHandler(err);
-      });
-  };
 
   useEffect(() => {
     getMaintenanceHistory();
@@ -92,7 +79,7 @@ export const SupplierMaintenanceHistory = () => {
         />
       )}
 
-      {maintenances.length > 0 && (
+      {maintenancesHistory.length > 0 && (
         <div style={{ marginTop: '24px' }}>
           <h2 style={{ marginBottom: '12px' }}>Histórico de manutenções</h2>
           <ReportDataTable
@@ -108,53 +95,57 @@ export const SupplierMaintenanceHistory = () => {
               { label: 'Valor' },
             ]}
           >
-            {maintenances?.map((maintenance) => (
+            {maintenancesHistory?.map((maintenanceHistory) => (
               <ReportDataTableContent
-                key={maintenance.id}
+                key={maintenanceHistory.id}
                 colsBody={[
                   {
                     cell: (
                       <Style.TagContainer>
-                        {maintenance.status === 'overdue' && <EventTag status="completed" />}
-                        <EventTag status={maintenance.status} />
-                        {maintenance.type === 'occasional' ? (
+                        {maintenanceHistory.status === 'overdue' && <EventTag status="completed" />}
+                        <EventTag status={maintenanceHistory.status} />
+                        {maintenanceHistory.type === 'occasional' ? (
                           <EventTag status="occasional" />
                         ) : (
                           <EventTag status="common" />
                         )}
-                        {(maintenance.status === 'expired' || maintenance.status === 'pending') &&
-                          maintenance.inProgress && <InProgressTag />}
+                        {(maintenanceHistory.status === 'expired' ||
+                          maintenanceHistory.status === 'pending') &&
+                          maintenanceHistory.inProgress && <InProgressTag />}
                       </Style.TagContainer>
                     ),
                   },
 
-                  { cell: maintenance.buildingName },
-                  { cell: maintenance.categoryName },
-                  { cell: maintenance.element },
-                  { cell: maintenance.activity },
-                  { cell: maintenance.responsible ?? 'Sem responsável cadastrado' },
-                  { cell: dateFormatter(maintenance.notificationDate) },
+                  { cell: maintenanceHistory.buildingName },
+                  { cell: maintenanceHistory.categoryName },
+                  { cell: maintenanceHistory.element },
+                  { cell: maintenanceHistory.activity },
+                  { cell: maintenanceHistory.responsible ?? 'Sem responsável cadastrado' },
+                  { cell: dateFormatter(maintenanceHistory.notificationDate) },
                   {
-                    cell: maintenance.type === 'common' ? dateFormatter(maintenance.dueDate) : '-',
+                    cell:
+                      maintenanceHistory.type === 'common'
+                        ? dateFormatter(maintenanceHistory.dueDate)
+                        : '-',
                   },
                   {
                     cell:
-                      maintenance.cost !== null
-                        ? applyMask({ mask: 'BRL', value: String(maintenance.cost) }).value
+                      maintenanceHistory.cost !== null
+                        ? applyMask({ mask: 'BRL', value: String(maintenanceHistory.cost) }).value
                         : '-',
                   },
                 ]}
                 onClick={() => {
-                  setMaintenanceHistoryId(maintenance.maintenanceHistoryId);
+                  setMaintenanceHistoryId(maintenanceHistory.maintenanceHistoryId);
 
                   if (
-                    (maintenance.status === 'completed' ||
-                      maintenance.status === 'overdue' ||
-                      maintenance.isFuture) &&
-                    maintenance.id
+                    (maintenanceHistory.status === 'completed' ||
+                      maintenanceHistory.status === 'overdue' ||
+                      maintenanceHistory.isFuture) &&
+                    maintenanceHistory.id
                   ) {
                     setModalMaintenanceDetails(true);
-                  } else if (!maintenance.isFuture && maintenance.id) {
+                  } else if (!maintenanceHistory.isFuture && maintenanceHistory.id) {
                     setModalSendMaintenanceReportOpen(true);
                   }
                 }}
