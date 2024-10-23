@@ -15,22 +15,23 @@ import { Image } from '@components/Image';
 // UTILS
 import { applyMask, catchHandler } from '@utils/functions';
 
-// ASSETS
-
 // GLOBAL STYLES
 import type { ISupplier } from '@customTypes/ISupplier';
+import type { IMaintenanceReportData } from '@customTypes/IMaintenanceReportData';
 
 // COMPONENTS
 import { SupplierMaintenanceHistory } from './SupplierMaintenanceHistory';
 
 // STYLES
 import * as Style from './styles';
+import { SupplierOverview } from './SupplierOverview';
 
 export const SupplierDetails = () => {
   const { supplierId } = useParams() as { supplierId: string };
 
   const [loading, setLoading] = useState(true);
 
+  const [maintenancesHistory, setMaintenancesHistory] = useState<IMaintenanceReportData[]>([]);
   const [supplier, setSupplier] = useState<ISupplier>({
     email: '',
     id: '',
@@ -57,9 +58,20 @@ export const SupplierDetails = () => {
       });
   };
 
+  const getMaintenanceHistory = async () => {
+    await Api.get(`/suppliers/${supplierId}/maintenance-history`)
+      .then((res) => {
+        setMaintenancesHistory(res.data.maintenances);
+      })
+      .catch((err) => {
+        catchHandler(err);
+      });
+  };
+
   useEffect(() => {
     if (supplierId) {
       findSupplierById();
+      getMaintenanceHistory();
     }
   }, []);
 
@@ -105,7 +117,7 @@ export const SupplierDetails = () => {
             </Style.Card>
 
             <Style.Card>
-              <h6>Categoria</h6>
+              <h6>Categoria(s)</h6>
               <p className="p2">
                 {supplier.categories.map(({ category }) => category.name).join(', ')}
               </p>
@@ -133,7 +145,12 @@ export const SupplierDetails = () => {
             </Style.Card>
           </Style.CardSection>
 
-          <SupplierMaintenanceHistory />
+          <SupplierOverview maintenancesHistory={maintenancesHistory} />
+
+          <SupplierMaintenanceHistory
+            maintenancesHistory={maintenancesHistory}
+            getMaintenanceHistory={getMaintenanceHistory}
+          />
         </>
       )}
     </>
