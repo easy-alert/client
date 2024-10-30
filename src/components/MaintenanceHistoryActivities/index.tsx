@@ -1,17 +1,32 @@
+// REACT
 import { useState, useEffect } from 'react';
+
+// LIBS
 import { useDropzone } from 'react-dropzone';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { Api } from '../../services/api';
-import { catchHandler, dateTimeFormatter, isImage, uploadManyFiles } from '../../utils/functions';
-import { IActivity } from './types';
+
+// SERVICES
+import { Api } from '@services/api';
+
+// GLOBAL COMPONENTS
+import { IconButton } from '@components/Buttons/IconButton';
+import { ImageComponent } from '@components/ImageComponent';
+import { ImagePreview } from '@components/ImagePreview';
+import { DotLoading } from '@components/Loadings/DotLoading';
+import { TextArea } from '@components/Inputs/TextArea';
+import { ListTag } from '@components/ListTag';
+
+// GLOBAL UTILS
+import { catchHandler, dateTimeFormatter, isImage, uploadManyFiles } from '@utils/functions';
+
+// GLOBAL ASSETS
+import { icon } from '@assets/icons';
+
+// STYLES
 import * as Style from './styles';
-import { icon } from '../../assets/icons';
-import { IconButton } from '../Buttons/IconButton';
-import { ImageComponent } from '../ImageComponent';
-import { ImagePreview } from '../ImagePreview';
-import { DotLoading } from '../Loadings/DotLoading';
-import { TextArea } from '../Inputs/TextArea';
-import { ListTag } from '../ListTag';
+
+// TYPES
+import type { IActivity } from './types';
 
 interface IMaintenanceHistoryActivities {
   maintenanceHistoryId: string;
@@ -26,19 +41,26 @@ export const MaintenanceHistoryActivities = ({
   maintenanceHistoryId,
 }: IMaintenanceHistoryActivities) => {
   const location = useLocation();
+  const [query] = useSearchParams();
+
+  const [activities, setActivities] = useState<IActivity[]>([]);
+  const [filteredActivities, setFilteredActivities] = useState<IActivity[]>([]);
 
   const [comment, setComment] = useState('');
-  const [onQuery, setOnQuery] = useState(false);
-  const [activities, setActivities] = useState<IActivity[]>([]);
-  // const [loading, setLoading] = useState<boolean>(true);
 
-  const [query] = useSearchParams();
+  const [activeTab, setActiveTab] = useState<'comments' | 'notifications'>('comments');
+
+  const [onImageQuery, setOnImageQuery] = useState<boolean>(false);
+  const [imagesToUpload, setImagesToUpload] = useState<AnnexesAndImages[]>([]);
+  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+    disabled: onImageQuery,
+  });
+
+  const [onQuery, setOnQuery] = useState(false);
 
   // Gambiarra, ver lá na nas rotas de atividades
   const isGuest = location.pathname.includes('guest-maintenance-history');
   const syndicNanoId = query.get('syndicNanoId') || (isGuest ? 'guest' : '');
-
-  const [imagesToUpload, setImagesToUpload] = useState<AnnexesAndImages[]>([]);
 
   const findMaintenanceHistoryActivities = async () => {
     await Api.get(
@@ -77,39 +99,6 @@ export const MaintenanceHistoryActivities = ({
         setOnQuery(false);
       });
   };
-
-  useEffect(() => {
-    findMaintenanceHistoryActivities();
-  }, []);
-
-  const [onImageQuery, setOnImageQuery] = useState<boolean>(false);
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
-    disabled: onImageQuery,
-  });
-
-  useEffect(() => {
-    if (acceptedFiles.length > 0) {
-      const uploadAcceptedImages = async () => {
-        setOnImageQuery(true);
-
-        const uploadedImages = await uploadManyFiles(acceptedFiles);
-
-        const formattedImages = uploadedImages.map((file) => ({
-          originalName: file.originalname,
-          url: file.Location,
-        }));
-
-        setImagesToUpload((prevState) => {
-          let newState = [...prevState];
-          newState = [...newState, ...formattedImages];
-          return newState;
-        });
-        setOnImageQuery(false);
-      };
-
-      uploadAcceptedImages();
-    }
-  }, [acceptedFiles]);
 
   const sortFiles = (a: AnnexesAndImages, b: AnnexesAndImages) => {
     const imageExtensions = ['png', 'jpeg', 'jpg'];
@@ -158,6 +147,66 @@ export const MaintenanceHistoryActivities = ({
     return 0; // Keep original order if both are in the same group
   };
 
+  useEffect(() => {
+    if (acceptedFiles.length > 0) {
+      const uploadAcceptedImages = async () => {
+        setOnImageQuery(true);
+
+        const uploadedImages = await uploadManyFiles(acceptedFiles);
+
+        const formattedImages = uploadedImages.map((file) => ({
+          originalName: file.originalname,
+          url: file.Location,
+        }));
+
+        setImagesToUpload((prevState) => {
+          let newState = [...prevState];
+          newState = [...newState, ...formattedImages];
+          return newState;
+        });
+        setOnImageQuery(false);
+      };
+
+      uploadAcceptedImages();
+    }
+  }, [acceptedFiles]);
+
+  useEffect(() => {
+    findMaintenanceHistoryActivities();
+  }, []);
+
+  useEffect(() => {
+    if (activities.length === 0) return;
+
+    if (activeTab === 'comments') {
+      activities.sort((a, b) => {
+        if (a.createdAt < b.createdAt) {
+          return 1;
+        }
+        if (a.createdAt > b.createdAt) {
+          return -1;
+        }
+        return 0;
+      });
+
+      setFilteredActivities(activities.filter((e) => e.type === 'comment'));
+    }
+
+    if (activeTab === 'notifications') {
+      activities.sort((a, b) => {
+        if (a.createdAt < b.createdAt) {
+          return 1;
+        }
+        if (a.createdAt > b.createdAt) {
+          return -1;
+        }
+        return 0;
+      });
+
+      setFilteredActivities(activities.filter((e) => e.type === 'notification'));
+    }
+  }, [activities, activeTab]);
+
   return (
     <Style.Container>
       {syndicNanoId && (
@@ -172,6 +221,7 @@ export const MaintenanceHistoryActivities = ({
                 setComment(evt.target.value);
               }}
             />
+
             <Style.InputButtons>
               <div {...getRootProps({ className: 'dropzone' })}>
                 <input {...getInputProps()} />
@@ -193,6 +243,7 @@ export const MaintenanceHistoryActivities = ({
               />
             </Style.InputButtons>
           </Style.InputRow>
+
           {(imagesToUpload.length > 0 || onImageQuery) && (
             <Style.FileAndImageRow>
               {imagesToUpload.sort(sortFiles).map((e, i: number) => {
@@ -244,11 +295,24 @@ export const MaintenanceHistoryActivities = ({
         </Style.SendDataSection>
       )}
 
-      {activities.length > 0 ? (
-        <Style.History>
-          <h3>Históricos</h3>
+      <Style.History>
+        <h3>Históricos</h3>
+
+        <Style.Tabs>
+          <Style.Tab onClick={() => setActiveTab('comments')} active={activeTab === 'comments'}>
+            Comentários
+          </Style.Tab>
+          <Style.Tab
+            onClick={() => setActiveTab('notifications')}
+            active={activeTab === 'notifications'}
+          >
+            Notificações
+          </Style.Tab>
+        </Style.Tabs>
+
+        {filteredActivities.length > 0 ? (
           <Style.ScrollDiv>
-            {activities.map(({ id, content, createdAt, title, type, images }) => {
+            {filteredActivities.map(({ id, content, createdAt, title, type, images }) => {
               if (type === 'comment') {
                 return (
                   <Style.Comment key={id}>
@@ -307,16 +371,14 @@ export const MaintenanceHistoryActivities = ({
                   </Style.Comment>
                 );
               }
+
               return null;
             })}
           </Style.ScrollDiv>
-        </Style.History>
-      ) : (
-        <Style.History>
-          <h3>Históricos</h3>
+        ) : (
           <p className="p2 opacity">Não há registros no momento.</p>
-        </Style.History>
-      )}
+        )}
+      </Style.History>
     </Style.Container>
   );
 };
