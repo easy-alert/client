@@ -1,26 +1,42 @@
-/* eslint-disable import/no-cycle */
+// REACT
 import { useEffect, useState } from 'react';
+
+// LIBS
 import { useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import * as Style from './styles';
-import { catchHandler, dateFormatter } from '../../utils/functions';
-import { Api } from '../../services/api';
-import { Skeleton } from '../../components/Skeleton';
-import { NoDataFound } from '../../components/NoDataFound';
-import { ListTag } from '../../components/ListTag';
-import { TagsArray } from '../../components/TagsArray';
-import { InputCheckbox } from '../../components/Inputs/InputCheckbox';
-import { IconButton } from '../../components/Buttons/IconButton';
-import { icon } from '../../assets/icons';
-import { theme } from '../../styles/theme';
-import { Button } from '../../components/Buttons/Button';
-import { Select } from '../../components/Inputs/Select';
+
+// SERVICES
+import { Api } from '@services/api';
+
+// GLOBAL COMPONENTS
+import { ModalCreateOccasionalMaintenance } from '@components/ModalCreateOccasionalMaintenance';
+import { Skeleton } from '@components/Skeleton';
+import { NoDataFound } from '@components/NoDataFound';
+import { ListTag } from '@components/ListTag';
+import { TagsArray } from '@components/TagsArray';
+import { InputCheckbox } from '@components/Inputs/InputCheckbox';
+import { IconButton } from '@components/Buttons/IconButton';
+import { Button } from '@components/Buttons/Button';
+import { Select } from '@components/Inputs/Select';
+import { Input } from '@components/Inputs/Input';
+import { Pagination } from '@components/Pagination';
+
+// GLOBAL UTILS
+import { catchHandler, dateFormatter } from '@utils/functions';
+
+// GLOBAL STYLES
+import { theme } from '@styles/theme';
+
+// GLOBAL ASSETS
+import { icon } from '@assets/icons';
+
+// COMPONENTS
 import { ModalTicketDetails } from './ModalTicketDetails';
-import { Input } from '../../components/Inputs/Input';
-import { Pagination } from '../../components/Pagination';
 import { ModalChooseAnswerType } from './ModalChooseAnswerType';
-import { ModalCreateOccasionalMaintenanceForTicket } from './ModalCreateOccasionalMaintenanceForTicket';
 import { ModalConnectTicketToExistingOccasionalMaintenances } from './ModalConnectTicketToExistingOccasionalMaintenances';
+
+// STYLES
+import * as Style from './styles';
 
 interface IImage {
   id: string;
@@ -88,7 +104,7 @@ export const Tickets = () => {
   const [ticketsToAnswer, setTicketsToAnswer] = useState<ITicketsToAnswer[]>([]);
 
   const [modalChooseAnswerType, setModalChooseAnswerType] = useState<boolean>(false);
-  const [modalCreateOccasionalMaintenanceForTicket, setModalCreateOccasionalMaintenanceForTicket] =
+  const [modalCreateOccasionalMaintenance, setModalCreateOccasionalMaintenance] =
     useState<boolean>(false);
   const [
     modalConnectTicketToExistingOccasionalMaintenances,
@@ -125,12 +141,20 @@ export const Tickets = () => {
       });
   };
 
-  useEffect(() => {
-    findManyTickets();
-  }, []);
-
   const resetSelectedTickets = () => {
     setTicketsToAnswer([]);
+  };
+
+  const handleModalChooseAnswerType = (modalState: boolean) => {
+    setModalChooseAnswerType(modalState);
+  };
+
+  const handleModalCreateOccasionalMaintenance = (modalState: boolean) => {
+    setModalCreateOccasionalMaintenance(modalState);
+  };
+
+  const handleModalConnectTicketToExistingOccasionalMaintenances = (modalState: boolean) => {
+    setModalConnectTicketToExistingOccasionalMaintenances(modalState);
   };
 
   const ticketsToAnswerString = `Chamados selecionados: ${ticketsToAnswer
@@ -139,30 +163,37 @@ export const Tickets = () => {
 
   const ticketIds = ticketsToAnswer.map(({ id }) => id);
 
+  useEffect(() => {
+    findManyTickets();
+  }, []);
+
   return (
     <Style.PaginationContainer>
       {modalTicketDetailsOpen && (
         <ModalTicketDetails setModal={setModalTicketDetailsOpen} ticketId={selectedTicketId} />
       )}
+
       {modalChooseAnswerType && (
         <ModalChooseAnswerType
-          setModal={setModalChooseAnswerType}
-          setModalCreateOccasionalMaintenance={setModalCreateOccasionalMaintenanceForTicket}
-          setModalSelectOccasionalMaintenance={
-            setModalConnectTicketToExistingOccasionalMaintenances
+          ticketsToAnswer={ticketsToAnswerString}
+          handleModalChooseAnswerType={handleModalChooseAnswerType}
+          handleModalCreateOccasionalMaintenance={handleModalCreateOccasionalMaintenance}
+          handleModalConnectTicketToExistingOccasionalMaintenances={
+            handleModalConnectTicketToExistingOccasionalMaintenances
           }
-          ticketsToAnswer={ticketsToAnswerString}
         />
       )}
-      {modalCreateOccasionalMaintenanceForTicket && (
-        <ModalCreateOccasionalMaintenanceForTicket
-          setModal={setModalCreateOccasionalMaintenanceForTicket}
-          onThenRequest={findManyTickets}
+
+      {modalCreateOccasionalMaintenance && (
+        <ModalCreateOccasionalMaintenance
+          ticketsIds={ticketIds}
           ticketsToAnswer={ticketsToAnswerString}
-          ticketIds={ticketIds}
-          resetSelectedTickets={resetSelectedTickets}
+          handleGetBackgroundData={findManyTickets}
+          handleResetTickets={resetSelectedTickets}
+          handleModalCreateOccasionalMaintenance={handleModalCreateOccasionalMaintenance}
         />
       )}
+
       {modalConnectTicketToExistingOccasionalMaintenances && (
         <ModalConnectTicketToExistingOccasionalMaintenances
           setModal={setModalConnectTicketToExistingOccasionalMaintenances}
@@ -172,10 +203,12 @@ export const Tickets = () => {
           onThenRequest={findManyTickets}
         />
       )}
+
       <Style.Container>
         <Style.Header>
           <Style.HeaderWrapper>
             <h2>Chamados{buildingName ? ` / ${buildingName}` : ''}</h2>
+
             <Style.HeaderSide>
               <IconButton
                 icon={icon.filter}
@@ -203,6 +236,7 @@ export const Tickets = () => {
             />
           )}
         </Style.Header>
+
         {showFilter && (
           <Style.FilterWrapper>
             <Input
@@ -213,6 +247,7 @@ export const Tickets = () => {
                 setInitialCreatedAt(evt.target.value);
               }}
             />
+
             <Input
               label="Data final"
               type="date"
@@ -221,6 +256,7 @@ export const Tickets = () => {
                 setFinalCreatedAt(evt.target.value);
               }}
             />
+
             <Select
               selectPlaceholderValue={' '}
               label="Status"
@@ -236,6 +272,7 @@ export const Tickets = () => {
                 </option>
               ))}
             </Select>
+
             <Button
               type="button"
               label="Filtrar"
@@ -288,6 +325,7 @@ export const Tickets = () => {
                       padding="2px 4px"
                       fontSize="12px"
                     />
+
                     {syndicNanoId && status.name === 'open' && (
                       <InputCheckbox
                         size="18px"
@@ -317,6 +355,7 @@ export const Tickets = () => {
 
                 <Style.CardRow>
                   <p className="p3">Local da Ocorrência</p>
+
                   <ListTag
                     label={place.label}
                     backgroundColor={theme.color.gray4}
@@ -344,6 +383,7 @@ export const Tickets = () => {
           <NoDataFound label="Nehum chamado encontrado" height="70dvh" />
         )}
       </Style.Container>
+
       <Style.PaginationFooter>
         <Pagination
           totalCountOfRegister={count}
