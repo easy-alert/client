@@ -46,6 +46,8 @@ export interface IModalCreateOccasionalMaintenance {
 
   syndicNanoId?: string;
 
+  checklistActivity?: string;
+
   handleResetTickets?: () => void;
   ticketsIds?: string[];
   ticketsToAnswer?: string;
@@ -69,6 +71,7 @@ export interface IHandleSetOccasionalMaintenanceData {
 export interface IModalSecondView {
   categoriesData: ICategory[];
   occasionalMaintenanceData: IOccasionalMaintenanceData;
+  checklistActivity?: string;
   handleSetView: (setView: number) => void;
   handleOccasionalMaintenanceDataChange: (data: IHandleSetOccasionalMaintenanceData) => void;
   handleCreateOccasionalMaintenance: (data: IHandleCreateOccasionalMaintenance) => Promise<void>;

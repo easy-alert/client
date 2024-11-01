@@ -30,6 +30,7 @@ import type {
 
 export const ModalCreateOccasionalMaintenance = ({
   syndicNanoId = '',
+  checklistActivity,
   ticketsIds,
   handleGetBackgroundData,
   handleMaintenanceHistoryIdChange,
@@ -45,7 +46,7 @@ export const ModalCreateOccasionalMaintenance = ({
       buildingId: buildingNanoId,
 
       element: '',
-      activity: '',
+      activity: checklistActivity || '',
       responsible: '',
       executionDate: '',
       inProgress: false,
@@ -166,6 +167,8 @@ export const ModalCreateOccasionalMaintenance = ({
         handleModalCreateOccasionalMaintenance(false);
         setLoading(false);
       }, 1000);
+
+      return;
     }
 
     setLoading(false);
@@ -187,6 +190,7 @@ export const ModalCreateOccasionalMaintenance = ({
             <ModalSecondView
               categoriesData={categoriesData}
               occasionalMaintenanceData={occasionalMaintenanceData}
+              checklistActivity={checklistActivity}
               handleSetView={handleSetView}
               handleOccasionalMaintenanceDataChange={handleOccasionalMaintenanceDataChange}
               handleCreateOccasionalMaintenance={handleCreateOccasionalMaintenance}
