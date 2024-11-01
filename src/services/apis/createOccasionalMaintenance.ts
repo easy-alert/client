@@ -14,6 +14,8 @@ interface IRequestCreateOccasionalMaintenance {
   syndicNanoId: string;
   occasionalMaintenanceType: IOccasionalMaintenanceType;
   occasionalMaintenanceBody: IOccasionalMaintenanceData;
+
+  ticketsIds?: string[];
 }
 
 interface IResponseCreateOccasionalMaintenance extends IResponse {
@@ -31,6 +33,7 @@ interface IResponseCreateOccasionalMaintenance extends IResponse {
 export const createOccasionalMaintenance = async ({
   origin,
   syndicNanoId,
+  ticketsIds = [],
   occasionalMaintenanceType,
   occasionalMaintenanceBody: {
     buildingId,
@@ -44,6 +47,14 @@ export const createOccasionalMaintenance = async ({
   },
 }: IRequestCreateOccasionalMaintenance) => {
   const uri = '/building/reports/occasional/create';
+  if (ticketsIds.length === 0) {
+    handleToastify({
+      statusCode: 400,
+      message: 'Nenhum chamado selecionado.',
+    });
+
+    return null;
+  }
 
   try {
     const response: IResponseCreateOccasionalMaintenance = await Api.post(uri, {
@@ -68,6 +79,7 @@ export const createOccasionalMaintenance = async ({
         files: reportData.files || null,
         images: reportData.images || null,
       },
+      ticketsIds,
     });
 
     handleToastify({

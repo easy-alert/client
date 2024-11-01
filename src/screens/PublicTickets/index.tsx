@@ -117,6 +117,7 @@ export const PublicTickets = () => {
         <Style.Header>
           <Style.HeaderWrapper>
             <h2>Chamados{buildingName ? ` / ${buildingName}` : ''}</h2>
+
             <Style.HeaderSide>
               <IconButton
                 icon={icon.filter}
@@ -130,6 +131,7 @@ export const PublicTickets = () => {
             </Style.HeaderSide>
           </Style.HeaderWrapper>
         </Style.Header>
+
         {showFilter && (
           <Style.FilterWrapper>
             <Input
@@ -140,6 +142,7 @@ export const PublicTickets = () => {
                 setInitialCreatedAt(evt.target.value);
               }}
             />
+
             <Input
               label="Data final"
               type="date"
@@ -148,6 +151,7 @@ export const PublicTickets = () => {
                 setFinalCreatedAt(evt.target.value);
               }}
             />
+
             <Select
               selectPlaceholderValue={' '}
               label="Status"
@@ -163,6 +167,7 @@ export const PublicTickets = () => {
                 </option>
               ))}
             </Select>
+
             <Button
               type="button"
               label="Filtrar"
@@ -241,6 +246,7 @@ export const PublicTickets = () => {
           <NoDataFound label="Nehum chamado encontrado" height="70dvh" />
         )}
       </Style.Container>
+
       <Style.PaginationFooter>
         <Pagination
           totalCountOfRegister={count}

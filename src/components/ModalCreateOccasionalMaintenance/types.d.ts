@@ -35,13 +35,20 @@ export interface IRequestCreateOccasionalMaintenance {
 }
 
 export interface IModalCreateOccasionalMaintenance {
-  syndicNanoId: string;
-  handleGetSyndicKanban: () => Promise<void>;
-  handleMaintenanceHistoryIdChange: (id: string) => void;
   handleModalCreateOccasionalMaintenance: (modalState: boolean) => void;
-  handleModalMaintenanceDetails: (modalState: boolean) => void;
-  handleModalSendMaintenanceReport: (modalState: boolean) => void;
-  checklistTitle?: string;
+
+  handleMaintenanceHistoryIdChange?: (id: string) => void;
+
+  handleModalMaintenanceDetails?: (modalState: boolean) => void;
+  handleModalSendMaintenanceReport?: (modalState: boolean) => void;
+
+  handleGetBackgroundData?: () => Promise<void>;
+
+  syndicNanoId?: string;
+
+  handleResetTickets?: () => void;
+  ticketsIds?: string[];
+  ticketsToAnswer?: string;
 }
 
 export interface IHandleCreateOccasionalMaintenance {

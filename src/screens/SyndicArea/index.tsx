@@ -183,7 +183,7 @@ export const SyndicArea = () => {
       {modalCreateOccasionalMaintenance && (
         <ModalCreateOccasionalMaintenance
           syndicNanoId={syndicNanoId}
-          handleGetSyndicKanban={handleGetSyndicKanban}
+          handleGetBackgroundData={handleGetSyndicKanban}
           handleMaintenanceHistoryIdChange={handleMaintenanceHistoryIdChange}
           handleModalCreateOccasionalMaintenance={handleModalCreateOccasionalMaintenance}
           handleModalMaintenanceDetails={handleModalMaintenanceDetails}

@@ -138,12 +138,16 @@ const ModalSecondView = ({
       <Style.ButtonContainer>
         <Button
           label="Criar"
+          bgColor="transparent"
+          textColor="actionBlue"
           onClick={() =>
             handleCreateOccasionalMaintenance({ occasionalMaintenanceType: 'pending' })
           }
         />
         <Button
-          label="Criar em progresso"
+          label="Iniciar execução"
+          bgColor="transparent"
+          textColor="actionBlue"
           onClick={() => {
             handleCreateOccasionalMaintenance({
               occasionalMaintenanceType: 'pending',
