@@ -1,19 +1,33 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
+// REACT
 import { useEffect, useRef, useState } from 'react';
+
+// LIBS
 import { useSearchParams } from 'react-router-dom';
-// eslint-disable-next-line import/no-cycle
-import { IChecklist } from '.';
-import { icon } from '../../assets/icons';
-import { IconButton } from '../../components/Buttons/IconButton';
-import { Image } from '../../components/Image';
-import * as Style from './styles';
+
+// GLOBAL COMPONENTS
+import { IconButton } from '@components/Buttons/IconButton';
+import { Image } from '@components/Image';
+import { ModalCreateOccasionalMaintenance } from '@components/ModalCreateOccasionalMaintenance';
+
+// GLOBAL UTILS
+import { ITimeInterval } from '@utils/types';
+
+// GLOBAL STYLES
+import { theme } from '@styles/theme';
+
+// GLOBAL ASSETS
+import { icon } from '@assets/icons';
+
+// COMPONENTS
 import { ModalChecklistDetails } from './ModalChecklistDetails';
-import { theme } from '../../styles/theme';
 import { ModalDeleteChecklist } from './ModalDeleteChecklist';
 import { ModalUpdateChecklist } from './ModalUpdateChecklist';
-import { ITimeInterval } from '../../utils/types';
-import { ModalCreateOccasionalMaintenance } from '../SyndicArea/ModalCreateOccasionalMaintenance';
+
+// STYLES
+import * as Style from './styles';
+
+// TYPES
+import type { IChecklist } from '.';
 
 interface IChecklistRow {
   checklist: IChecklist;
@@ -27,6 +41,7 @@ export const ChecklistRowComponent = ({
   timeIntervals,
 }: IChecklistRow) => {
   const [search] = useSearchParams();
+
   const syndicNanoId = search.get('syndicNanoId') ?? '';
   const [modalChecklistDetailsOpen, setModalChecklistDetailsOpen] = useState(false);
   const [modalDeleteChecklistOpen, setModalDeleteChecklistOpen] = useState(false);
@@ -38,6 +53,10 @@ export const ChecklistRowComponent = ({
 
   const toggleDropdown = () => {
     setDropdownOpen((prevState) => !prevState);
+  };
+
+  const handleModalCreateOccasionalMaintenance = (modalState: boolean) => {
+    setModalCreateOccasionalMaintenance(modalState);
   };
 
   useEffect(() => {
@@ -63,6 +82,7 @@ export const ChecklistRowComponent = ({
           onThenRequest={onThenRequest}
         />
       )}
+
       {modalDeleteChecklistOpen && (
         <ModalDeleteChecklist
           onThenRequest={onThenRequest}
@@ -70,6 +90,7 @@ export const ChecklistRowComponent = ({
           checklistId={id}
         />
       )}
+
       {modalUpdateChecklistOpen && (
         <ModalUpdateChecklist
           setModal={setModalUpdateChecklistOpen}
@@ -78,19 +99,15 @@ export const ChecklistRowComponent = ({
           checklistId={id}
         />
       )}
+
       {modalCreateOccasionalMaintenance && (
         <ModalCreateOccasionalMaintenance
           syndicNanoId={syndicNanoId}
-          checklistTitle={name}
-          setModal={setModalCreateOccasionalMaintenance}
-          getCalendarData={() =>
-            new Promise<void>((resolve) => {
-              // Não faz nada
-              resolve();
-            })
-          }
+          checklistActivity={name}
+          handleModalCreateOccasionalMaintenance={handleModalCreateOccasionalMaintenance}
         />
       )}
+
       <Style.ChecklistBackground ref={dropdownRef}>
         <Style.ChecklistWrapper>
           <Style.ChecklistRow

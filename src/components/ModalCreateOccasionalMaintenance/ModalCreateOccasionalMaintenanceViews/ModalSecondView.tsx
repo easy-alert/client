@@ -16,6 +16,7 @@ import type { IModalSecondView } from '../types';
 const ModalSecondView = ({
   categoriesData,
   occasionalMaintenanceData,
+  checklistActivity,
   handleSetView,
   handleOccasionalMaintenanceDataChange,
   handleCreateOccasionalMaintenance,
@@ -92,6 +93,7 @@ const ModalSecondView = ({
         label="Atividade *"
         placeholder="Ex: Troca de lâmpada"
         value={occasionalMaintenanceData.activity}
+        disabled={!!checklistActivity}
         onChange={(e) =>
           handleOccasionalMaintenanceDataChange({
             primaryKey: 'activity',
