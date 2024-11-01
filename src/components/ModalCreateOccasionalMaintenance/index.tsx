@@ -29,10 +29,11 @@ import type {
 } from './types';
 
 export const ModalCreateOccasionalMaintenance = ({
-  syndicNanoId,
-  checklistTitle,
-  handleGetSyndicKanban,
+  syndicNanoId = '',
+  ticketsIds,
+  handleGetBackgroundData,
   handleMaintenanceHistoryIdChange,
+  handleResetTickets,
   handleModalCreateOccasionalMaintenance,
   handleModalMaintenanceDetails,
   handleModalSendMaintenanceReport,
@@ -44,7 +45,7 @@ export const ModalCreateOccasionalMaintenance = ({
       buildingId: buildingNanoId,
 
       element: '',
-      activity: checklistTitle || '',
+      activity: '',
       responsible: '',
       executionDate: '',
       inProgress: false,
@@ -137,24 +138,34 @@ export const ModalCreateOccasionalMaintenance = ({
       syndicNanoId,
       occasionalMaintenanceType,
       occasionalMaintenanceBody,
+      ticketsIds,
     });
 
     if (response?.ServerMessage?.statusCode === 200) {
       if (!response?.maintenance?.id) return;
 
-      handleMaintenanceHistoryIdChange(response.maintenance.id);
-
-      await handleGetSyndicKanban();
-
-      if (occasionalMaintenanceType === 'finished') {
-        handleModalMaintenanceDetails(true);
-      } else {
-        handleModalSendMaintenanceReport(true);
+      if (handleMaintenanceHistoryIdChange) {
+        handleMaintenanceHistoryIdChange(response.maintenance.id);
       }
 
-      handleModalCreateOccasionalMaintenance(false);
-      setLoading(false);
-      return;
+      if (handleResetTickets) {
+        handleResetTickets();
+      }
+
+      if (handleGetBackgroundData) {
+        await handleGetBackgroundData();
+      }
+
+      setTimeout(() => {
+        if (occasionalMaintenanceType === 'finished' && handleModalMaintenanceDetails) {
+          handleModalMaintenanceDetails(true);
+        } else if (occasionalMaintenanceType === 'pending' && handleModalSendMaintenanceReport) {
+          handleModalSendMaintenanceReport(true);
+        }
+
+        handleModalCreateOccasionalMaintenance(false);
+        setLoading(false);
+      }, 1000);
     }
 
     setLoading(false);
