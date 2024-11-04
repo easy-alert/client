@@ -26,7 +26,12 @@ export const getStatusName = (status: string) => {
       statusName = 'Preventiva';
       break;
 
+    case 'ticket':
+      statusName = 'Chamado';
+      break;
+
     default:
+      statusName = status;
       break;
   }
 

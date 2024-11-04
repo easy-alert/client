@@ -1,4 +1,8 @@
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+
+import TicketsPage from '@screens/Tickets';
+
+import { Tickets } from '@screens/Tickets/index BU';
 import { NavBar } from './components/NavBar';
 import { MaintenancesPlan } from './screens/MaintenancesPlan';
 import { Informations } from './screens/Informations';
@@ -9,7 +13,6 @@ import { Settings } from './screens/Settings';
 import { ChooseSyndic } from './screens/ChooseSyndic';
 import { Videos } from './screens/Videos';
 import { Checklists } from './screens/Checklists';
-import { Tickets } from './screens/Tickets';
 // import { PublicTickets } from './screens/PublicTickets';
 import { ResponsibleRequireAuth } from './contexts/ResponsibleAuth/ResponsibleRequireAuth';
 import { ResidentRequireAuth } from './contexts/ResidentAuth/ResidentRequireAuth';
@@ -68,7 +71,9 @@ const AppRoutes = () => (
             </ResponsibleRequireAuth>
           }
         >
-          <Route path="/tickets/:buildingNanoId" element={<Tickets />} />
+          <Route path="/tickets/:buildingNanoId" element={<TicketsPage />} />
+          {/* <Route path="/tickets/:buildingNanoId" element={<Tickets />} /> */}
+
           <Route path="/syndicarea/:buildingNanoId" element={<SyndicArea />} />
           <Route path="/checklists/:buildingNanoId" element={<Checklists />} />
           <Route path="/settings/:buildingNanoId" element={<Settings />} />
