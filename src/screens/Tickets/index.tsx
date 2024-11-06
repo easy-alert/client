@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { useParams, useSearchParams } from 'react-router-dom';
+
 import { getTicketsByBuildingNanoId } from '@services/apis/getTicketsByBuildingNanoId';
 
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useServiceTypes } from '@hooks/useServiceTypes';
 
 import { IconButton } from '@components/Buttons/IconButton';
 
@@ -13,23 +15,41 @@ import { theme } from '@styles/theme';
 import type { ITicket, ITicketStatus } from '@customTypes/ITicket';
 
 import { handleToastify } from '@utils/toastifyResponses';
-import { Input } from '@components/Inputs/Input';
 import { Select } from '@components/Inputs/Select';
 import { Button } from '@components/Buttons/Button';
 import { Skeleton } from '@components/Skeleton';
 import { EventTag } from '@components/EventTag';
 import { dateFormatter } from '@utils/functions';
-import * as Style from './styles';
 
-interface ITicketsFilterOptions {
-  initialCreatedAt: string;
-  finalCreatedAt: string;
-  statusName: string;
-}
+import * as Style from './styles';
 
 interface IKanbanTicket {
   title: string;
   tickets: ITicket[];
+}
+
+export interface ITicketFilter {
+  year: string;
+  month: string;
+  status: string;
+  placeId: string;
+  serviceTypeId: string;
+}
+
+interface ITicketFilterOptions {
+  years: string[];
+  months: {
+    number: number;
+    name: string;
+  }[];
+  status: {
+    name: string;
+    label: string;
+  }[];
+  places: {
+    name: string;
+    id: string;
+  }[];
 }
 
 function TicketsPage() {
@@ -37,27 +57,45 @@ function TicketsPage() {
   const [search] = useSearchParams();
   const syndicNanoId = search;
 
+  const { serviceTypes } = useServiceTypes({ buildingNanoId });
+
   const [tickets, setTickets] = useState<ITicket[]>([]);
   const [kanbanTickets, setKanbanTickets] = useState<IKanbanTicket[]>([]);
   const [buildingName, setBuildingName] = useState<string>('');
+
   const [statusOptions, setStatusOptions] = useState<ITicketStatus[]>([]);
 
   const [ticketsToAnswer, setTicketsToAnswer] = useState<ITicket[]>([]);
 
   const [showFilter, setShowFilter] = useState<boolean>(false);
-  const [filterOptions, setFilterOptions] = useState<ITicketsFilterOptions>({
-    initialCreatedAt: '',
-    finalCreatedAt: '',
-    statusName: '',
+  const [filter, setFilter] = useState<ITicketFilter>({
+    year: '',
+    month: '',
+    status: '',
+    placeId: '',
+    serviceTypeId: '',
   });
-
-  const [page, setPage] = useState<number>(1);
-  const [take, setTake] = useState<number>(10);
+  const [filterOptions, setFilterOptions] = useState<ITicketFilterOptions>({
+    months: [],
+    years: [],
+    status: [],
+    places: [],
+  });
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleFilterOptionsChange = useCallback(
+  const handleFilterChange = useCallback(
     (key: string, value: string) => {
+      setFilter((prevState) => ({
+        ...prevState,
+        [key]: value,
+      }));
+    },
+    [filter, setFilter],
+  );
+
+  const handleFilterOptionsChange = useCallback(
+    (key: string, value: string | string[]) => {
       setFilterOptions((prevState) => ({
         ...prevState,
         [key]: value,
@@ -68,19 +106,19 @@ function TicketsPage() {
 
   const handleCreateKanbanTickets = useCallback((responseTickets: ITicket[]) => {
     const openTickets = responseTickets
-      .filter((ticket) => ticket.statusName === 'open')
+      .filter((ticket) => ticket.status.name === 'open')
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     const inProgressTickets = responseTickets
-      .filter((ticket) => ticket.statusName === 'inProgress')
+      .filter((ticket) => ticket.status.name === 'inProgress')
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     const finishedTickets = responseTickets
-      .filter((ticket) => ticket.statusName === 'finished')
+      .filter((ticket) => ticket.status.name === 'finished')
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     const dismissedTickets = responseTickets
-      .filter((ticket) => ticket.statusName === 'dismissed')
+      .filter((ticket) => ticket.status.name === 'dismissed')
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     const ticketsKanbanArray = [
@@ -102,25 +140,24 @@ function TicketsPage() {
       },
     ];
 
-    console.log('🚀 ~ handleCreateKanbanTickets ~ ticketsKanbanArray:', ticketsKanbanArray);
-
     setKanbanTickets(ticketsKanbanArray);
   }, []);
 
-  const handleGetTickets = async (pageParam?: number) => {
+  const handleGetTickets = async () => {
     try {
       setLoading(true);
 
       const response = await getTicketsByBuildingNanoId({
         buildingNanoId,
-        page: pageParam || page,
-        take,
+        filter,
       });
 
       handleCreateKanbanTickets(response.tickets);
 
+      handleFilterOptionsChange('years', response.filterOptions.years);
+      handleFilterOptionsChange('months', response.filterOptions.months);
+
       setBuildingName(response.buildingName);
-      setStatusOptions(response.status);
       setTickets(response.tickets);
     } catch (error: any) {
       handleToastify(error);
@@ -170,36 +207,78 @@ function TicketsPage() {
 
       {showFilter && (
         <Style.FilterWrapper>
-          <Input
-            label="Data inicial"
-            type="date"
-            value={filterOptions.initialCreatedAt}
-            onChange={(e) => {
-              handleFilterOptionsChange('initialCreatedAt', e.target.value);
-            }}
-          />
-
-          <Input
-            label="Data final"
-            type="date"
-            value={filterOptions.finalCreatedAt}
-            onChange={(e) => {
-              handleFilterOptionsChange('finalCreatedAt', e.target.value);
-            }}
-          />
-
           <Select
-            selectPlaceholderValue={' '}
-            label="Status"
-            value={filterOptions.statusName}
-            onChange={(evt) => {
-              handleFilterOptionsChange('statusName', evt.target.value);
-            }}
+            selectPlaceholderValue=""
+            label="Ano"
+            value={filter.year}
+            onChange={(e) => handleFilterChange('year', e.target.value)}
           >
             <option value="">Todos</option>
-            {statusOptions.map(({ label, name }) => (
-              <option key={name} value={name}>
-                {label}
+
+            {filterOptions.years.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </Select>
+
+          <Select
+            disabled={filter.year === ''}
+            selectPlaceholderValue=""
+            label="Mês"
+            value={filter.month}
+            onChange={(e) => handleFilterChange('month', e.target.value)}
+          >
+            <option value="">Todos</option>
+
+            {filterOptions.months.map((month) => (
+              <option key={month.number} value={month.number}>
+                {month.name}
+              </option>
+            ))}
+          </Select>
+
+          <Select
+            selectPlaceholderValue=""
+            label="Status"
+            value={filter.status}
+            onChange={(e) => handleFilterChange('status', e.target.value)}
+          >
+            <option value="">Todos</option>
+
+            {filterOptions.status.map((status) => (
+              <option key={status.name} value={status.name}>
+                {status.label}
+              </option>
+            ))}
+          </Select>
+
+          <Select
+            label="Tipo"
+            selectPlaceholderValue=""
+            value={filter.serviceTypeId}
+            onChange={(e) => handleFilterChange('serviceTypeId', e.target.value)}
+          >
+            <option value="">Todas</option>
+
+            {serviceTypes.map((serviceType) => (
+              <option key={serviceType.id} value={serviceType.id}>
+                {serviceType.singularLabel}
+              </option>
+            ))}
+          </Select>
+
+          <Select
+            label="Local"
+            selectPlaceholderValue=""
+            value={filter.placeId}
+            onChange={(e) => handleFilterChange('categoryId', e.target.value)}
+          >
+            <option value="">Todas</option>
+
+            {filterOptions.places.map((place) => (
+              <option key={place.id} value={place.id}>
+                {place.name}
               </option>
             ))}
           </Select>
@@ -208,10 +287,7 @@ function TicketsPage() {
             type="button"
             label="Filtrar"
             disabled={loading}
-            onClick={() => {
-              setPage(1);
-              handleGetTickets(1);
-            }}
+            onClick={() => handleGetTickets()}
           />
         </Style.FilterWrapper>
       )}
@@ -272,7 +348,12 @@ function TicketsPage() {
                         <Style.KanbanTicketTitle>Tipo de manutenção</Style.KanbanTicketTitle>
 
                         {ticket.types.map((type) => (
-                          <EventTag key={type.type.id} label={type.type.label} />
+                          <EventTag
+                            key={type.type.id}
+                            label={type.type.label}
+                            color={type.type.color}
+                            bgColor={type.type.backgroundColor}
+                          />
                         ))}
                       </Style.KanbanTicketGridBox>
 
