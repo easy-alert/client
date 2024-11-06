@@ -13,7 +13,12 @@ export interface ITicketPlace {
 export interface ITicketType {
   type: {
     id: string;
+    name: string;
     label: string;
+    singularLabel: string;
+    pluralLabel: string;
+    color: string;
+    backgroundColor: string;
   };
 }
 
