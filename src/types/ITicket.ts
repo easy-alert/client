@@ -1,3 +1,5 @@
+import { IBuilding } from './IBuilding';
+
 export interface ITicketStatus {
   backgroundColor: string;
   color: string;
@@ -43,8 +45,10 @@ export interface ITicket {
   ticketNumber: number;
   createdAt: string;
   updatedAt: string;
+
   images: ITicketImage[];
   status: ITicketStatus;
   place: ITicketPlace;
   types: ITicketType[];
+  building: IBuilding;
 }
