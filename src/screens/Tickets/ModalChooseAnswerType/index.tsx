@@ -1,13 +1,18 @@
+// LIBS
 import styled from 'styled-components';
-import { Button } from '../../../components/Buttons/Button';
-import { Modal } from '../../../components/Modal';
-import { theme } from '../../../styles/theme';
+
+// GLOBAL COMPONENTS
+import { Button } from '@components/Buttons/Button';
+import { Modal } from '@components/Modal';
+
+// GLOBAL STYLES
+import { theme } from '@styles/theme';
 
 interface IModalChooseAnswerType {
-  setModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setModalCreateOccasionalMaintenance: React.Dispatch<React.SetStateAction<boolean>>;
-  setModalSelectOccasionalMaintenance: React.Dispatch<React.SetStateAction<boolean>>;
   ticketsToAnswer: string;
+  handleModalChooseAnswerType: (modalState: boolean) => void;
+  handleModalCreateOccasionalMaintenance: (modalState: boolean) => void;
+  handleModalConnectTicketToExistingOccasionalMaintenances: (modalState: boolean) => void;
 }
 
 const ModalSelectMethodContainer = styled.div`
@@ -33,23 +38,23 @@ const Text = styled.div`
 `;
 
 export const ModalChooseAnswerType = ({
-  setModal,
-  setModalCreateOccasionalMaintenance,
-  setModalSelectOccasionalMaintenance,
-  ticketsToAnswer
+  ticketsToAnswer,
+  handleModalChooseAnswerType,
+  handleModalCreateOccasionalMaintenance,
+  handleModalConnectTicketToExistingOccasionalMaintenances,
 }: IModalChooseAnswerType) => {
   const createNew = () => {
-    setModal(false);
-    setModalCreateOccasionalMaintenance(true);
+    handleModalChooseAnswerType(false);
+    handleModalCreateOccasionalMaintenance(true);
   };
 
   const addExisting = () => {
-    setModal(false);
-    setModalSelectOccasionalMaintenance(true);
+    handleModalChooseAnswerType(false);
+    handleModalConnectTicketToExistingOccasionalMaintenances(true);
   };
 
   return (
-    <Modal setModal={setModal} title="Responder chamados">
+    <Modal setModal={handleModalChooseAnswerType} title="Responder chamados">
       <ModalSelectMethodContainer>
         <Text>
           <h5>Atenção</h5>

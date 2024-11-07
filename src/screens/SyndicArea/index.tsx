@@ -1,34 +1,46 @@
-/* eslint-disable react/no-array-index-key */
-// LIBS
+// REACT
 import { useState, useEffect } from 'react';
 
-// COMPONENTS
+// LIBS
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { Button } from '../../components/Buttons/Button';
-import { IconButton } from '../../components/Buttons/IconButton';
-import { EventTag } from '../../components/EventTag';
-import { Select } from '../../components/Inputs/Select';
-import { DotSpinLoading } from '../../components/Loadings/DotSpinLoading';
+
+// SERVICES
+import { Api } from '@services/api';
+
+// GLOBAL COMPONENTS
+import { Button } from '@components/Buttons/Button';
+import { IconButton } from '@components/Buttons/IconButton';
+import { EventTag } from '@components/EventTag';
+import { Select } from '@components/Inputs/Select';
+import { DotSpinLoading } from '@components/Loadings/DotSpinLoading';
+import { Skeleton } from '@components/Skeleton';
+import { FutureMaintenanceTag } from '@components/FutureMaintenanceTag';
+import { InProgressTag } from '@components/InProgressTag';
+import { ModalCreateOccasionalMaintenance } from '@components/ModalCreateOccasionalMaintenance';
+
+// GLOBAL UTILS
+import { capitalizeFirstLetter, catchHandler, dateFormatter } from '@utils/functions';
+
+// GLOBAL ASSETS
+import { icon } from '@assets/icons';
+
+// GLOBAL STYLES
+import { theme } from '@styles/theme';
+
+// COMPONENTS
 import { ModalMaintenanceDetails } from '../MaintenancesPlan/ModalMaintenanceDetails';
 import { ModalSendMaintenanceReport } from './ModalSendMaintenanceReport';
-import { Skeleton } from '../../components/Skeleton';
+// import { ModalCreateOccasionalMaintenance } from './ModalCreateOccasionalMaintenance';
 
-// FUNCTIONS
+// UTILS
 import { requestSyndicKanban } from './functions';
-import { capitalizeFirstLetter, catchHandler, dateFormatter } from '../../utils/functions';
-
-// TYPES
-import { IFilter, IFilterOptions, IKanban } from './types';
-import { IModalAdditionalInformations } from '../MaintenancesPlan/types';
 
 // STYLES
-import { icon } from '../../assets/icons';
-import { theme } from '../../styles/theme';
 import * as Style from './styles';
-import { FutureMaintenanceTag } from '../../components/FutureMaintenanceTag';
-import { ModalCreateOccasionalMaintenance } from './ModalCreateOccasionalMaintenance';
-import { InProgressTag } from '../../components/InProgressTag';
-import { Api } from '../../services/api';
+
+// TYPES
+import type { IFilter, IFilterOptions, IKanban } from './types';
+import type { IModalAdditionalInformations } from '../MaintenancesPlan/types';
 
 interface IBuildingsBySyndic {
   buildingName: string;
@@ -41,29 +53,13 @@ interface IBuildingsBySyndic {
 
 export const SyndicArea = () => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
-
   const navigate = useNavigate();
 
-  const [showFilter, setShowFilter] = useState<boolean>(false);
-
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const [onQuery, setOnQuery] = useState<boolean>(false);
-
-  const [showFutureMaintenances, setShowFutureMaintenances] = useState<boolean>(false);
-
-  const [showOldExpireds, setShowOldExpireds] = useState<boolean>(false);
-
-  const [modalSendReportOpen, setModalSendReportOpen] = useState<boolean>(false);
-
-  const [modalCreateOccasionalMaintenance, setModalCreateOccasionalMaintenance] =
-    useState<boolean>(false);
-
-  const [modalMaintenanceDetailsOpen, setModalMaintenanceDetailsOpen] = useState<boolean>(false);
-
-  const [kanban, setKanban] = useState<IKanban[]>([]);
-
   const [buildingName, setBuildingName] = useState<string>('');
+  const [buildingsBySyndic, setBuildingsBySyndic] = useState<IBuildingsBySyndic[]>([]);
+
+  const [maintenanceHistoryId, setMaintenanceHistoryId] = useState<string>('');
+  const [kanban, setKanban] = useState<IKanban[]>([]);
 
   const [modalAdditionalInformations, setModalAdditionalInformations] =
     useState<IModalAdditionalInformations>({
@@ -72,24 +68,63 @@ export const SyndicArea = () => {
       expectedDueDate: '',
       isFuture: false,
     });
+
+  const [modalSendReportOpen, setModalSendReportOpen] = useState<boolean>(false);
+  const [modalCreateOccasionalMaintenance, setModalCreateOccasionalMaintenance] =
+    useState<boolean>(false);
+  const [modalMaintenanceDetailsOpen, setModalMaintenanceDetailsOpen] = useState<boolean>(false);
+
+  const [showFutureMaintenances, setShowFutureMaintenances] = useState<boolean>(false);
+  const [showOldExpireds, setShowOldExpireds] = useState<boolean>(false);
+
+  const [search, setSearch] = useSearchParams();
+  const syndicNanoId = search.get('syndicNanoId') ?? '';
+  const categoryId = search.get('categoryId') ?? '';
+
+  const [showFilter, setShowFilter] = useState<boolean>(false);
   const [filterOptions, setFilterOptions] = useState<IFilterOptions>({
     months: [],
     status: [],
     years: [],
     categories: [],
   });
-
-  const [search, setSearch] = useSearchParams();
-  const syndicNanoId = search.get('syndicNanoId') ?? '';
-  const categoryId = search.get('categoryId') ?? '';
-  const [buildingsBySyndic, setBuildingsBySyndic] = useState<IBuildingsBySyndic[]>([]);
-
   const [filter, setFilter] = useState<IFilter>({
     months: '',
     status: '',
     years: '',
     categoryId,
   });
+
+  const [loading, setLoading] = useState<boolean>(true);
+  const [onQuery, setOnQuery] = useState<boolean>(false);
+
+  const handleModalCreateOccasionalMaintenance = (modalState: boolean) => {
+    setModalCreateOccasionalMaintenance(modalState);
+  };
+
+  const handleModalMaintenanceDetails = (modalState: boolean) => {
+    setModalMaintenanceDetailsOpen(modalState);
+  };
+
+  const handleModalSendMaintenanceReport = (modalState: boolean) => {
+    setModalSendReportOpen(modalState);
+  };
+
+  const handleMaintenanceHistoryIdChange = (id: string) => {
+    setMaintenanceHistoryId(id);
+  };
+
+  const handleGetSyndicKanban = async () => {
+    await requestSyndicKanban({
+      setLoading,
+      syndicNanoId,
+      setFilterOptions,
+      filter,
+      setOnQuery,
+      setKanban,
+      setBuildingName,
+    });
+  };
 
   const getBuildingsBySyndic = async () => {
     await Api.get(`/find-buildings-by-syndic-nano-id/${syndicNanoId}`)
@@ -113,7 +148,7 @@ export const SyndicArea = () => {
       setKanban,
       setBuildingName,
     });
-  }, []);
+  }, [syndicNanoId]);
 
   return loading ? (
     <DotSpinLoading />
@@ -121,7 +156,10 @@ export const SyndicArea = () => {
     <>
       {modalSendReportOpen && (
         <ModalSendMaintenanceReport
-          modalAdditionalInformations={modalAdditionalInformations}
+          modalAdditionalInformations={{
+            ...modalAdditionalInformations,
+            id: maintenanceHistoryId || modalAdditionalInformations.id,
+          }}
           setModal={setModalSendReportOpen}
           filter={filter}
           setBuildingName={setBuildingName}
@@ -134,26 +172,22 @@ export const SyndicArea = () => {
 
       {modalMaintenanceDetailsOpen && (
         <ModalMaintenanceDetails
+          modalAdditionalInformations={{
+            ...modalAdditionalInformations,
+            id: maintenanceHistoryId || modalAdditionalInformations.id,
+          }}
           setModal={setModalMaintenanceDetailsOpen}
-          modalAdditionalInformations={modalAdditionalInformations}
         />
       )}
 
       {modalCreateOccasionalMaintenance && (
         <ModalCreateOccasionalMaintenance
           syndicNanoId={syndicNanoId}
-          setModal={setModalCreateOccasionalMaintenance}
-          getCalendarData={async () =>
-            requestSyndicKanban({
-              setLoading,
-              syndicNanoId,
-              setFilterOptions,
-              filter,
-              setOnQuery,
-              setKanban,
-              setBuildingName,
-            })
-          }
+          handleGetBackgroundData={handleGetSyndicKanban}
+          handleMaintenanceHistoryIdChange={handleMaintenanceHistoryIdChange}
+          handleModalCreateOccasionalMaintenance={handleModalCreateOccasionalMaintenance}
+          handleModalMaintenanceDetails={handleModalMaintenanceDetails}
+          handleModalSendMaintenanceReport={handleModalSendMaintenanceReport}
         />
       )}
 
@@ -214,6 +248,7 @@ export const SyndicArea = () => {
             onClick={() => setModalCreateOccasionalMaintenance(true)}
           />
         </Style.Header>
+
         {showFilter && (
           <Style.FilterWrapper>
             <Select
@@ -328,6 +363,7 @@ export const SyndicArea = () => {
             <Style.KanbanCard key={card.status}>
               <Style.KanbanHeader>
                 <h5>{card.status}</h5>
+
                 {card.status === 'Pendentes' && (
                   <label htmlFor="showFuture">
                     <input
@@ -341,6 +377,7 @@ export const SyndicArea = () => {
                     Mostrar futuras
                   </label>
                 )}
+
                 {card.status === 'Vencidas' && (
                   <label htmlFor="showExpireds">
                     <input
@@ -363,16 +400,19 @@ export const SyndicArea = () => {
                       <Skeleton />
                     </Style.MaintenanceWrapper>
                   )}
+
                   {(i === 0 || i === 1 || i === 2 || i === 3) && (
                     <Style.MaintenanceWrapper>
                       <Skeleton />
                     </Style.MaintenanceWrapper>
                   )}
+
                   {(i === 0 || i === 2 || i === 3) && (
                     <Style.MaintenanceWrapper>
                       <Skeleton />
                     </Style.MaintenanceWrapper>
                   )}
+
                   {i === 3 && (
                     <Style.MaintenanceWrapper>
                       <Skeleton />
@@ -383,7 +423,7 @@ export const SyndicArea = () => {
 
               {!onQuery &&
                 card.maintenances.length > 0 &&
-                card.maintenances.map((maintenance, j: number) => {
+                card.maintenances.map((maintenance) => {
                   const isPending = maintenance.status === 'pending';
                   const isFuture =
                     new Date(maintenance.date) > new Date(new Date().setHours(0, 0, 0, 0));
@@ -407,10 +447,12 @@ export const SyndicArea = () => {
                         !isExpired)) ||
                       showExpiredOccasional ||
                       inProgress) && (
-                      <Style.MaintenanceWrapper key={maintenance.id + j}>
+                      <Style.MaintenanceWrapper key={maintenance.id}>
                         <Style.MaintenanceInfo
                           status={maintenance.status}
                           onClick={() => {
+                            setMaintenanceHistoryId(maintenance.id);
+
                             setModalAdditionalInformations({
                               id: maintenance.id,
                               expectedNotificationDate: '',
