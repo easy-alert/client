@@ -1,177 +1,185 @@
+// REACT
 import { useEffect, useState } from 'react';
-import { DotSpinLoading } from '../../../components/Loadings/DotSpinLoading';
-import { Modal } from '../../../components/Modal';
+
+// LIBS
+// CONTEXTS
+// HOOKS
+// SERVICES
+import { getTicketById } from '@services/apis/getTicketById';
+
+// GLOBAL COMPONENTS
+import { Modal } from '@components/Modal';
+import { ImagePreview } from '@components/ImagePreview';
+import { EventTag } from '@components/EventTag';
+
+// GLOBAL UTILS
+import { handleToastify } from '@utils/toastifyResponses';
+
+// GLOBAL STYLES
+// GLOBAL ASSETS
+// GLOBAL TYPES
+import { ITicket } from '@customTypes/ITicket';
+
+// COMPONENTS
+// UTILS
+// STYLES
+import { Button } from '@components/Buttons/Button';
+import { TicketHistoryActivities } from '@components/TicketHistoryActivities';
 import * as Style from './styles';
-import { Api } from '../../../services/api';
-import { catchHandler, isImage } from '../../../utils/functions';
-import { ImagePreview } from '../../../components/ImagePreview';
-import { ListTag } from '../../../components/ListTag';
-import { theme } from '../../../styles/theme';
-import { TagsArray } from '../../../components/TagsArray';
+
+// TYPES
 
 interface IModalTicketDetails {
-  setModal: React.Dispatch<React.SetStateAction<boolean>>;
   ticketId: string;
+  handleTicketDetailsModal: (modalState: boolean) => void;
 }
 
-interface Image {
-  id: string;
-  ticketId: string;
-  name: string;
-  url: string;
-  createdAt: string;
-  updatedAt: string;
-}
-interface Status {
-  name: string;
-  label: string;
-  color: string;
-  backgroundColor: string;
-}
-interface Place {
-  id: string;
-  label: string;
-}
-interface Type {
-  type: Place;
-}
-interface Company {
-  canAccessTickets: boolean;
-}
-interface Building {
-  nanoId: string;
-  id: string;
-  name: string;
-  Company: Company;
-}
-
-interface ITicket {
-  id: string;
-  residentName: string;
-  residentApartment: string;
-  residentEmail: string;
-  description: string;
-  placeId: string;
-  statusName: string;
-  buildingId: string;
-  ticketNumber: number;
-  createdAt: string;
-  updatedAt: string;
-  images: Image[];
-  status: Status;
-  place: Place;
-  types: Type[];
-  building: Building;
-}
-
-export const ModalTicketDetails = ({ setModal, ticketId }: IModalTicketDetails) => {
-  const [loading, setLoading] = useState<boolean>(true);
+function ModalTicketDetails({ ticketId, handleTicketDetailsModal }: IModalTicketDetails) {
   const [ticket, setTicket] = useState<ITicket>();
 
-  const findChecklistById = async () => {
-    await Api.get(`/tickets/${ticketId}`)
-      .then((res) => {
-        setTicket(res.data.ticket);
-      })
-      .catch((err) => {
-        catchHandler(err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const handleGetTicketById = async () => {
+    setLoading(true);
+
+    try {
+      const ticketData = await getTicketById(ticketId);
+      console.log('🚀 ~ handleGetTicketById ~ ticketData:', ticketData);
+
+      setTicket(ticketData);
+    } catch (error: any) {
+      handleToastify(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const ticketDetailsRows = {
+    leftColumn: [
+      {
+        label: 'Edificação',
+        value: ticket?.building.name,
+      },
+      {
+        label: 'Nome do morador',
+        value: ticket?.residentName,
+      },
+      {
+        label: 'Apartamento do morador',
+        value: ticket?.residentApartment,
+      },
+      {
+        label: 'E-mail do morador',
+        value: ticket?.residentEmail,
+      },
+    ],
+    rightColumn: [
+      {
+        label: 'Descrição',
+        value: ticket?.description,
+      },
+      {
+        label: 'Local da ocorrência',
+        place: ticket?.place,
+      },
+      {
+        label: 'Tipo da manutenção',
+        types: ticket?.types,
+      },
+    ],
   };
 
   useEffect(() => {
-    findChecklistById();
-  }, []);
+    handleGetTicketById();
+  }, [ticketId]);
+
+  if (!ticket) return null;
 
   return (
-    <Modal title={`Detalhes do chamado #${ticket?.ticketNumber}`} setModal={setModal}>
-      {loading ? (
-        <Style.LoadingContainer>
-          <DotSpinLoading />
-        </Style.LoadingContainer>
-      ) : (
-        <Style.Container>
-          <Style.Content>
-            <Style.Row>
-              <h6>Edificação</h6>
-              <p className="p2">{ticket?.building.name}</p>
-            </Style.Row>
+    <Modal
+      title={`Detalhes do chamado #${ticket?.ticketNumber}`}
+      bodyWidth="475px"
+      setModal={handleTicketDetailsModal}
+    >
+      <Style.TicketDetailsContainer>
+        <Style.TicketDetailsColumnContainer>
+          <Style.TicketDetailsLeftColumn>
+            {ticketDetailsRows.leftColumn.map(({ label, value }) => (
+              <Style.TicketDetailsColumnContent key={label}>
+                <Style.TicketDetailsRowLabel>{label}</Style.TicketDetailsRowLabel>
+                <Style.TicketDetailsRowValue>{value}</Style.TicketDetailsRowValue>
+              </Style.TicketDetailsColumnContent>
+            ))}
+          </Style.TicketDetailsLeftColumn>
 
-            <Style.Row>
-              <h6>Nome do morador</h6>
-              <p className="p2">{ticket?.residentName}</p>
-            </Style.Row>
+          <Style.TicketDetailsRightColumn>
+            {ticketDetailsRows.rightColumn.map(({ label, value, place, types }) => {
+              if (label === 'Local da ocorrência') {
+                return (
+                  <Style.TicketDetailsColumnContent key={label}>
+                    <Style.TicketDetailsRowLabel>{label}</Style.TicketDetailsRowLabel>
+                    <EventTag label={place?.label} />
+                  </Style.TicketDetailsColumnContent>
+                );
+              }
 
-            <Style.Row>
-              <h6>Apartamento do morador</h6>
-              <p className="p2">{ticket?.residentApartment}</p>
-            </Style.Row>
-
-            <Style.Row>
-              <h6>E-mail do morador</h6>
-              <p className="p2">{ticket?.residentEmail || '-'}</p>
-            </Style.Row>
-
-            <Style.Row>
-              <h6>Local da ocorrência</h6>
-              <ListTag
-                label={ticket?.place.label || '-'}
-                backgroundColor={theme.color.gray4}
-                color="#ffffff"
-                fontWeight={500}
-                padding="2px 4px"
-                fontSize="12px"
-              />
-            </Style.Row>
-
-            <Style.Row>
-              <h6>Tipo da manutenção</h6>
-              <TagsArray data={ticket?.types.map(({ type }) => type.label)} />
-            </Style.Row>
-
-            <Style.Row>
-              <h6>Descrição</h6>
-              <pre className="p2">{ticket?.description}</pre>
-            </Style.Row>
-
-            <Style.Row>
-              <h6>Anexos</h6>
-              <Style.FileAndImageRow>
-                {ticket && ticket.images.length > 0 ? (
-                  ticket?.images.map((image) => {
-                    if (isImage(image.url)) {
-                      return (
-                        <ImagePreview
-                          key={image.url}
-                          src={image.url}
-                          downloadUrl={image.url}
-                          imageCustomName={image.name}
-                          width="132px"
-                          height="136px"
+              if (label === 'Tipo da manutenção') {
+                return (
+                  <Style.TicketDetailsColumnContent key={label}>
+                    <Style.TicketDetailsRowLabel>{label}</Style.TicketDetailsRowLabel>
+                    {Array.isArray(types) &&
+                      types.map(({ type }) => (
+                        <EventTag
+                          key={type.id}
+                          label={type.label}
+                          color={type.color}
+                          bgColor={type.backgroundColor}
                         />
-                      );
-                    }
+                      ))}
+                  </Style.TicketDetailsColumnContent>
+                );
+              }
 
-                    return (
-                      <ListTag
-                        downloadUrl={image.url}
-                        key={image.url}
-                        padding="4px 12px"
-                        label={image.name}
-                        maxWidth="100px"
-                      />
-                    );
-                  })
-                ) : (
-                  <p className="p2">Nenhuma imagem enviada.</p>
-                )}
-              </Style.FileAndImageRow>
-            </Style.Row>
-          </Style.Content>
-        </Style.Container>
-      )}
+              return (
+                <Style.TicketDetailsColumnContent key={label}>
+                  <Style.TicketDetailsRowLabel>{label}</Style.TicketDetailsRowLabel>
+                  <Style.TicketDetailsRowValue>
+                    {!Array.isArray(value) && value}
+                  </Style.TicketDetailsRowValue>
+                </Style.TicketDetailsColumnContent>
+              );
+            })}
+          </Style.TicketDetailsRightColumn>
+        </Style.TicketDetailsColumnContainer>
+
+        <Style.TicketDetailsImagesContainer>
+          <Style.TicketDetailsRowLabel>Imagens</Style.TicketDetailsRowLabel>
+
+          <Style.TicketDetailsImagesContent>
+            {ticket?.images.map((image) => (
+              <ImagePreview
+                key={image.id}
+                src={image.url}
+                downloadUrl={image.url}
+                imageCustomName={image.name}
+                width="128px"
+                height="128px"
+              />
+            ))}
+          </Style.TicketDetailsImagesContent>
+        </Style.TicketDetailsImagesContainer>
+
+        <TicketHistoryActivities ticketId={ticket.id} />
+
+        <Style.ButtonsContainer>
+          <Button label="Voltar para Aberto" />
+          <Button label="Reprovar" />
+          <Button label="Executar" />
+          <Button label="Finalizar" />
+        </Style.ButtonsContainer>
+      </Style.TicketDetailsContainer>
     </Modal>
   );
-};
+}
+
+export default ModalTicketDetails;

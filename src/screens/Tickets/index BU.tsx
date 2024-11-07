@@ -31,7 +31,7 @@ import { theme } from '@styles/theme';
 import { icon } from '@assets/icons';
 
 // COMPONENTS
-import { ModalTicketDetails } from './ModalTicketDetails';
+import { ModalTicketDetails } from './ModalTicketDetails BU';
 import { ModalChooseAnswerType } from './ModalChooseAnswerType';
 import { ModalConnectTicketToExistingOccasionalMaintenances } from './ModalConnectTicketToExistingOccasionalMaintenances';
 

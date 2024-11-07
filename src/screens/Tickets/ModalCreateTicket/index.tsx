@@ -14,7 +14,7 @@ import { DragAndDropFiles } from '../../../components/DragAndDropFiles';
 import { ImagePreview } from '../../../components/ImagePreview';
 import { DotLoading } from '../../../components/Loadings/DotLoading';
 import { FormikSelect } from '../../../components/Form/FormikSelect';
-import { Row, FileAndImageRow } from '../ModalTicketDetails/styles';
+import { Row, FileAndImageRow } from '../ModalTicketDetails BU/styles';
 import { ReactSelectComponent } from '../../../components/ReactSelectComponent';
 import { ImageLoadingTag } from '../../Checklists/ModalChecklistDetails/styles';
 import { ListTag } from '../../../components/ListTag';
