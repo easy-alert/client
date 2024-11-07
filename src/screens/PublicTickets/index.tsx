@@ -15,7 +15,7 @@ import { Button } from '../../components/Buttons/Button';
 import { Select } from '../../components/Inputs/Select';
 import { Input } from '../../components/Inputs/Input';
 import { Pagination } from '../../components/Pagination';
-import { ModalTicketDetails } from '../Tickets/ModalTicketDetails';
+import { ModalTicketDetails } from '../Tickets/ModalTicketDetails BU';
 
 interface IImage {
   id: string;
