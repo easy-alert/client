@@ -75,8 +75,12 @@ export const createOccasionalMaintenance = async ({
     });
 
     handleToastify({
-      statusCode: 200,
-      message: 'Manutenção avulsa criada com sucesso',
+      status: 200,
+      data: {
+        ServerMessage: {
+          message: 'Manutenção avulsa criada com sucesso',
+        },
+      },
     });
 
     return response.data;
