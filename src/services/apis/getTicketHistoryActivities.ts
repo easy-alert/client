@@ -3,25 +3,37 @@ import { Api } from '@services/api';
 import { handleToastify } from '@utils/toastifyResponses';
 
 import type { IResponse } from '@customTypes/IResponse';
-import type { ITicketActivities } from '@customTypes/ITicketActivities';
+import type { ITicketActivity } from '@customTypes/ITicketActivity';
 
 interface IResponseGetTicketHistoryActivities extends IResponse {
   data: {
-    ticketActivities: ITicketActivities[];
+    ticketActivities: ITicketActivity[];
   };
 }
 
-export async function getTicketHistoryActivities(ticketId: string) {
+interface IGetTicketHistoryActivities {
+  ticketActivities: ITicketActivity[];
+}
+
+export async function getTicketHistoryActivities(
+  ticketId: string,
+  syndicNanoId: string,
+): Promise<IGetTicketHistoryActivities> {
   const uri = `/ticketHistoryActivities/${ticketId}`;
 
+  const params = {
+    syndicNanoId,
+  };
+
   try {
-    const response: IResponseGetTicketHistoryActivities = await Api.get(uri);
+    const response: IResponseGetTicketHistoryActivities = await Api.get(uri, { params });
 
     const { ticketActivities } = response.data;
 
     return { ticketActivities };
   } catch (error: any) {
     handleToastify(error.response);
+
     return { ticketActivities: [] };
   }
 }
