@@ -49,7 +49,7 @@ export const InputButtons = styled.div`
   gap: ${theme.size.xsm};
 `;
 
-export const Comment = styled.div`
+export const ActivityContent = styled.div`
   display: flex;
   gap: ${theme.size.xsm};
   flex-direction: column;

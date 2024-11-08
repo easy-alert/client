@@ -6,8 +6,8 @@ import { useDropzone } from 'react-dropzone';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
 // SERVICES
-import { Api } from '@services/api';
 import { getTicketHistoryActivities } from '@services/apis/getTicketHistoryActivities';
+import { postTicketHistoryActivity } from '@services/apis/postTicketHistoryActivity';
 
 // GLOBAL COMPONENTS
 import { IconButton } from '@components/Buttons/IconButton';
@@ -24,14 +24,14 @@ import { dateTimeFormatter, isImage, uploadManyFiles } from '@utils/functions';
 import { icon } from '@assets/icons';
 
 // GLOBAL TYPES
-import type { AnnexesAndImages } from '@screens/types';
+import { ITicketActivity } from '@customTypes/ITicketActivity';
+import { IAnnexesAndImages } from '@customTypes/IAnnexesAndImages';
 
 // STYLES
 import { handleToastify } from '@utils/toastifyResponses';
 import * as Style from './styles';
 
 // TYPES
-import type { IActivity } from './types';
 
 interface ITicketHistoryActivities {
   ticketId: string;
@@ -41,59 +41,61 @@ export const TicketHistoryActivities = ({ ticketId }: ITicketHistoryActivities) 
   const location = useLocation();
   const [query] = useSearchParams();
 
-  const [activities, setActivities] = useState<IActivity[]>([]);
-  const [filteredActivities, setFilteredActivities] = useState<IActivity[]>([]);
+  const [activities, setActivities] = useState<ITicketActivity[]>([]);
+  const [filteredActivities, setFilteredActivities] = useState<ITicketActivity[]>([]);
 
-  const [comment, setComment] = useState('');
+  const [activityContent, setActivityContent] = useState('');
 
   const [activeTab, setActiveTab] = useState<'comments' | 'notifications'>('comments');
 
   const [onImageQuery, setOnImageQuery] = useState<boolean>(false);
-  const [imagesToUpload, setImagesToUpload] = useState<AnnexesAndImages[]>([]);
+  const [imagesToUpload, setImagesToUpload] = useState<IAnnexesAndImages[]>([]);
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
     disabled: onImageQuery,
   });
 
-  const [onQuery, setOnQuery] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Gambiarra, ver lá na nas rotas de atividades
   const isGuest = location.pathname.includes('guest-maintenance-history');
   const syndicNanoId = query.get('syndicNanoId') || (isGuest ? 'guest' : '');
 
   const handleGetTicketHistoryActivities = async () => {
+    setLoading(true);
+
     try {
-      const ticketHistoryActivitiesData = await getTicketHistoryActivities(ticketId);
+      const responseData = await getTicketHistoryActivities(ticketId, syndicNanoId);
+
+      setActivities(responseData.ticketActivities);
     } catch (error: any) {
       handleToastify(error);
     } finally {
-      setOnQuery(false);
+      setLoading(false);
     }
   };
 
-  // const createActivity = async () => {
-  //   setOnQuery(true);
+  const handleCreateOneTicketHistoryActivity = async () => {
+    setLoading(true);
 
-  //   await Api.post(`/maintenance-history-activities`, {
-  //     maintenanceHistoryId,
-  //     content: comment || null,
-  //     syndicNanoId,
-  //     images: imagesToUpload,
-  //   })
-  //     .then(() => {
-  //       findMaintenanceHistoryActivities();
-  //       setComment('');
-  //       setImagesToUpload([]);
-  //       // toast.success(res.data.ServerMessage.message);
-  //     })
-  //     .catch((err) => {
-  //       catchHandler(err);
-  //     })
-  //     .finally(() => {
-  //       setOnQuery(false);
-  //     });
-  // };
+    try {
+      await postTicketHistoryActivity({
+        ticketId,
+        syndicNanoId,
+        activityContent,
+        activityImages: imagesToUpload,
+      });
 
-  const sortFiles = (a: AnnexesAndImages, b: AnnexesAndImages) => {
+      setActivityContent('');
+      setImagesToUpload([]);
+      handleGetTicketHistoryActivities();
+    } catch (error: any) {
+      handleToastify(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sortFiles = (a: IAnnexesAndImages, b: IAnnexesAndImages) => {
     const imageExtensions = ['png', 'jpeg', 'jpg'];
 
     const extA = a.originalName.split('.').pop() || '';
@@ -164,37 +166,37 @@ export const TicketHistoryActivities = ({ ticketId }: ITicketHistoryActivities) 
   //   }
   // }, [acceptedFiles]);
 
-  // useEffect(() => {
-  //   if (activities.length === 0) return;
+  useEffect(() => {
+    if (activities.length === 0) return;
 
-  //   if (activeTab === 'comments') {
-  //     activities.sort((a, b) => {
-  //       if (a.createdAt < b.createdAt) {
-  //         return 1;
-  //       }
-  //       if (a.createdAt > b.createdAt) {
-  //         return -1;
-  //       }
-  //       return 0;
-  //     });
+    if (activeTab === 'comments') {
+      activities.sort((a, b) => {
+        if (a.createdAt < b.createdAt) {
+          return 1;
+        }
+        if (a.createdAt > b.createdAt) {
+          return -1;
+        }
+        return 0;
+      });
 
-  //     setFilteredActivities(activities.filter((e) => e.type === 'comment'));
-  //   }
+      setFilteredActivities(activities.filter((e) => e.type === 'comment'));
+    }
 
-  //   if (activeTab === 'notifications') {
-  //     activities.sort((a, b) => {
-  //       if (a.createdAt < b.createdAt) {
-  //         return 1;
-  //       }
-  //       if (a.createdAt > b.createdAt) {
-  //         return -1;
-  //       }
-  //       return 0;
-  //     });
+    if (activeTab === 'notifications') {
+      activities.sort((a, b) => {
+        if (a.createdAt < b.createdAt) {
+          return 1;
+        }
+        if (a.createdAt > b.createdAt) {
+          return -1;
+        }
+        return 0;
+      });
 
-  //     setFilteredActivities(activities.filter((e) => e.type === 'notification'));
-  //   }
-  // }, [activities, activeTab]);
+      setFilteredActivities(activities.filter((e) => e.type === 'notification'));
+    }
+  }, [activities, activeTab]);
 
   useEffect(() => {
     handleGetTicketHistoryActivities();
@@ -209,9 +211,9 @@ export const TicketHistoryActivities = ({ ticketId }: ITicketHistoryActivities) 
               name="activity"
               label="Enviar comentário"
               placeholder="Escreva seu comentário"
-              value={comment}
+              value={activityContent}
               onChange={(evt) => {
-                setComment(evt.target.value);
+                setActivityContent(evt.target.value);
               }}
             />
 
@@ -226,14 +228,12 @@ export const TicketHistoryActivities = ({ ticketId }: ITicketHistoryActivities) 
                 />
               </div>
 
-              {/* <IconButton
-                disabled={(!comment && imagesToUpload.length === 0) || onImageQuery}
-                loading={onQuery}
+              <IconButton
+                loading={loading}
+                disabled={(!activityContent && imagesToUpload.length === 0) || onImageQuery}
                 icon={icon.send}
-                onClick={() => {
-                  createActivity();
-                }}
-              /> */}
+                onClick={() => handleCreateOneTicketHistoryActivity()}
+              />
             </Style.InputButtons>
           </Style.InputRow>
 
@@ -308,7 +308,7 @@ export const TicketHistoryActivities = ({ ticketId }: ITicketHistoryActivities) 
             {filteredActivities.map(({ id, content, createdAt, title, type, images }) => {
               if (type === 'comment') {
                 return (
-                  <Style.Comment key={id}>
+                  <Style.ActivityContent key={id}>
                     <Style.CommentHeader>
                       <ImageComponent src={icon.activityComment} />
                       <Style.CommentInfo>
@@ -346,13 +346,13 @@ export const TicketHistoryActivities = ({ ticketId }: ITicketHistoryActivities) 
                         })}
                       </Style.FileAndImageRow>
                     )}
-                  </Style.Comment>
+                  </Style.ActivityContent>
                 );
               }
 
               if (type === 'notification') {
                 return (
-                  <Style.Comment key={id}>
+                  <Style.ActivityContent key={id}>
                     <Style.CommentHeader>
                       <ImageComponent src={icon.activityNotification} />
                       <Style.CommentInfo>
@@ -361,7 +361,7 @@ export const TicketHistoryActivities = ({ ticketId }: ITicketHistoryActivities) 
                       </Style.CommentInfo>
                     </Style.CommentHeader>
                     {content && <pre className="p2">{content}</pre>}
-                  </Style.Comment>
+                  </Style.ActivityContent>
                 );
               }
 
