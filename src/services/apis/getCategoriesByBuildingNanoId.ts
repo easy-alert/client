@@ -4,6 +4,8 @@ import { Api } from '@services/api';
 // GLOBAL TYPES
 import type { ICategory } from '@customTypes/ICategory';
 import type { IResponse } from '@customTypes/IResponse';
+
+// GLOBAL UTILS
 import { handleToastify } from '@utils/toastifyResponses';
 
 interface IGetCategoriesByBuildingNanoId {
