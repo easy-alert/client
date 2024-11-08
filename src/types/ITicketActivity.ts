@@ -1,6 +1,6 @@
 import type { ITicket } from './ITicket';
 
-export interface ITicketActivities {
+export interface ITicketActivity {
   id: string;
 
   ticketId: string;
