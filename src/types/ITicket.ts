@@ -1,10 +1,14 @@
-import { IBuilding } from './IBuilding';
+import type { IBuilding } from './IBuilding';
+import type { IBuildingNotificationConfiguration } from './IBuildingNotificationConfiguration';
+import type { ITicketDismissReason } from './ITicketDismissReason';
+
+type ITicketStatusNames = 'open' | 'awaitingToFinish' | 'finished' | 'dismissed';
 
 export interface ITicketStatus {
-  backgroundColor: string;
-  color: string;
-  label: string;
-  name: string;
+  name: ITicketStatusNames;
+  label?: string;
+  backgroundColor?: string;
+  color?: string;
 }
 
 export interface ITicketPlace {
@@ -35,20 +39,32 @@ export interface ITicketImage {
 
 export interface ITicket {
   id: string;
-  residentName: string;
-  residentApartment: string;
-  residentEmail: string;
-  description: string;
-  placeId: string;
-  statusName: string;
-  buildingId: string;
-  ticketNumber: number;
-  createdAt: string;
-  updatedAt: string;
+  residentName?: string;
+  residentApartment?: string;
+  residentEmail?: string;
+  description?: string;
+  placeId?: string;
+  statusName?: ITicketStatusNames;
+  buildingId?: string;
+  ticketNumber?: number;
 
-  images: ITicketImage[];
-  status: ITicketStatus;
-  place: ITicketPlace;
-  types: ITicketType[];
-  building: IBuilding;
+  seen?: boolean;
+  seenAt?: string;
+
+  dismissReason?: string;
+  dismissReasonName?: string;
+  dismissObservation?: string;
+  dismissedAt?: string;
+  dismissedById?: string;
+
+  createdAt?: string;
+  updatedAt?: string;
+
+  images?: ITicketImage[];
+  status?: ITicketStatus;
+  place?: ITicketPlace;
+  types?: ITicketType[];
+  building?: IBuilding;
+  dismissReasons?: ITicketDismissReason;
+  dismissedBy?: IBuildingNotificationConfiguration;
 }
