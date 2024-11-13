@@ -5,7 +5,13 @@ import { theme } from '@styles/theme';
 export const TicketDetailsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${theme.size.xsm};
+  gap: ${theme.size.sm};
+`;
+
+export const TicketDetailsTitle = styled.h3`
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 24px;
 `;
 
 export const TicketDetailsColumnContainer = styled.div`
@@ -78,10 +84,37 @@ export const TicketDetailsRowValue = styled.span`
   line-height: 16px;
 `;
 
+export const TicketDetailsDismissedContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  margin-top: ${theme.size.xsm};
+  gap: ${theme.size.xsm};
+`;
+
+export const TicketDetailsDismissedContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.size.xsm};
+`;
+
 export const ButtonsContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
 
   margin-top: ${theme.size.sm};
+`;
+
+// styles for DismissTicket.tsx
+export const DismissTicketContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   gap: ${theme.size.xsm};
+`;
+
+export const DismissTicketText = styled.span`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  margin-bottom: ${theme.size.xsm};
 `;
