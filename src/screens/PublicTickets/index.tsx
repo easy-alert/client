@@ -1,21 +1,33 @@
-/* eslint-disable import/no-cycle */
+// REACT
 import { useEffect, useState } from 'react';
+
+// LIBS
 import { useParams } from 'react-router-dom';
+
+// API
+import { Api } from '@services/api';
+
+// GLOBAL COMPONENTS
+import { Skeleton } from '@components/Skeleton';
+import { NoDataFound } from '@components/NoDataFound';
+import { ListTag } from '@components/ListTag';
+import { TagsArray } from '@components/TagsArray';
+import { IconButton } from '@components/Buttons/IconButton';
+import { icon } from '@assets/icons';
+import { theme } from '@styles/theme';
+import { Button } from '@components/Buttons/Button';
+import { Select } from '@components/Inputs/Select';
+import { Input } from '@components/Inputs/Input';
+import { Pagination } from '@components/Pagination';
+
+// GLOBAL UTILS
+import { catchHandler, dateFormatter } from '@utils/functions';
+
+// COMPONENTS
+import ModalTicketDetails from '@screens/Tickets/ModalTicketDetails';
+
+// STYLES
 import * as Style from './styles';
-import { catchHandler, dateFormatter } from '../../utils/functions';
-import { Api } from '../../services/api';
-import { Skeleton } from '../../components/Skeleton';
-import { NoDataFound } from '../../components/NoDataFound';
-import { ListTag } from '../../components/ListTag';
-import { TagsArray } from '../../components/TagsArray';
-import { IconButton } from '../../components/Buttons/IconButton';
-import { icon } from '../../assets/icons';
-import { theme } from '../../styles/theme';
-import { Button } from '../../components/Buttons/Button';
-import { Select } from '../../components/Inputs/Select';
-import { Input } from '../../components/Inputs/Input';
-import { Pagination } from '../../components/Pagination';
-import { ModalTicketDetails } from '../Tickets/ModalTicketDetails BU';
 
 interface IImage {
   id: string;
@@ -69,12 +81,13 @@ export const PublicTickets = () => {
   const [buildingName, setBuildingName] = useState<string>('');
   const [tickets, setTickets] = useState<ITicket[]>([]);
   const [showFilter, setShowFilter] = useState<boolean>(false);
-  const [modalTicketDetailsOpen, setModalTicketDetailsOpen] = useState<boolean>(false);
   const [selectedTicketId, setSelectedTicketId] = useState<string>('');
   const [statusOptions, setStatusOptions] = useState<IStatusOptions[]>([]);
   const [initialCreatedAt, setInitialCreatedAt] = useState<string>('');
   const [finalCreatedAt, setFinalCreatedAt] = useState<string>('');
   const [statusName, setStatusName] = useState<string>('');
+
+  const [ticketDetailsModal, setTicketDetailsModal] = useState<boolean>(false);
 
   const [count, setCount] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
@@ -103,14 +116,21 @@ export const PublicTickets = () => {
       });
   };
 
+  const handleTicketDetailsModal = (modalState: boolean) => {
+    setTicketDetailsModal(modalState);
+  };
+
   useEffect(() => {
     findManyTickets();
   }, []);
 
   return (
     <Style.PaginationContainer>
-      {modalTicketDetailsOpen && (
-        <ModalTicketDetails setModal={setModalTicketDetailsOpen} ticketId={selectedTicketId} />
+      {ticketDetailsModal && (
+        <ModalTicketDetails
+          ticketId={selectedTicketId}
+          handleTicketDetailsModal={handleTicketDetailsModal}
+        />
       )}
 
       <Style.Container>
@@ -190,7 +210,7 @@ export const PublicTickets = () => {
                 key={id}
                 onClick={() => {
                   setSelectedTicketId(id);
-                  setModalTicketDetailsOpen(true);
+                  handleTicketDetailsModal(true);
                 }}
               >
                 <Style.CardHeader>
