@@ -50,6 +50,8 @@ export const WebContent = styled.div`
 `;
 
 export const NavbarButtonWeb = styled.div<{ selected: boolean; showRedDot?: boolean }>`
+  display: flex;
+
   padding: ${theme.size.md} ${theme.size.sm};
   color: ${theme.color.black};
   font-weight: 500;
@@ -102,6 +104,8 @@ export const HamburguerWrapper = styled.div`
 `;
 
 export const NavbarButtonMobile = styled.div<{ selected: boolean; showRedDot?: boolean }>`
+  display: flex;
+
   padding: ${theme.size.sm};
   color: ${theme.color.black};
   font-weight: 500;
@@ -161,4 +165,37 @@ export const AppContent = styled.div`
   @media (max-width: 960px) {
     padding: ${theme.size.sm};
   }
+`;
+
+export const NewTicketsNotification = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: ${theme.color.primary};
+  color: ${theme.color.white};
+
+  position: absolute;
+  top: 6px;
+  margin-left: 50px;
+
+  border-radius: 50%;
+  padding: 2px 3px;
+
+  font-size: 10px;
+`;
+
+export const NewTicketsNotificationMobile = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 4px;
+
+  background-color: ${theme.color.primary};
+  color: ${theme.color.white};
+
+  border-radius: 100%;
+  padding: 1px 2px;
+
+  font-size: 10px;
 `;

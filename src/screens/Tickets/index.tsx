@@ -1,28 +1,27 @@
 // REACT
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 // LIBS
 import { useParams, useSearchParams } from 'react-router-dom';
-import { toast } from 'react-toastify';
+
+// HOOKS
+import { useServiceTypes } from '@hooks/useServiceTypes';
 
 // SERVICES
-import { Api } from '@services/api';
+import { getTicketsByBuildingNanoId } from '@services/apis/getTicketsByBuildingNanoId';
+import { putTicketById } from '@services/apis/putTicketById';
 
 // GLOBAL COMPONENTS
-import { ModalCreateOccasionalMaintenance } from '@components/ModalCreateOccasionalMaintenance';
-import { Skeleton } from '@components/Skeleton';
-import { NoDataFound } from '@components/NoDataFound';
-import { ListTag } from '@components/ListTag';
-import { TagsArray } from '@components/TagsArray';
-import { InputCheckbox } from '@components/Inputs/InputCheckbox';
 import { IconButton } from '@components/Buttons/IconButton';
-import { Button } from '@components/Buttons/Button';
 import { Select } from '@components/Inputs/Select';
-import { Input } from '@components/Inputs/Input';
-import { Pagination } from '@components/Pagination';
+import { Button } from '@components/Buttons/Button';
+import { Skeleton } from '@components/Skeleton';
+import { EventTag } from '@components/EventTag';
+import { DotSpinLoading } from '@components/Loadings/DotSpinLoading';
 
 // GLOBAL UTILS
-import { catchHandler, dateFormatter } from '@utils/functions';
+import { handleToastify } from '@utils/toastifyResponses';
+import { formatDateString } from '@utils/dateFunctions';
 
 // GLOBAL STYLES
 import { theme } from '@styles/theme';
@@ -30,177 +29,231 @@ import { theme } from '@styles/theme';
 // GLOBAL ASSETS
 import { icon } from '@assets/icons';
 
+// GLOBAL TYPES
+import type { ITicket } from '@customTypes/ITicket';
+
 // COMPONENTS
-import { ModalTicketDetails } from './ModalTicketDetails';
-import { ModalChooseAnswerType } from './ModalChooseAnswerType';
-import { ModalConnectTicketToExistingOccasionalMaintenances } from './ModalConnectTicketToExistingOccasionalMaintenances';
+import ModalTicketDetails from './ModalTicketDetails';
+import { ModalCreateTicket } from './ModalCreateTicket';
 
 // STYLES
 import * as Style from './styles';
 
-interface IImage {
-  id: string;
-  ticketId: string;
-  name: string;
-  url: string;
-  createdAt: string;
-  updatedAt: string;
-}
-interface IStatus {
-  name: string;
-  label: string;
-  color: string;
-  backgroundColor: string;
-}
-interface IPlace {
-  id: string;
-  label: string;
-}
-interface IType {
-  type: IPlace;
+interface IKanbanTicket {
+  title: string;
+  tickets: ITicket[];
 }
 
-interface ITicket {
-  id: string;
-  residentName: string;
-  residentApartment: string;
-  residentEmail: string;
-  description: string;
-  placeId: string;
-  statusName: string;
-  buildingId: string;
-  ticketNumber: number;
-  createdAt: string;
-  updatedAt: string;
-  images: IImage[];
-  status: IStatus;
-  place: IPlace;
-  types: IType[];
+export interface ITicketFilter {
+  year?: string;
+  month?: string;
+  status?: string;
+  placeId?: string;
+  serviceTypeId?: string;
+  seen?: boolean;
 }
 
-interface IStatusOptions {
-  name: string;
-  label: string;
+interface ITicketFilterOptions {
+  years: string[];
+  months: {
+    number: number;
+    name: string;
+  }[];
+  status: {
+    name: string;
+    label: string;
+  }[];
+  places: {
+    name: string;
+    id: string;
+  }[];
 }
 
-interface ITicketsToAnswer {
-  id: string;
-  ticketNumber: number;
-}
-
-export const Tickets = () => {
+function TicketsPage() {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
-  const [loading, setLoading] = useState<boolean>(true);
-  const [onQuery, setOnQuery] = useState<boolean>(false);
-  const [buildingName, setBuildingName] = useState<string>('');
-  const [tickets, setTickets] = useState<ITicket[]>([]);
-  const [showFilter, setShowFilter] = useState<boolean>(false);
-  const [modalTicketDetailsOpen, setModalTicketDetailsOpen] = useState<boolean>(false);
-  const [selectedTicketId, setSelectedTicketId] = useState<string>('');
-  const [statusOptions, setStatusOptions] = useState<IStatusOptions[]>([]);
-  const [initialCreatedAt, setInitialCreatedAt] = useState<string>('');
-  const [finalCreatedAt, setFinalCreatedAt] = useState<string>('');
-  const [statusName, setStatusName] = useState<string>('');
-  const [ticketsToAnswer, setTicketsToAnswer] = useState<ITicketsToAnswer[]>([]);
-
-  const [modalChooseAnswerType, setModalChooseAnswerType] = useState<boolean>(false);
-  const [modalCreateOccasionalMaintenance, setModalCreateOccasionalMaintenance] =
-    useState<boolean>(false);
-  const [
-    modalConnectTicketToExistingOccasionalMaintenances,
-    setModalConnectTicketToExistingOccasionalMaintenances,
-  ] = useState<boolean>(false);
-
-  const [count, setCount] = useState<number>(0);
-  const [page, setPage] = useState<number>(1);
-  const take = 12;
-
   const [search] = useSearchParams();
   const syndicNanoId = search.get('syndicNanoId') ?? '';
 
-  const findManyTickets = async (pageParam?: number) => {
-    setOnQuery(true);
+  const { serviceTypes } = useServiceTypes({ buildingNanoId });
 
-    await Api.get(
-      `/tickets/buildings/${buildingNanoId}?statusName=${statusName}&initialCreatedAt=${initialCreatedAt}&finalCreatedAt=${finalCreatedAt}&page=${
-        pageParam || page
-      }&take=${take}`,
-    )
-      .then((res) => {
-        setTickets(res.data.tickets);
-        setCount(res.data.ticketsCount);
-        setBuildingName(res.data.buildingName);
-        setStatusOptions(res.data.status);
-      })
-      .catch((err) => {
-        catchHandler(err);
-      })
-      .finally(() => {
-        setOnQuery(false);
-        setLoading(false);
-      });
+  const [tickets, setTickets] = useState<ITicket[]>([]);
+  const [kanbanTickets, setKanbanTickets] = useState<IKanbanTicket[]>([]);
+  const [buildingName, setBuildingName] = useState<string>('');
+  const [selectedTicketId, setSelectedTicketId] = useState<string>('');
+
+  const [showFilter, setShowFilter] = useState<boolean>(false);
+  const [filter, setFilter] = useState<ITicketFilter>({
+    year: '',
+    month: '',
+    status: '',
+    placeId: '',
+    serviceTypeId: '',
+  });
+  const [filterOptions, setFilterOptions] = useState<ITicketFilterOptions>({
+    months: [],
+    years: [],
+    status: [],
+    places: [],
+  });
+
+  const [ticketDetailsModal, setTicketDetailsModal] = useState<boolean>(false);
+  const [createTicketModal, setCreateTicketModal] = useState<boolean>(false);
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const [refresh, setRefresh] = useState<boolean>(false);
+
+  const handleRefresh = () => {
+    setRefresh(!refresh);
   };
 
-  const resetSelectedTickets = () => {
-    setTicketsToAnswer([]);
-  };
+  const handleCreateKanbanTickets = useCallback((responseTickets: ITicket[]) => {
+    const openTickets = responseTickets
+      .filter((ticket) => ticket.status?.name === 'open')
+      .sort((a, b) => new Date(b.createdAt ?? '').getTime() - new Date(a.createdAt ?? '').getTime())
+      .sort((a) => (a.seen ? 1 : -1));
 
-  const handleModalChooseAnswerType = (modalState: boolean) => {
-    setModalChooseAnswerType(modalState);
-  };
+    const inProgressTickets = responseTickets
+      .filter((ticket) => ticket.status?.name === 'awaitingToFinish')
+      .sort(
+        (a, b) => new Date(b.updatedAt ?? '').getTime() - new Date(a.updatedAt ?? '').getTime(),
+      );
 
-  const handleModalCreateOccasionalMaintenance = (modalState: boolean) => {
-    setModalCreateOccasionalMaintenance(modalState);
-  };
+    const finishedTickets = responseTickets
+      .filter((ticket) => ticket.status?.name === 'finished')
+      .sort(
+        (a, b) => new Date(b.updatedAt ?? '').getTime() - new Date(a.updatedAt ?? '').getTime(),
+      );
 
-  const handleModalConnectTicketToExistingOccasionalMaintenances = (modalState: boolean) => {
-    setModalConnectTicketToExistingOccasionalMaintenances(modalState);
-  };
+    const dismissedTickets = responseTickets
+      .filter((ticket) => ticket.status?.name === 'dismissed')
+      .sort(
+        (a, b) => new Date(b.dismissedAt ?? '').getTime() - new Date(a.dismissedAt ?? '').getTime(),
+      );
 
-  const ticketsToAnswerString = `Chamados selecionados: ${ticketsToAnswer
-    .map(({ ticketNumber }) => `#${ticketNumber}`)
-    .join(', ')}`;
+    const ticketsKanbanArray = [
+      {
+        title: 'Abertos',
+        tickets: openTickets,
+      },
+      {
+        title: 'Em execução',
+        tickets: inProgressTickets,
+      },
+      {
+        title: 'Concluídos',
+        tickets: finishedTickets,
+      },
+      {
+        title: 'Indeferidos',
+        tickets: dismissedTickets,
+      },
+    ];
 
-  const ticketIds = ticketsToAnswer.map(({ id }) => id);
-
-  useEffect(() => {
-    findManyTickets();
+    setKanbanTickets(ticketsKanbanArray);
   }, []);
 
+  // handle change functions
+  const handleFilterChange = useCallback(
+    (key: string, value: string) => {
+      setFilter((prevState) => ({
+        ...prevState,
+        [key]: value,
+      }));
+    },
+    [filter, setFilter],
+  );
+
+  const handleFilterOptionsChange = useCallback(
+    (key: string, value: string | string[]) => {
+      setFilterOptions((prevState) => ({
+        ...prevState,
+        [key]: value,
+      }));
+    },
+    [filterOptions, setFilterOptions],
+  );
+
+  const handleSelectedTicketIdChange = (ticketId: string) => {
+    setSelectedTicketId(ticketId);
+  };
+
+  const handleSeenLocalKanbanTicket = (ticketId: string) => {
+    const updatedTickets = kanbanTickets.map((kanban) => ({
+      ...kanban,
+      tickets: kanban.tickets.map((kt) => (kt.id === ticketId ? { ...kt, seen: true } : kt)),
+    }));
+
+    setKanbanTickets(updatedTickets);
+  };
+
+  // api functions
+  const handleGetTickets = async () => {
+    try {
+      setLoading(true);
+
+      const response = await getTicketsByBuildingNanoId({
+        buildingNanoId,
+        filter,
+      });
+
+      setBuildingName(response.buildingName);
+
+      handleCreateKanbanTickets(response.tickets);
+      setTickets(response.tickets);
+
+      handleFilterOptionsChange('years', response.filterOptions.years);
+      handleFilterOptionsChange('months', response.filterOptions.months);
+    } catch (error: any) {
+      handleToastify(error);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    }
+  };
+
+  const handleUpdateOneTicket = async (updatedTicket: ITicket) => {
+    try {
+      await putTicketById(updatedTicket);
+    } catch (error: any) {
+      handleToastify(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // modal functions
+  const handleTicketDetailsModal = (modalState: boolean) => {
+    setTicketDetailsModal(modalState);
+  };
+
+  const handleCreateTicketModal = (modalState: boolean) => {
+    setCreateTicketModal(modalState);
+  };
+
+  useEffect(() => {
+    handleGetTickets();
+  }, [refresh]);
+
+  if (loading) return <DotSpinLoading />;
+
   return (
-    <Style.PaginationContainer>
-      {modalTicketDetailsOpen && (
-        <ModalTicketDetails setModal={setModalTicketDetailsOpen} ticketId={selectedTicketId} />
-      )}
-
-      {modalChooseAnswerType && (
-        <ModalChooseAnswerType
-          ticketsToAnswer={ticketsToAnswerString}
-          handleModalChooseAnswerType={handleModalChooseAnswerType}
-          handleModalCreateOccasionalMaintenance={handleModalCreateOccasionalMaintenance}
-          handleModalConnectTicketToExistingOccasionalMaintenances={
-            handleModalConnectTicketToExistingOccasionalMaintenances
-          }
+    <>
+      {createTicketModal && (
+        <ModalCreateTicket
+          buildingNanoId={buildingNanoId}
+          buildingName={buildingName}
+          handleCreateTicketModal={handleCreateTicketModal}
+          handleRefresh={handleRefresh}
         />
       )}
 
-      {modalCreateOccasionalMaintenance && (
-        <ModalCreateOccasionalMaintenance
-          ticketsIds={ticketIds}
-          ticketsToAnswer={ticketsToAnswerString}
-          handleGetBackgroundData={findManyTickets}
-          handleResetTickets={resetSelectedTickets}
-          handleModalCreateOccasionalMaintenance={handleModalCreateOccasionalMaintenance}
-        />
-      )}
-
-      {modalConnectTicketToExistingOccasionalMaintenances && (
-        <ModalConnectTicketToExistingOccasionalMaintenances
-          setModal={setModalConnectTicketToExistingOccasionalMaintenances}
-          ticketsToAnswer={ticketsToAnswerString}
-          ticketIds={ticketIds}
-          resetSelectedTickets={resetSelectedTickets}
-          onThenRequest={findManyTickets}
+      {ticketDetailsModal && (
+        <ModalTicketDetails
+          ticketId={selectedTicketId}
+          syndicNanoId={syndicNanoId}
+          handleTicketDetailsModal={handleTicketDetailsModal}
+          handleRefresh={handleRefresh}
         />
       )}
 
@@ -225,50 +278,86 @@ export const Tickets = () => {
           {syndicNanoId && (
             <IconButton
               icon={icon.siren}
-              label="Responder chamados"
-              onClick={() => {
-                if (ticketsToAnswer.length === 0) {
-                  toast.error('Selecione pelo menos um chamado.');
-                  return;
-                }
-                setModalChooseAnswerType(true);
-              }}
+              label="Abrir chamado"
+              onClick={() => handleCreateTicketModal(true)}
             />
           )}
         </Style.Header>
 
         {showFilter && (
           <Style.FilterWrapper>
-            <Input
-              label="Data inicial"
-              type="date"
-              value={initialCreatedAt}
-              onChange={(evt) => {
-                setInitialCreatedAt(evt.target.value);
-              }}
-            />
-
-            <Input
-              label="Data final"
-              type="date"
-              value={finalCreatedAt}
-              onChange={(evt) => {
-                setFinalCreatedAt(evt.target.value);
-              }}
-            />
-
             <Select
-              selectPlaceholderValue={' '}
-              label="Status"
-              value={statusName}
-              onChange={(evt) => {
-                setStatusName(evt.target.value);
-              }}
+              selectPlaceholderValue=""
+              label="Ano"
+              value={filter.year}
+              onChange={(e) => handleFilterChange('year', e.target.value)}
             >
               <option value="">Todos</option>
-              {statusOptions.map(({ label, name }) => (
-                <option key={name} value={name}>
-                  {label}
+
+              {filterOptions.years.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </Select>
+
+            <Select
+              disabled={filter.year === ''}
+              selectPlaceholderValue=""
+              label="Mês"
+              value={filter.month}
+              onChange={(e) => handleFilterChange('month', e.target.value)}
+            >
+              <option value="">Todos</option>
+
+              {filterOptions.months.map((month) => (
+                <option key={month.number} value={month.number}>
+                  {month.name}
+                </option>
+              ))}
+            </Select>
+
+            <Select
+              selectPlaceholderValue=""
+              label="Status"
+              value={filter.status}
+              onChange={(e) => handleFilterChange('status', e.target.value)}
+            >
+              <option value="">Todos</option>
+
+              {filterOptions.status.map((status) => (
+                <option key={status.name} value={status.name}>
+                  {status.label}
+                </option>
+              ))}
+            </Select>
+
+            <Select
+              label="Tipo"
+              selectPlaceholderValue=""
+              value={filter.serviceTypeId}
+              onChange={(e) => handleFilterChange('serviceTypeId', e.target.value)}
+            >
+              <option value="">Todas</option>
+
+              {serviceTypes.map((serviceType) => (
+                <option key={serviceType.id} value={serviceType.id}>
+                  {serviceType.singularLabel}
+                </option>
+              ))}
+            </Select>
+
+            <Select
+              label="Local"
+              selectPlaceholderValue=""
+              value={filter.placeId}
+              onChange={(e) => handleFilterChange('categoryId', e.target.value)}
+            >
+              <option value="">Todas</option>
+
+              {filterOptions.places.map((place) => (
+                <option key={place.id} value={place.id}>
+                  {place.name}
                 </option>
               ))}
             </Select>
@@ -276,125 +365,117 @@ export const Tickets = () => {
             <Button
               type="button"
               label="Filtrar"
-              disable={onQuery}
-              onClick={() => {
-                setPage(1);
-                findManyTickets(1);
-              }}
+              disabled={loading}
+              onClick={() => handleGetTickets()}
             />
           </Style.FilterWrapper>
         )}
 
-        {ticketsToAnswer.length > 0 && (
-          <Style.SelectedTickets>
-            <h5>Chamados selecionados:</h5>
+        <Style.Kanban>
+          {kanbanTickets.map((kanbanTicket, i: number) => (
+            <Style.KanbanCard key={kanbanTicket.title}>
+              <Style.KanbanHeader>
+                <h5>{kanbanTicket.title}</h5>
+                <span>{kanbanTicket.tickets.length}</span>
+              </Style.KanbanHeader>
 
-            {ticketsToAnswer.map(
-              ({ ticketNumber }, i) =>
-                `#${ticketNumber}${i === ticketsToAnswer.length - 1 ? '' : ', '}`,
-            )}
-          </Style.SelectedTickets>
-        )}
+              {loading && (
+                <>
+                  {(i === 1 || i === 2 || i === 3) && (
+                    <Style.KanbanTicketWrapper>
+                      <Skeleton />
+                    </Style.KanbanTicketWrapper>
+                  )}
 
-        <Style.Wrapper>
-          {loading && [...Array(10).keys()].map((e) => <Skeleton key={e} height="262px" />)}
+                  {(i === 0 || i === 1 || i === 2 || i === 3) && (
+                    <Style.KanbanTicketWrapper>
+                      <Skeleton />
+                    </Style.KanbanTicketWrapper>
+                  )}
 
-          {!loading &&
-            tickets.length > 0 &&
-            tickets.map(({ id, residentName, place, types, createdAt, ticketNumber, status }) => (
-              <Style.Card
-                key={id}
-                onClick={() => {
-                  setSelectedTicketId(id);
-                  setModalTicketDetailsOpen(true);
-                }}
-              >
-                <Style.CardHeader>
-                  <h5>{`#${ticketNumber}`}</h5>
+                  {(i === 0 || i === 2 || i === 3) && (
+                    <Style.KanbanTicketWrapper>
+                      <Skeleton />
+                    </Style.KanbanTicketWrapper>
+                  )}
 
-                  <Style.CardHeaderRightSide
-                    onClick={(e) => {
-                      e.stopPropagation();
+                  {i === 3 && (
+                    <Style.KanbanTicketWrapper>
+                      <Skeleton />
+                    </Style.KanbanTicketWrapper>
+                  )}
+                </>
+              )}
+
+              {!loading &&
+                kanbanTicket.tickets.length > 0 &&
+                kanbanTicket.tickets.map((ticket) => (
+                  <Style.KanbanTicketWrapper
+                    key={ticket.id}
+                    onClick={() => {
+                      if (!ticket.seen) {
+                        handleUpdateOneTicket({ id: ticket.id, seen: true }).then(() =>
+                          handleSeenLocalKanbanTicket(ticket.id),
+                        );
+                      }
+
+                      handleSelectedTicketIdChange(ticket.id);
+                      handleTicketDetailsModal(true);
                     }}
                   >
-                    <ListTag
-                      label={status.label}
-                      backgroundColor={status.backgroundColor}
-                      color={status.color}
-                      fontWeight={500}
-                      padding="2px 4px"
-                      fontSize="12px"
-                    />
+                    <Style.KanbanTicketInfo statusBgColor={ticket?.status?.backgroundColor}>
+                      <Style.KanbanTicketInfoHeader>
+                        <Style.KanbanTicketNumber>#{ticket.ticketNumber}</Style.KanbanTicketNumber>
 
-                    {syndicNanoId && status.name === 'open' && (
-                      <InputCheckbox
-                        size="18px"
-                        checked={ticketsToAnswer.some((e) => e.id === id)}
-                        onChange={(evt) => {
-                          const isChecked = evt.target.checked;
-                          if (isChecked) {
-                            setTicketsToAnswer((prev) => [...prev, { id, ticketNumber }]);
-                          } else {
-                            setTicketsToAnswer((prev) =>
-                              prev.filter(
-                                (ticket) =>
-                                  ticket.id !== id || ticket.ticketNumber !== ticketNumber,
-                              ),
-                            );
-                          }
-                        }}
-                      />
-                    )}
-                  </Style.CardHeaderRightSide>
-                </Style.CardHeader>
+                        {!ticket?.seen && <Style.KanbanTicketNewTag />}
+                      </Style.KanbanTicketInfoHeader>
 
-                <Style.CardRow>
-                  <p className="p3">Morador</p>
-                  <p className="p3">{residentName}</p>
-                </Style.CardRow>
+                      <Style.KanbanTicketGrid>
+                        <Style.KanbanTicketGridBox>
+                          <Style.KanbanTicketTitle>Morador</Style.KanbanTicketTitle>
 
-                <Style.CardRow>
-                  <p className="p3">Local da Ocorrência</p>
+                          <Style.KanbanTicketDescription>
+                            {ticket.residentName}
+                          </Style.KanbanTicketDescription>
+                        </Style.KanbanTicketGridBox>
 
-                  <ListTag
-                    label={place.label}
-                    backgroundColor={theme.color.gray4}
-                    color="#ffffff"
-                    fontWeight={500}
-                    padding="2px 4px"
-                    fontSize="12px"
-                  />
-                </Style.CardRow>
+                        <Style.KanbanTicketGridBox>
+                          <Style.KanbanTicketTitle>Tipo de manutenção</Style.KanbanTicketTitle>
 
-                <Style.CardRow>
-                  <p className="p3">Tipo da manutenção</p>
-                  <TagsArray data={types.map(({ type }) => type.label)} />
-                </Style.CardRow>
+                          {ticket.types?.map((type) => (
+                            <EventTag
+                              key={type.type.id}
+                              label={type.type.label}
+                              color={type.type.color}
+                              bgColor={type.type.backgroundColor}
+                            />
+                          ))}
+                        </Style.KanbanTicketGridBox>
 
-                <Style.CardRow>
-                  <p className="p3">Data de abertura</p>
-                  <p className="p3">{dateFormatter(createdAt)}</p>
-                </Style.CardRow>
-              </Style.Card>
-            ))}
-        </Style.Wrapper>
+                        <Style.KanbanTicketGridBox>
+                          <Style.KanbanTicketTitle>Local da ocorrência</Style.KanbanTicketTitle>
 
-        {!loading && tickets.length === 0 && (
-          <NoDataFound label="Nehum chamado encontrado" height="70dvh" />
-        )}
+                          <EventTag label={ticket.place?.label} />
+                        </Style.KanbanTicketGridBox>
+
+                        <Style.KanbanTicketGridBox>
+                          <Style.KanbanTicketTitle>Data de abertura</Style.KanbanTicketTitle>
+
+                          <Style.KanbanTicketDescription>
+                            {ticket.createdAt &&
+                              formatDateString(ticket.createdAt, 'dd/MM/yyyy - HH:mm')}
+                          </Style.KanbanTicketDescription>
+                        </Style.KanbanTicketGridBox>
+                      </Style.KanbanTicketGrid>
+                    </Style.KanbanTicketInfo>
+                  </Style.KanbanTicketWrapper>
+                ))}
+            </Style.KanbanCard>
+          ))}
+        </Style.Kanban>
       </Style.Container>
-
-      <Style.PaginationFooter>
-        <Pagination
-          totalCountOfRegister={count}
-          currentPage={page}
-          registerPerPage={take}
-          onPageChange={(pageParam) => {
-            setPage(pageParam);
-            findManyTickets(pageParam);
-          }}
-        />
-      </Style.PaginationFooter>
-    </Style.PaginationContainer>
+    </>
   );
-};
+}
+
+export default TicketsPage;

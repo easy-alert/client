@@ -4,6 +4,8 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 
 // STYLES
 import { toast } from 'react-toastify';
+import { getTicketsByBuildingNanoId } from '@services/apis/getTicketsByBuildingNanoId';
+import { handleToastify } from '@utils/toastifyResponses';
 import * as Style from './styles';
 import { icon } from '../../assets/icons';
 
@@ -21,6 +23,8 @@ export const NavBar = ({ children }: ISidebar) => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
   const [search] = useSearchParams();
   const syndicNanoId = search.get('syndicNanoId') ?? '';
+
+  const [newTickets, setNewTickets] = useState<number>(0);
 
   const [showNavbarMenu, setShowNavbarMenu] = useState<boolean>(false);
 
@@ -76,6 +80,22 @@ export const NavBar = ({ children }: ISidebar) => {
     // },
   ];
 
+  const handleGetTickets = async () => {
+    try {
+      const response = await getTicketsByBuildingNanoId({
+        buildingNanoId,
+        filter: {
+          seen: false,
+        },
+        count: true,
+      });
+
+      setNewTickets(response.ticketsCount ?? 0);
+    } catch (error: any) {
+      handleToastify(error);
+    }
+  };
+
   useEffect(() => {
     if (window.location.href.endsWith('/')) {
       window.open('https://easyalert.com.br/', '_self');
@@ -83,6 +103,10 @@ export const NavBar = ({ children }: ISidebar) => {
       requestCompanyLogo({ setCompanyLogo, buildingNanoId });
     }
   }, []);
+
+  useEffect(() => {
+    handleGetTickets();
+  }, [buildingNanoId, window.location.pathname]);
 
   return (
     <Style.Background>
@@ -129,6 +153,12 @@ export const NavBar = ({ children }: ISidebar) => {
                       showRedDot={element.disabled}
                     >
                       <span>{element.name}</span>
+
+                      {element.name === 'Chamados' && newTickets > 0 && (
+                        <Style.NewTicketsNotificationMobile>
+                          +{newTickets}
+                        </Style.NewTicketsNotificationMobile>
+                      )}
                     </Style.NavbarButtonMobile>
                   </Link>
                 );
@@ -171,6 +201,10 @@ export const NavBar = ({ children }: ISidebar) => {
                   showRedDot={element.disabled}
                 >
                   <span>{element.name}</span>
+
+                  {element.name === 'Chamados' && newTickets > 0 && (
+                    <Style.NewTicketsNotification>+{newTickets}</Style.NewTicketsNotification>
+                  )}
                 </Style.NavbarButtonWeb>
               </Link>
             );

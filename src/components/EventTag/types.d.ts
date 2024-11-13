@@ -1,3 +1,6 @@
 export interface IEventTag {
-  status: 'expired' | 'pending' | 'completed' | 'overdue' | 'occasional' | 'common';
+  status?: 'expired' | 'pending' | 'completed' | 'overdue' | 'occasional' | 'common' | 'ticket';
+  label?: string;
+  color?: string;
+  bgColor?: string;
 }

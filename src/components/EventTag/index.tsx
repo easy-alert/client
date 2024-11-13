@@ -7,8 +7,12 @@ import { IEventTag } from './types';
 // FUNCTIONS
 import { getStatusName } from './functions';
 
-export const EventTag = ({ status }: IEventTag) => (
-  <Style.TagContainer status={status}>
-    <p className="p7">{getStatusName(status)}</p>
-  </Style.TagContainer>
-);
+export const EventTag = ({ status, color, bgColor, label }: IEventTag) => {
+  const eventTagName = getStatusName(label || status || '');
+
+  return (
+    <Style.TagContainer label={label} status={status} color={color} bgColor={bgColor}>
+      <p className="p7">{eventTagName}</p>
+    </Style.TagContainer>
+  );
+};
