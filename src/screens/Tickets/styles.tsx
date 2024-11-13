@@ -46,12 +46,6 @@ export const HeaderWrapper = styled.div`
   }
 `;
 
-export const Wrapper = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(325px, 1fr));
-  gap: ${theme.size.md};
-`;
-
 export const Kanban = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -121,7 +115,7 @@ export const KanbanTicketWrapper = styled.div`
 `;
 
 export const KanbanTicketInfo = styled.div<{
-  statusBgColor: string;
+  statusBgColor?: string;
 }>`
   padding: ${theme.size.sm} ${theme.size.sm} ${theme.size.sm} 23px;
   background-color: ${theme.color.gray0};
@@ -156,11 +150,25 @@ export const KanbanTicketInfo = styled.div<{
     `}
 `;
 
+export const KanbanTicketInfoHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: ${theme.size.xsm};
+`;
+
 export const KanbanTicketNumber = styled.h1`
   font-size: 18px;
   font-weight: 700;
   line-height: 16px;
   color: ${theme.color.primary};
+`;
+
+export const KanbanTicketNewTag = styled.span`
+  background-color: ${theme.color.primary};
+  padding: 4px 4px;
+  border-radius: 100%;
 `;
 
 export const KanbanTicketGrid = styled.div`
@@ -194,53 +202,6 @@ export const KanbanTicketDescription = styled.p`
   color: ${theme.color.black};
 `;
 
-export const Card = styled.div`
-  background-color: ${theme.color.white};
-  padding: ${theme.size.sm};
-  border-radius: ${theme.size.xxsm};
-
-  display: flex;
-  flex-direction: column;
-  gap: ${theme.size.xsm};
-
-  cursor: pointer;
-  transition: 0.1s;
-  :hover {
-    scale: 1.05;
-  }
-`;
-
-export const CardHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  > h5 {
-    font-weight: 500;
-    color: ${theme.color.primary};
-  }
-`;
-
-export const CardHeaderRightSide = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${theme.size.xsm};
-`;
-
-export const CardRow = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${theme.size.xxsm};
-
-  > p {
-    font-weight: 500;
-  }
-
-  > :first-child {
-    color: ${theme.color.gray4};
-  }
-`;
-
 export const FilterWrapper = styled.div`
   display: grid;
   grid-template-columns: 0.8fr 1fr 1fr 1fr 1fr 71px;
@@ -268,25 +229,10 @@ export const FilterWrapper = styled.div`
   }
 `;
 
-export const SelectedTickets = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: ${theme.color.primary};
-  font-weight: 500;
-`;
-
 export const PaginationFooter = styled.footer`
   margin-top: 8px;
   width: 100%;
   height: fit-content;
   display: flex;
   justify-content: flex-end;
-`;
-
-export const PaginationContainer = styled.div`
-  min-height: calc(100vh - 110px);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 `;
