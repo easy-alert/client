@@ -1,8 +1,6 @@
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 
 import TicketsPage from '@screens/Tickets';
-
-import { Tickets } from '@screens/Tickets/index BU';
 import { NavBar } from './components/NavBar';
 import { MaintenancesPlan } from './screens/MaintenancesPlan';
 import { Informations } from './screens/Informations';
