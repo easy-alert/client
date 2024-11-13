@@ -19,6 +19,7 @@ import { ListTag } from '@components/ListTag';
 
 // GLOBAL UTILS
 import { dateTimeFormatter, isImage, uploadManyFiles } from '@utils/functions';
+import { handleToastify } from '@utils/toastifyResponses';
 
 // GLOBAL ASSETS
 import { icon } from '@assets/icons';
@@ -28,16 +29,19 @@ import { ITicketActivity } from '@customTypes/ITicketActivity';
 import { IAnnexesAndImages } from '@customTypes/IAnnexesAndImages';
 
 // STYLES
-import { handleToastify } from '@utils/toastifyResponses';
 import * as Style from './styles';
 
 // TYPES
 
 interface ITicketHistoryActivities {
   ticketId: string;
+  disableComment?: boolean;
 }
 
-export const TicketHistoryActivities = ({ ticketId }: ITicketHistoryActivities) => {
+export const TicketHistoryActivities = ({
+  ticketId,
+  disableComment = false,
+}: ITicketHistoryActivities) => {
   const location = useLocation();
   const [query] = useSearchParams();
 
@@ -142,29 +146,30 @@ export const TicketHistoryActivities = ({ ticketId }: ITicketHistoryActivities) 
     return 0; // Keep original order if both are in the same group
   };
 
-  // useEffect(() => {
-  //   if (acceptedFiles.length > 0) {
-  //     const uploadAcceptedImages = async () => {
-  //       setOnImageQuery(true);
+  useEffect(() => {
+    if (acceptedFiles.length > 0) {
+      const uploadAcceptedImages = async () => {
+        setOnImageQuery(true);
 
-  //       const uploadedImages = await uploadManyFiles(acceptedFiles);
+        const uploadedImages = await uploadManyFiles(acceptedFiles);
 
-  //       const formattedImages = uploadedImages.map((file) => ({
-  //         originalName: file.originalname,
-  //         url: file.Location,
-  //       }));
+        const formattedImages = uploadedImages.map((file) => ({
+          name: file.originalname,
+          originalName: file.originalname,
+          url: file.Location,
+        }));
 
-  //       setImagesToUpload((prevState) => {
-  //         let newState = [...prevState];
-  //         newState = [...newState, ...formattedImages];
-  //         return newState;
-  //       });
-  //       setOnImageQuery(false);
-  //     };
+        setImagesToUpload((prevState) => {
+          let newState = [...prevState];
+          newState = [...newState, ...formattedImages];
+          return newState;
+        });
+        setOnImageQuery(false);
+      };
 
-  //     uploadAcceptedImages();
-  //   }
-  // }, [acceptedFiles]);
+      uploadAcceptedImages();
+    }
+  }, [acceptedFiles]);
 
   useEffect(() => {
     if (activities.length === 0) return;
@@ -204,7 +209,7 @@ export const TicketHistoryActivities = ({ ticketId }: ITicketHistoryActivities) 
 
   return (
     <Style.Container>
-      {syndicNanoId && (
+      {syndicNanoId && !disableComment && (
         <Style.SendDataSection>
           <Style.InputRow>
             <TextArea
