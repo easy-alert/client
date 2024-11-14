@@ -235,8 +235,6 @@ function TicketsPage() {
     handleGetTickets();
   }, [refresh]);
 
-  if (loading) return <DotSpinLoading />;
-
   return (
     <>
       {createTicketModal && (
