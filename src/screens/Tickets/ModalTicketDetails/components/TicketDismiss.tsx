@@ -55,7 +55,7 @@ function TicketDismiss({
       return;
     }
 
-    if (dismissReasonName === 'other') {
+    if (dismissReasonName === 'other' && !dismissObservation) {
       handleToastify({
         status: 400,
         data: {
@@ -96,7 +96,7 @@ function TicketDismiss({
       </Select>
 
       <TextArea
-        name="activity"
+        name="dismissObservation"
         placeholder="Observações sobre o motivo da reprovação"
         value={dismissObservation}
         onChange={(evt) => setDismissObservation(evt.target.value)}
