@@ -1,27 +1,47 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { handleToastify } from '@utils/toastifyResponses';
 import { Api } from '../services/api';
 import { catchHandler } from '../utils/functions';
 
-interface IAuxiliaryData {
-  id: string;
-  label: string;
+interface IUseServiceTypes {
+  buildingNanoId?: string;
+  page?: number;
+  take?: number;
 }
-export const useServiceTypes = () => {
-  const [serviceTypes, setServiceTypes] = useState<IAuxiliaryData[]>([]);
+interface IServiceTypes {
+  id: string;
+  name?: string;
+  label?: string;
+  singularLabel?: string;
+  pluralLabel?: string;
+  color?: string;
+  backgroundColor?: string;
+}
 
-  const getAuxiliaryData = async () => {
-    await Api.get(`/tickets/extras/auxiliary-data`)
-      .then((res) => {
-        setServiceTypes(res.data.types);
-      })
-      .catch((err) => {
-        catchHandler(err);
-      });
-  };
+export const useServiceTypes = ({ buildingNanoId, page, take }: IUseServiceTypes) => {
+  const [serviceTypes, setServiceTypes] = useState<IServiceTypes[]>([]);
+
+  const getServiceTypes = useCallback(async () => {
+    const uri = `/serviceTypes/findMany?buildingNanoId=${buildingNanoId}&page=${page}&take=${take}`;
+
+    const params = {
+      buildingNanoId,
+      page,
+      take,
+    };
+
+    try {
+      const response = await Api.get(uri, { params });
+
+      setServiceTypes(response.data);
+    } catch (error: any) {
+      handleToastify(error);
+    }
+  }, [buildingNanoId, page, take]);
 
   useEffect(() => {
-    getAuxiliaryData();
-  }, []);
+    getServiceTypes();
+  }, [buildingNanoId, page, take]);
 
   return { serviceTypes };
 };

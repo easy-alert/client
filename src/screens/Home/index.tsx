@@ -26,7 +26,8 @@ export const Home = () => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
   const [search] = useSearchParams();
   const syndicNanoId = search.get('syndicNanoId') ?? '';
-  const [modalCreateTicketOpen, setModalCreateTicketOpen] = useState(false);
+
+  const [createTicketModal, setCreateTicketModal] = useState<boolean>(false);
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -40,6 +41,10 @@ export const Home = () => {
     },
   });
 
+  const handleCreateTicketModal = (modalState: boolean) => {
+    setCreateTicketModal(modalState);
+  };
+
   useEffect(() => {
     requestHomeInformations({
       buildingNanoId,
@@ -49,15 +54,17 @@ export const Home = () => {
 
     if (!syndicNanoId) requestBuildingAccess(buildingNanoId);
   }, []);
+
   return (
     <>
-      {modalCreateTicketOpen && (
+      {createTicketModal && (
         <ModalCreateTicket
-          setModal={setModalCreateTicketOpen}
           buildingNanoId={buildingNanoId}
           buildingName={informations.name}
+          handleCreateTicketModal={handleCreateTicketModal}
         />
       )}
+
       <Style.Container>
         <Style.Wrapper>
           {loading ? <Skeleton height="24px" width="248px" /> : <h2>{informations.name}</h2>}
@@ -97,12 +104,7 @@ export const Home = () => {
 
             {informations.Company.ticketType === 'platform' &&
               informations.Company.canAccessTickets && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setModalCreateTicketOpen(true);
-                  }}
-                >
+                <button type="button" onClick={() => handleCreateTicketModal(true)}>
                   Abrir chamado
                 </button>
               )}

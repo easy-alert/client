@@ -7,6 +7,9 @@ export const TagContainer = styled.div<IEventTag>`
   padding: 2px ${theme.size.xxsm};
   border-radius: ${theme.size.xxsm};
 
+  color: ${({ color }) => color || 'inherit'};
+  background-color: ${({ bgColor }) => bgColor || theme.color.gray4};
+
   > p {
     color: ${theme.color.white};
     font-weight: 500;

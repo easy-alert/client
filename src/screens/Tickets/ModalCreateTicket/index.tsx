@@ -1,28 +1,39 @@
-import { Formik, Form } from 'formik';
+// REACT
+import { useEffect, useState } from 'react';
+
+// COMPONENTS
 import * as yup from 'yup';
 import { toast } from 'react-toastify';
-import { useEffect, useState } from 'react';
-import * as Style from './styles';
-import { Modal } from '../../../components/Modal';
-import { Button } from '../../../components/Buttons/Button';
-import { FormikInput } from '../../../components/Form/FormikInput';
-import { Api } from '../../../services/api';
+import { Formik, Form } from 'formik';
+
+// SERVICES
+import { Api } from '@services/api';
+
+// GLOBAL COMPONENTS
+import { Modal } from '@components/Modal';
+import { Button } from '@components/Buttons/Button';
+import { FormikInput } from '@components/Form/FormikInput';
+import { Input } from '@components/Inputs/Input';
+import { FormikTextArea } from '@components/Form/FormikTextArea';
+import { DragAndDropFiles } from '@components/DragAndDropFiles';
+import { ImagePreview } from '@components/ImagePreview';
+import { DotLoading } from '@components/Loadings/DotLoading';
+import { FormikSelect } from '@components/Form/FormikSelect';
+import { ReactSelectComponent } from '@components/ReactSelectComponent';
+import { ListTag } from '@components/ListTag';
+
+// GLOBAL UTILS
 import { catchHandler, isImage, uploadManyFiles } from '../../../utils/functions';
-import { Input } from '../../../components/Inputs/Input';
-import { FormikTextArea } from '../../../components/Form/FormikTextArea';
-import { DragAndDropFiles } from '../../../components/DragAndDropFiles';
-import { ImagePreview } from '../../../components/ImagePreview';
-import { DotLoading } from '../../../components/Loadings/DotLoading';
-import { FormikSelect } from '../../../components/Form/FormikSelect';
-import { Row, FileAndImageRow } from '../ModalTicketDetails/styles';
-import { ReactSelectComponent } from '../../../components/ReactSelectComponent';
+
+// STYLES
+import * as Style from './styles';
 import { ImageLoadingTag } from '../../Checklists/ModalChecklistDetails/styles';
-import { ListTag } from '../../../components/ListTag';
 
 interface IModalCreateTicket {
-  setModal: React.Dispatch<React.SetStateAction<boolean>>;
   buildingNanoId: string;
   buildingName: string;
+  handleCreateTicketModal: (modal: boolean) => void;
+  handleRefresh?: () => void;
 }
 
 interface IAuxiliaryData {
@@ -35,7 +46,7 @@ const schema = yup
     buildingNanoId: yup.string().required('Campo obrigatório.'),
     residentName: yup.string().required('Campo obrigatório.'),
     residentApartment: yup.string().required('Campo obrigatório.'),
-    residentEmail: yup.string().email('E-mail inválido.'),
+    residentEmail: yup.string().email('E-mail inválido.').required('Campo obrigatório.'),
     description: yup.string().required('Campo obrigatório.'),
     placeId: yup.string().required('Campo obrigatório.'),
     types: yup
@@ -53,9 +64,10 @@ const schema = yup
 type TSchema = yup.InferType<typeof schema>;
 
 export const ModalCreateTicket = ({
-  setModal,
   buildingNanoId,
   buildingName,
+  handleCreateTicketModal,
+  handleRefresh,
 }: IModalCreateTicket) => {
   const [places, setPlaces] = useState<IAuxiliaryData[]>([]);
   const [types, setTypes] = useState<IAuxiliaryData[]>([]);
@@ -76,12 +88,36 @@ export const ModalCreateTicket = ({
       });
   };
 
+  const submitForm = async (values: TSchema) => {
+    setOnQuery(true);
+
+    await Api.post(`/tickets`, {
+      ...values,
+      images,
+      residentEmail: values.residentEmail || null,
+    })
+      .then((res) => {
+        toast.success(res.data.ServerMessage.message);
+        handleCreateTicketModal(false);
+
+        if (handleRefresh) {
+          handleRefresh();
+        }
+      })
+      .catch((err) => {
+        catchHandler(err);
+      })
+      .finally(() => {
+        setOnQuery(false);
+      });
+  };
+
   useEffect(() => {
     getAuxiliaryData();
   }, []);
 
   return (
-    <Modal setModal={setModal} title="Abrir novo chamado">
+    <Modal setModal={handleCreateTicketModal} title="Abrir novo chamado">
       <Style.Container>
         <Formik
           initialValues={{
@@ -94,25 +130,7 @@ export const ModalCreateTicket = ({
             types: [],
           }}
           validationSchema={schema}
-          onSubmit={async (values: TSchema) => {
-            setOnQuery(true);
-
-            await Api.post(`/tickets`, {
-              ...values,
-              images,
-              residentEmail: values.residentEmail || null,
-            })
-              .then((res) => {
-                toast.success(res.data.ServerMessage.message);
-                setModal(false);
-              })
-              .catch((err) => {
-                catchHandler(err);
-              })
-              .finally(() => {
-                setOnQuery(false);
-              });
-          }}
+          onSubmit={submitForm}
         >
           {({ errors, touched, values, setFieldValue }) => (
             <Form>
@@ -188,9 +206,9 @@ export const ModalCreateTicket = ({
                 error={touched.description && (errors.description || null)}
               />
 
-              <Row>
+              <Style.Row>
                 <h6>Anexos *</h6>
-                <FileAndImageRow>
+                <Style.FileAndImageRow>
                   <DragAndDropFiles
                     disabled={onImageQuery}
                     width="132px"
@@ -258,8 +276,8 @@ export const ModalCreateTicket = ({
                         <DotLoading />
                       </ImageLoadingTag>
                     ))}
-                </FileAndImageRow>
-              </Row>
+                </Style.FileAndImageRow>
+              </Style.Row>
 
               <Button
                 center
