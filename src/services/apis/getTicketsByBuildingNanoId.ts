@@ -54,7 +54,8 @@ export const getTicketsByBuildingNanoId = async ({
 
     return { buildingName, filterOptions, tickets, ticketsCount };
   } catch (error: any) {
-    handleToastify(error);
+    if (!count) handleToastify(error.response);
+
     return { buildingName: '', tickets: [], filterOptions: { years: [], months: [] } };
   }
 };
