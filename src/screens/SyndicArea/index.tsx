@@ -60,7 +60,6 @@ export const SyndicArea = () => {
 
   const [maintenanceHistoryId, setMaintenanceHistoryId] = useState<string>('');
   const [kanban, setKanban] = useState<IKanban[]>([]);
-  console.log('🚀 ~ SyndicArea ~ kanban:', kanban);
 
   const [modalAdditionalInformations, setModalAdditionalInformations] =
     useState<IModalAdditionalInformations>({
