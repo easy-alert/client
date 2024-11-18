@@ -110,7 +110,10 @@ function TicketsPage() {
     const openTickets = responseTickets
       .filter((ticket) => ticket.status?.name === 'open')
       .sort((a, b) => new Date(b.createdAt ?? '').getTime() - new Date(a.createdAt ?? '').getTime())
-      .sort((a) => (a.seen ? 1 : -1));
+      .sort((a, b) => {
+        if (a.seen === b.seen) return 0;
+        return a.seen ? 1 : -1;
+      });
 
     const inProgressTickets = responseTickets
       .filter((ticket) => ticket.status?.name === 'awaitingToFinish')
@@ -315,7 +318,7 @@ function TicketsPage() {
               ))}
             </Select>
 
-            <Select
+            {/* <Select
               selectPlaceholderValue=""
               label="Status"
               value={filter.status}
@@ -328,7 +331,7 @@ function TicketsPage() {
                   {status.label}
                 </option>
               ))}
-            </Select>
+            </Select> */}
 
             <Select
               label="Tipo"
@@ -345,7 +348,7 @@ function TicketsPage() {
               ))}
             </Select>
 
-            <Select
+            {/* <Select
               label="Local"
               selectPlaceholderValue=""
               value={filter.placeId}
@@ -358,7 +361,7 @@ function TicketsPage() {
                   {place.name}
                 </option>
               ))}
-            </Select>
+            </Select> */}
 
             <Button
               type="button"
@@ -453,7 +456,9 @@ function TicketsPage() {
                         <Style.KanbanTicketGridBox>
                           <Style.KanbanTicketTitle>Local da ocorrência</Style.KanbanTicketTitle>
 
-                          <EventTag label={ticket.place?.label} />
+                          <Style.KanbanTicketDescription>
+                            {ticket.place?.label}
+                          </Style.KanbanTicketDescription>
                         </Style.KanbanTicketGridBox>
 
                         <Style.KanbanTicketGridBox>
