@@ -15,6 +15,7 @@ import type { IModalSecondView } from '../types';
 
 const ModalSecondView = ({
   categoriesData,
+  priorityData,
   occasionalMaintenanceData,
   checklistActivity,
   handleSetView,
@@ -120,6 +121,28 @@ const ModalSecondView = ({
         {responsibleArray.map((responsible) => (
           <option key={responsible.id} value={responsible.name}>
             {responsible.name}
+          </option>
+        ))}
+      </Select>
+
+      <Select
+        label="Prioridade *"
+        value={occasionalMaintenanceData.priorityName}
+        selectPlaceholderValue={occasionalMaintenanceData.priorityName}
+        onChange={(e) =>
+          handleOccasionalMaintenanceDataChange({
+            primaryKey: 'priorityName',
+            value: e.target.value,
+          })
+        }
+      >
+        <option value="" disabled>
+          Selecione
+        </option>
+
+        {priorityData.map((priority) => (
+          <option key={priority.name} value={priority.name}>
+            {priority.label}
           </option>
         ))}
       </Select>
