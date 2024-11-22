@@ -39,6 +39,7 @@ export interface IFilter {
   status: string;
   years: string;
   categoryId: string;
+  priorityName: string;
 }
 
 export interface IRequestSyndicKanban {

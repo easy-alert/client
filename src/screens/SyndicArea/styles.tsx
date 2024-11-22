@@ -37,7 +37,7 @@ export const HeaderWrapper = styled.div`
 
 export const FilterWrapper = styled.div`
   display: grid;
-  grid-template-columns: 0.8fr 1fr 1.2fr 2fr 71px;
+  grid-template-columns: 0.8fr 1fr 1.2fr 0.8fr 2fr 71px;
 
   align-items: flex-end;
   gap: ${theme.size.xsm};

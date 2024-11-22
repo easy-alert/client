@@ -60,7 +60,6 @@ export const SyndicArea = () => {
 
   const [maintenanceHistoryId, setMaintenanceHistoryId] = useState<string>('');
   const [kanban, setKanban] = useState<IKanban[]>([]);
-  console.log('🚀 ~ SyndicArea ~ kanban:', kanban);
 
   const [modalAdditionalInformations, setModalAdditionalInformations] =
     useState<IModalAdditionalInformations>({
@@ -94,6 +93,7 @@ export const SyndicArea = () => {
     status: '',
     years: '',
     categoryId,
+    priorityName: '',
   });
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -277,6 +277,7 @@ export const SyndicArea = () => {
                 </option>
               ))}
             </Select>
+
             <Select
               disabled={onQuery || filter.years === ''}
               selectPlaceholderValue={' '}
@@ -297,6 +298,7 @@ export const SyndicArea = () => {
                 </option>
               ))}
             </Select>
+
             <Select
               disabled={onQuery}
               selectPlaceholderValue={' '}
@@ -317,6 +319,26 @@ export const SyndicArea = () => {
                 </option>
               ))}
             </Select>
+
+            <Select
+              disabled={onQuery}
+              selectPlaceholderValue={' '}
+              label="Prioridade"
+              value={filter.priorityName}
+              onChange={(e) => {
+                setFilter((prevState) => {
+                  const newState = { ...prevState };
+                  newState.priorityName = e.target.value;
+                  return newState;
+                });
+              }}
+            >
+              <option value="">Todas</option>
+              <option value="low">Baixa</option>
+              <option value="medium">Média</option>
+              <option value="high">Alta</option>
+            </Select>
+
             <Select
               disabled={onQuery}
               selectPlaceholderValue={' '}
@@ -337,6 +359,7 @@ export const SyndicArea = () => {
                 </option>
               ))}
             </Select>
+
             <Button
               type="button"
               label="Filtrar"

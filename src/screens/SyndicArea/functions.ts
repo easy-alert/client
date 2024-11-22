@@ -1,6 +1,8 @@
 import { Api } from '../../services/api';
+
 import { catchHandler } from '../../utils/functions';
-import { IRequestSyndicKanban } from './types';
+
+import type { IRequestSyndicKanban } from './types';
 
 export const requestSyndicKanban = async ({
   setLoading,
@@ -14,7 +16,7 @@ export const requestSyndicKanban = async ({
   setOnQuery(true);
 
   await Api.get(
-    `/syndic/${syndicNanoId}?year=${filter.years}&month=${filter.months}&status=${filter.status}&categoryId=${filter.categoryId}`,
+    `/syndic/${syndicNanoId}?year=${filter.years}&month=${filter.months}&status=${filter.status}&categoryId=${filter.categoryId}&priorityName=${filter.priorityName}`,
   )
     .then((res) => {
       setKanban(res.data.kanban);
