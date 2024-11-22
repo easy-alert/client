@@ -1,11 +1,11 @@
 // COMPONENTS
 import * as Style from './styles';
 
-// TYPES
-import { IEventTag } from './types';
-
 // FUNCTIONS
 import { getStatusName } from './functions';
+
+// TYPES
+import type { IEventTag } from './types';
 
 export const EventTag = ({ status, color, bgColor, label }: IEventTag) => {
   const eventTagName = getStatusName(label || status || '');
