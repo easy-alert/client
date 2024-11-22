@@ -63,7 +63,7 @@ export const SupplierMaintenanceHistory = ({
             isFuture: false,
           }}
           syndicNanoId={syndicNanoId}
-          filter={{ categoryId: '', months: '', status: '', years: '' }}
+          filter={{ categoryId: '', months: '', status: '', years: '', priorityName: '' }}
           setBuildingName={() => {
             //
           }}
