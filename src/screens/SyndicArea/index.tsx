@@ -60,6 +60,7 @@ export const SyndicArea = () => {
 
   const [maintenanceHistoryId, setMaintenanceHistoryId] = useState<string>('');
   const [kanban, setKanban] = useState<IKanban[]>([]);
+  console.log('🚀 ~ SyndicArea ~ kanban:', kanban);
 
   const [modalAdditionalInformations, setModalAdditionalInformations] =
     useState<IModalAdditionalInformations>({
@@ -477,13 +478,21 @@ export const SyndicArea = () => {
                               ) : (
                                 <EventTag status="common" />
                               )}
+
                               {maintenance.status === 'pending' &&
                                 new Date(maintenance.date) >
                                   new Date(new Date().setHours(0, 0, 0, 0)) && (
                                   <FutureMaintenanceTag />
                                 )}
+
                               {maintenance.inProgress && <InProgressTag />}
                               {maintenance.status === 'overdue' && <EventTag status="overdue" />}
+
+                              <EventTag
+                                label={maintenance.priorityLabel}
+                                color={maintenance.priorityColor}
+                                bgColor={maintenance.priorityBackgroundColor}
+                              />
                             </span>
                             {maintenance.element}
                           </h6>
