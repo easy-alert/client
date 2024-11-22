@@ -44,6 +44,7 @@ export const createOccasionalMaintenance = async ({
     element,
     activity,
     responsible,
+    priorityName,
   },
 }: IRequestCreateOccasionalMaintenance) => {
   const uri = '/building/reports/occasional/create';
@@ -55,6 +56,7 @@ export const createOccasionalMaintenance = async ({
       buildingId: buildingId || null,
       executionDate: new Date(new Date(executionDate).setUTCHours(3, 0, 0, 0)) || null,
       responsibleSyndicId: syndicNanoId,
+      priorityName: priorityName || 'low',
       categoryData: {
         id: categoryData.id || null,
         name: categoryData.name || null,
