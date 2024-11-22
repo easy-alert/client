@@ -3,4 +3,5 @@ export interface IEventTag {
   label?: string;
   color?: string;
   bgColor?: string;
+  fontWeight?: number | string;
 }

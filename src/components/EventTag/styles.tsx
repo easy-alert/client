@@ -1,18 +1,19 @@
 import styled, { css } from 'styled-components';
-import { IEventTag } from './types';
+
 import { theme } from '../../styles/theme';
+
+import type { IEventTag } from './types';
 
 export const TagContainer = styled.div<IEventTag>`
   width: fit-content;
   padding: 2px ${theme.size.xxsm};
   border-radius: ${theme.size.xxsm};
 
-  color: ${({ color }) => color || 'inherit'};
   background-color: ${({ bgColor }) => bgColor || theme.color.gray4};
 
   > p {
-    color: ${theme.color.white};
-    font-weight: 500;
+    color: ${({ color }) => color || theme.color.white};
+    font-weight: ${({ fontWeight }) => fontWeight || 500} !important;
     white-space: nowrap;
   }
 
