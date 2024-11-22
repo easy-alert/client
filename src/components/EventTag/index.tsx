@@ -8,6 +8,10 @@ import { getStatusName } from './functions';
 import type { IEventTag } from './types';
 
 export const EventTag = ({ status, color, bgColor, label }: IEventTag) => {
+  if (!status && !label) {
+    return null;
+  }
+
   const eventTagName = getStatusName(label || status || '');
 
   return (
