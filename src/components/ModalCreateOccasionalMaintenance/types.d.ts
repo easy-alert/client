@@ -1,5 +1,6 @@
 import type { ICategory } from '@customTypes/ICategory';
 import type { IAnnexesAndImages } from '@customTypes/IAnnexesAndImages';
+import type { IPriority } from '@customTypes/IPriority';
 
 export type IOccasionalMaintenanceType = 'pending' | 'finished' | '';
 
@@ -12,6 +13,8 @@ export interface IOccasionalMaintenanceData {
   executionDate: string;
 
   inProgress: boolean;
+
+  priorityName: string;
 
   categoryData: {
     id: string;
@@ -70,6 +73,7 @@ export interface IHandleSetOccasionalMaintenanceData {
 
 export interface IModalSecondView {
   categoriesData: ICategory[];
+  priorityData: IPriority[];
   occasionalMaintenanceData: IOccasionalMaintenanceData;
   checklistActivity?: string;
   handleSetView: (setView: number) => void;

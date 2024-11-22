@@ -7,12 +7,17 @@ import { useParams } from 'react-router-dom';
 // SERVICES
 import { getCategoriesByBuildingNanoId } from '@services/apis/getCategoriesByBuildingNanoId';
 import { createOccasionalMaintenance } from '@services/apis/createOccasionalMaintenance';
+import { getPriority } from '@services/apis/getPriority';
 
 // GLOBAL COMPONENTS
 import { Modal } from '@components/Modal';
 
+// GLOBAL UTILS
+import { handleToastify } from '@utils/toastifyResponses';
+
 // GLOBAL TYPES
 import type { ICategory } from '@customTypes/ICategory';
+import type { IPriority } from '@customTypes/IPriority';
 
 // COMPONENTS
 import ModalLoading from './ModalCreateOccasionalMaintenanceViews/ModalLoading';
@@ -50,6 +55,7 @@ export const ModalCreateOccasionalMaintenance = ({
       responsible: '',
       executionDate: '',
       inProgress: false,
+      priorityName: '',
 
       categoryData: {
         id: '',
@@ -65,6 +71,7 @@ export const ModalCreateOccasionalMaintenance = ({
     });
 
   const [categoriesData, setCategoriesData] = useState<ICategory[]>([]);
+  const [priorityData, setPriorityData] = useState<IPriority[]>([]);
 
   const [view, setView] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
@@ -174,7 +181,17 @@ export const ModalCreateOccasionalMaintenance = ({
     setLoading(false);
   };
 
+  const handleGetPriorityNames = async () => {
+    try {
+      const responseData = await getPriority();
+      setPriorityData(responseData);
+    } catch (error: any) {
+      handleToastify(error.response.data.ServerMessage);
+    }
+  };
+
   useEffect(() => {
+    handleGetPriorityNames();
     handleGetCategoriesByBuildingNanoId();
   }, []);
 
@@ -189,6 +206,7 @@ export const ModalCreateOccasionalMaintenance = ({
           {view === 2 && (
             <ModalSecondView
               categoriesData={categoriesData}
+              priorityData={priorityData}
               occasionalMaintenanceData={occasionalMaintenanceData}
               checklistActivity={checklistActivity}
               handleSetView={handleSetView}
