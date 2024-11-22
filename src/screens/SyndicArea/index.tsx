@@ -15,7 +15,6 @@ import { Select } from '@components/Inputs/Select';
 import { DotSpinLoading } from '@components/Loadings/DotSpinLoading';
 import { Skeleton } from '@components/Skeleton';
 import { FutureMaintenanceTag } from '@components/FutureMaintenanceTag';
-import { InProgressTag } from '@components/InProgressTag';
 import { ModalCreateOccasionalMaintenance } from '@components/ModalCreateOccasionalMaintenance';
 
 // GLOBAL UTILS
@@ -323,25 +322,6 @@ export const SyndicArea = () => {
             <Select
               disabled={onQuery}
               selectPlaceholderValue={' '}
-              label="Prioridade"
-              value={filter.priorityName}
-              onChange={(e) => {
-                setFilter((prevState) => {
-                  const newState = { ...prevState };
-                  newState.priorityName = e.target.value;
-                  return newState;
-                });
-              }}
-            >
-              <option value="">Todas</option>
-              <option value="low">Baixa</option>
-              <option value="medium">Média</option>
-              <option value="high">Alta</option>
-            </Select>
-
-            <Select
-              disabled={onQuery}
-              selectPlaceholderValue={' '}
               label="Categoria"
               value={filter.categoryId}
               onChange={(e) => {
@@ -359,6 +339,29 @@ export const SyndicArea = () => {
                 </option>
               ))}
             </Select>
+
+            {kanban.some((card) =>
+              card.maintenances.some((maintenance) => maintenance.priorityLabel),
+            ) && (
+              <Select
+                disabled={onQuery}
+                selectPlaceholderValue={' '}
+                label="Prioridade"
+                value={filter.priorityName}
+                onChange={(e) => {
+                  setFilter((prevState) => {
+                    const newState = { ...prevState };
+                    newState.priorityName = e.target.value;
+                    return newState;
+                  });
+                }}
+              >
+                <option value="">Todas</option>
+                <option value="low">Baixa</option>
+                <option value="medium">Média</option>
+                <option value="high">Alta</option>
+              </Select>
+            )}
 
             <Button
               type="button"
@@ -496,34 +499,37 @@ export const SyndicArea = () => {
                         >
                           <h6>
                             <span>
-                              {maintenance.type === 'occasional' ? (
-                                <EventTag status="occasional" />
-                              ) : (
-                                <EventTag status="common" />
-                              )}
+                              <Style.EventsWrapper>
+                                <EventTag
+                                  status={
+                                    maintenance.type === 'occasional' ? 'occasional' : 'common'
+                                  }
+                                />
 
-                              {maintenance.status === 'pending' &&
-                                new Date(maintenance.date) >
-                                  new Date(new Date().setHours(0, 0, 0, 0)) && (
-                                  <FutureMaintenanceTag />
-                                )}
+                                {maintenance.status === 'pending' &&
+                                  new Date(maintenance.date) >
+                                    new Date(new Date().setHours(0, 0, 0, 0)) && (
+                                    <FutureMaintenanceTag />
+                                  )}
 
-                              {maintenance.inProgress && <InProgressTag />}
-                              {maintenance.status === 'overdue' && <EventTag status="overdue" />}
+                                {maintenance.status === 'overdue' && <EventTag status="overdue" />}
+                              </Style.EventsWrapper>
 
                               <EventTag
                                 label={maintenance.priorityLabel}
-                                color={maintenance.priorityColor}
-                                bgColor={maintenance.priorityBackgroundColor}
+                                color={maintenance.priorityBackgroundColor}
+                                bgColor="transparent"
+                                fontWeight="bold"
                               />
                             </span>
+
                             {maintenance.element}
                           </h6>
                           <p className="p2">{maintenance.activity}</p>
+
                           <p className="p3">
                             {maintenance.status === 'pending' && maintenance.label}
                             {maintenance.status === 'expired' && !isOldExpired && maintenance.label}
-
                             {(maintenance.status === 'completed' ||
                               maintenance.status === 'overdue') &&
                               `Concluída em ${dateFormatter(maintenance.date)}`}
