@@ -15,25 +15,36 @@ export const requestSyndicKanban = async ({
 }: IRequestSyndicKanban) => {
   setOnQuery(true);
 
-  await Api.get(
-    `/syndic/${syndicNanoId}?year=${filter.years}&month=${filter.months}&status=${filter.status}&categoryId=${filter.categoryId}&priorityName=${filter.priorityName}`,
-  )
-    .then((res) => {
-      setKanban(res.data.kanban);
-      setBuildingName(res.data.buildingName);
+  const uri = `/syndic/${syndicNanoId}`;
 
-      setFilterOptions(res.data.Filters);
+  const params = {
+    year: filter.years,
+    month: filter.months,
+    status: filter.status,
+    categoryId: filter.categoryId,
+    priorityName: filter.priorityName,
+  };
+
+  try {
+    const response = await Api.get(uri, { params });
+
+    setKanban(response.data.kanban);
+    setBuildingName(response.data.buildingName);
+
+    setFilterOptions(response.data.Filters);
+    setLoading(false);
+
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.status === 404) {
+      window.open('https://easyalert.com.br/', '_self');
+    } else {
+      catchHandler(error);
       setLoading(false);
-    })
-    .catch((err) => {
-      if (err.response && err.response.status === 404) {
-        window.open('https://easyalert.com.br/', '_self');
-      } else {
-        catchHandler(err);
-        setLoading(false);
-      }
-    })
-    .finally(() => {
-      setOnQuery(false);
-    });
+    }
+
+    return {};
+  } finally {
+    setOnQuery(false);
+  }
 };

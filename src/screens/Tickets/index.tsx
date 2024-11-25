@@ -86,6 +86,7 @@ function TicketsPage() {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
+  const [ticketAccess, setTicketAccess] = useState<boolean>(false);
 
   const handleRefresh = () => {
     setRefresh(!refresh);
@@ -191,8 +192,9 @@ function TicketsPage() {
         filter,
       });
 
-      setBuildingName(response.buildingName);
+      if (response?.statusCode !== 403) setTicketAccess(true);
 
+      setBuildingName(response.buildingName);
       handleCreateKanbanTickets(response.tickets);
       setTickets(response.tickets);
     } catch (error: any) {
@@ -265,7 +267,7 @@ function TicketsPage() {
             </Style.HeaderSide>
           </Style.HeaderWrapper>
 
-          {syndicNanoId && (
+          {syndicNanoId && ticketAccess && (
             <IconButton
               icon={icon.siren}
               label="Abrir chamado"

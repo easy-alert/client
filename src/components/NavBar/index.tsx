@@ -124,7 +124,7 @@ export const NavBar = ({ children }: ISidebar) => {
               setShowNavbarMenu(!showNavbarMenu);
             }}
           />
-          {showNavbarMenu ? (
+          {showNavbarMenu && (
             <Style.MobileContent>
               {sidebarContent.map((element) => {
                 if (!syndicNanoId && element.restricted) {
@@ -163,7 +163,9 @@ export const NavBar = ({ children }: ISidebar) => {
                 );
               })}
             </Style.MobileContent>
-          ) : (
+          )}
+
+          {!showNavbarMenu && newTickets > 0 && (
             <Style.NewTicketsNotificationMobile>+{newTickets}</Style.NewTicketsNotificationMobile>
           )}
         </Style.HamburguerWrapper>
