@@ -85,7 +85,12 @@ export const NavBar = ({ children }: ISidebar) => {
       const response = await getTicketsByBuildingNanoId({
         buildingNanoId,
         filter: {
-          seen: false,
+          seen: 'false',
+          status: [],
+          places: [],
+          serviceTypes: [],
+          startDate: '',
+          endDate: '',
         },
         count: true,
       });
@@ -119,7 +124,7 @@ export const NavBar = ({ children }: ISidebar) => {
               setShowNavbarMenu(!showNavbarMenu);
             }}
           />
-          {showNavbarMenu && (
+          {showNavbarMenu ? (
             <Style.MobileContent>
               {sidebarContent.map((element) => {
                 if (!syndicNanoId && element.restricted) {
@@ -153,17 +158,13 @@ export const NavBar = ({ children }: ISidebar) => {
                       showRedDot={element.disabled}
                     >
                       <span>{element.name}</span>
-
-                      {element.name === 'Chamados' && newTickets > 0 && (
-                        <Style.NewTicketsNotificationMobile>
-                          +{newTickets}
-                        </Style.NewTicketsNotificationMobile>
-                      )}
                     </Style.NavbarButtonMobile>
                   </Link>
                 );
               })}
             </Style.MobileContent>
+          ) : (
+            <Style.NewTicketsNotificationMobile>+{newTickets}</Style.NewTicketsNotificationMobile>
           )}
         </Style.HamburguerWrapper>
 

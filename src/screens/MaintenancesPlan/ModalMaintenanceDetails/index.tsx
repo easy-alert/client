@@ -88,17 +88,23 @@ export const ModalMaintenanceDetails = ({
           <h3>{maintenance?.Building.name}</h3>
           <Style.StatusTagWrapper>
             {maintenance.MaintenancesStatus.name === 'overdue' && <EventTag status="completed" />}
+
             <EventTag status={maintenance?.MaintenancesStatus.name} />
-            {maintenance?.Maintenance.MaintenanceType.name === 'occasional' ? (
-              <EventTag status="occasional" />
-            ) : (
-              <EventTag status="common" />
-            )}
+
+            <EventTag
+              status={
+                maintenance?.Maintenance.MaintenanceType.name === 'occasional'
+                  ? 'occasional'
+                  : 'common'
+              }
+            />
+
             {(maintenance?.MaintenancesStatus.name === 'expired' ||
               maintenance?.MaintenancesStatus.name === 'pending') &&
               maintenance.inProgress &&
               !modalAdditionalInformations.isFuture && <InProgressTag />}
           </Style.StatusTagWrapper>
+
           <Style.Content>
             <Style.Row>
               <h6>Categoria</h6>

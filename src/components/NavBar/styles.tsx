@@ -176,11 +176,11 @@ export const NewTicketsNotification = styled.div`
   color: ${theme.color.white};
 
   position: absolute;
-  top: 6px;
-  margin-left: 50px;
+  top: 10px;
+  margin-left: 55px;
 
   border-radius: 50%;
-  padding: 2px 3px;
+  padding: 2px 4px;
 
   font-size: 10px;
 `;
@@ -189,13 +189,16 @@ export const NewTicketsNotificationMobile = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 4px;
 
   background-color: ${theme.color.primary};
   color: ${theme.color.white};
 
-  border-radius: 100%;
-  padding: 1px 2px;
+  position: absolute;
+  top: -5px;
+  margin-left: 25px;
+
+  border-radius: 50%;
+  padding: 2px 4px;
 
   font-size: 10px;
 `;

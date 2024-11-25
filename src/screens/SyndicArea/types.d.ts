@@ -8,6 +8,9 @@ export interface MaintenanceKanban {
   cantReportExpired?: boolean;
   type: 'common' | 'occasional';
   inProgress: boolean;
+  priorityLabel: string;
+  priorityColor: string;
+  priorityBackgroundColor: string;
 }
 
 export interface IKanban {
@@ -36,6 +39,7 @@ export interface IFilter {
   status: string;
   years: string;
   categoryId: string;
+  priorityName: string;
 }
 
 export interface IRequestSyndicKanban {

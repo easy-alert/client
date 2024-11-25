@@ -37,7 +37,7 @@ export const HeaderWrapper = styled.div`
 
 export const FilterWrapper = styled.div`
   display: grid;
-  grid-template-columns: 0.8fr 1fr 1.2fr 2fr 71px;
+  grid-template-columns: 0.8fr 1fr 1.2fr 2fr 0.8fr 71px;
 
   align-items: flex-end;
   gap: ${theme.size.xsm};
@@ -151,8 +151,6 @@ export const MaintenanceInfo = styled.div<{
     > span {
       display: flex;
       align-items: center;
-      gap: ${theme.size.xxsm};
-      flex-wrap: wrap;
       margin-bottom: 4px;
     }
   }
@@ -211,6 +209,12 @@ export const MaintenanceInfo = styled.div<{
         rgba(250, 250, 250, 1) 100%
       );
     `}
+`;
+
+export const EventsWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  gap: ${theme.size.xxsm};
 `;
 
 export const NoDataContainer = styled.div`

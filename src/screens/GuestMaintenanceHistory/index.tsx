@@ -12,7 +12,7 @@ export const GuestMaintenanceHistory = () => {
         expectedDueDate: '',
         isFuture: false,
       }}
-      filter={{ categoryId: '', months: '', status: '', years: '' }}
+      filter={{ categoryId: '', months: '', status: '', years: '', priorityName: '' }}
       setBuildingName={() => ''}
       setFilterOptions={() => ''}
       setKanban={() => ''}

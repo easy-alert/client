@@ -36,14 +36,40 @@ export const HeaderWrapper = styled.div`
   align-items: center;
   gap: ${theme.size.xsm};
 
-  .select {
-    max-width: 300px;
-  }
-
   @media (max-width: 600px) {
     flex-direction: column;
     align-items: flex-start;
   }
+`;
+
+export const FilterSection = styled.div`
+  background-color: ${theme.color.white};
+  padding: ${theme.size.sm};
+  border-radius: ${theme.size.xxsm};
+`;
+
+export const FilterWrapperFooter = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: ${theme.size.sm};
+`;
+
+export const FilterTags = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${theme.size.xsm};
+  flex-wrap: wrap;
+
+  grid-area: 2 / 1 / 2 / 4;
+`;
+
+export const FilterButtonWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: ${theme.size.sm};
+  grid-area: 2 / 4;
+  align-self: flex-start;
 `;
 
 export const Kanban = styled.div`
@@ -204,28 +230,11 @@ export const KanbanTicketDescription = styled.p`
 
 export const FilterWrapper = styled.div`
   display: grid;
-  grid-template-columns: 0.8fr 1fr 1fr 1fr 1fr 71px;
-
-  align-items: flex-end;
+  grid-template-columns: repeat(5, 1fr);
   gap: ${theme.size.xsm};
-  max-width: 80%;
 
-  > :last-child {
-    margin-left: ${theme.size.xsm};
-  }
-
-  @media (max-width: 900px) {
-    max-width: 100%;
+  @media (max-width: 1100px) {
     grid-template-columns: 1fr;
-
-    background-color: ${theme.color.white};
-    padding: ${theme.size.sm};
-    border-radius: ${theme.size.xxsm};
-
-    > :last-child {
-      margin-left: auto;
-      margin-top: ${theme.size.xsm};
-    }
   }
 `;
 
