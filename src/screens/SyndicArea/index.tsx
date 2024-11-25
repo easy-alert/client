@@ -97,6 +97,7 @@ export const SyndicArea = () => {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [onQuery, setOnQuery] = useState<boolean>(false);
+  const [showPriority, setShowPriority] = useState<boolean>(false);
 
   const handleModalCreateOccasionalMaintenance = (modalState: boolean) => {
     setModalCreateOccasionalMaintenance(modalState);
@@ -115,7 +116,7 @@ export const SyndicArea = () => {
   };
 
   const handleGetSyndicKanban = async () => {
-    await requestSyndicKanban({
+    const response = await requestSyndicKanban({
       setLoading,
       syndicNanoId,
       setFilterOptions,
@@ -124,6 +125,8 @@ export const SyndicArea = () => {
       setKanban,
       setBuildingName,
     });
+
+    setShowPriority(response.showPriority);
   };
 
   const getBuildingsBySyndic = async () => {
@@ -138,16 +141,7 @@ export const SyndicArea = () => {
 
   useEffect(() => {
     getBuildingsBySyndic();
-
-    requestSyndicKanban({
-      setLoading,
-      syndicNanoId,
-      setFilterOptions,
-      filter,
-      setOnQuery,
-      setKanban,
-      setBuildingName,
-    });
+    handleGetSyndicKanban();
   }, [syndicNanoId]);
 
   return loading ? (
@@ -340,9 +334,7 @@ export const SyndicArea = () => {
               ))}
             </Select>
 
-            {kanban.some((card) =>
-              card.maintenances.some((maintenance) => maintenance.priorityLabel),
-            ) && (
+            {showPriority && (
               <Select
                 disabled={onQuery}
                 selectPlaceholderValue={' '}
