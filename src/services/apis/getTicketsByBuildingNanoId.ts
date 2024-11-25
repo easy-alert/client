@@ -34,11 +34,11 @@ export const getTicketsByBuildingNanoId = async ({
   count = '',
 }: IGetTickets) => {
   const params = {
-    year: filter?.year || '',
-    month: filter?.month || '',
-    status: filter?.status || '',
-    placeId: filter?.placeId || '',
-    serviceTypeId: filter?.serviceTypeId || '',
+    placesId: filter?.places?.length === 0 ? '' : filter?.places?.join(','),
+    serviceTypesId: filter?.serviceTypes?.length === 0 ? '' : filter?.serviceTypes?.join(','),
+    status: filter?.status?.length === 0 ? '' : filter?.status?.join(','),
+    startDate: filter?.startDate,
+    endDate: filter?.endDate,
     seen: filter?.seen,
     page,
     take,
