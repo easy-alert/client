@@ -509,7 +509,7 @@ export const SyndicArea = () => {
 
                               <EventTag
                                 label={maintenance.priorityLabel}
-                                color={maintenance.priorityBackgroundColor}
+                                color={theme.color.gray4}
                                 bgColor="transparent"
                                 fontWeight="bold"
                               />
