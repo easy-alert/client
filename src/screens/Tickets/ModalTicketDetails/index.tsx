@@ -31,6 +31,8 @@ import TicketDetails from './components/TicketDetails';
 interface IModalTicketDetails {
   ticketId: string;
   syndicNanoId?: string;
+  type?: 'guest' | 'syndic';
+  showButtons?: boolean;
   handleTicketDetailsModal: (modalState: boolean) => void;
   handleRefresh?: () => void;
 }
@@ -40,6 +42,8 @@ type IViewState = 'details' | 'dismiss';
 function ModalTicketDetails({
   ticketId,
   syndicNanoId,
+  type = 'syndic',
+  showButtons = true,
   handleTicketDetailsModal,
   handleRefresh,
 }: IModalTicketDetails) {
@@ -98,7 +102,10 @@ function ModalTicketDetails({
 
   useEffect(() => {
     handleGetTicketById();
-    handleGetTicketDismissReasons();
+
+    if (type === 'syndic') {
+      handleGetTicketDismissReasons();
+    }
   }, [ticketId]);
 
   if (!ticket) return null;
@@ -121,6 +128,8 @@ function ModalTicketDetails({
             <TicketDetails
               ticket={ticket}
               syndicNanoId={syndicNanoId}
+              type={type}
+              showButtons={showButtons}
               handleSetView={handleSetView}
               handleUpdateOneTicket={handleUpdateOneTicket}
             />
