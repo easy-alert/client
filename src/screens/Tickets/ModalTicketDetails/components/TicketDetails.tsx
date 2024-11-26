@@ -14,7 +14,7 @@ import { formatDateString } from '@utils/dateFunctions';
 import type { ITicket } from '@customTypes/ITicket';
 
 // STYLES
-import { ShareTicketButton } from '@components/ShareTicketButton';
+import { TicketShareButton } from '@components/TicketShareButton';
 import * as Style from '../styles';
 
 interface ITicketDetails {
@@ -93,7 +93,7 @@ function TicketDetails({
 
   return (
     <Style.TicketDetailsContainer>
-      {type === 'syndic' && <ShareTicketButton ticketId={ticket.id} />}
+      {type === 'syndic' && <TicketShareButton ticketId={ticket.id} />}
 
       <Style.TicketDetailsColumnContainer>
         <Style.TicketDetailsLeftColumn>

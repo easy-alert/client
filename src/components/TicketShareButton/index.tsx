@@ -15,7 +15,7 @@ import { ShareButton } from './components/ShareButton';
 // STYLES
 import * as Style from './styles';
 
-export const ShareTicketButton = ({ ticketId }: { ticketId: string }) => {
+export const TicketShareButton = ({ ticketId }: { ticketId: string }) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false);
 
   const handleTogglePopover = (popover?: boolean) => {
