@@ -30,6 +30,10 @@ export const getStatusName = (status: string) => {
       statusName = 'Chamado';
       break;
 
+    case 'open':
+      statusName = 'Aberto';
+      break;
+
     default:
       statusName = status;
       break;

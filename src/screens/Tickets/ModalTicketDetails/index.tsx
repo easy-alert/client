@@ -98,7 +98,10 @@ function ModalTicketDetails({
 
   useEffect(() => {
     handleGetTicketById();
-    handleGetTicketDismissReasons();
+
+    if (syndicNanoId) {
+      handleGetTicketDismissReasons();
+    }
   }, [ticketId]);
 
   if (!ticket) return null;

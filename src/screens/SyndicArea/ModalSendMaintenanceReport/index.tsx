@@ -84,6 +84,9 @@ export const ModalSendMaintenanceReport = ({
       name: 'pending',
     },
     MaintenanceReport: [{ cost: 0, id: '', observation: '', ReportAnnexes: [], ReportImages: [] }],
+    MaintenanceReportProgress: [
+      { cost: 0, id: '', observation: '', ReportAnnexesProgress: [], ReportImagesProgress: [] },
+    ],
   });
 
   // MODAL ENVIAR RELATO

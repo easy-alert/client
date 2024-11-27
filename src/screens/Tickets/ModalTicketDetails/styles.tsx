@@ -55,6 +55,13 @@ export const TicketDetailsColumnContent = styled.div`
   gap: ${theme.size.xxsm};
 `;
 
+export const TicketDetailsTypesContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: ${theme.size.xxsm};
+`;
+
 export const TicketDetailsImagesContainer = styled.div`
   display: flex;
   flex-direction: column;

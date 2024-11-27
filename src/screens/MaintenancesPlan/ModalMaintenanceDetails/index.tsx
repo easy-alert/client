@@ -1,29 +1,33 @@
-/* eslint-disable react/no-array-index-key */
+// REACT
+import { useEffect, useState } from 'react';
 
 // COMPONENTS
-import { useEffect, useState } from 'react';
-import { EventTag } from '../../../components/EventTag';
-import { Button } from '../../../components/Buttons/Button';
-import { Modal } from '../../../components/Modal';
-import { DotSpinLoading } from '../../../components/Loadings/DotSpinLoading';
-import { Image } from '../../../components/Image';
+import { EventTag } from '@components/EventTag';
+import { Button } from '@components/Buttons/Button';
+import { Modal } from '@components/Modal';
+import { DotSpinLoading } from '@components/Loadings/DotSpinLoading';
+import { Image } from '@components/Image';
+import { ListTag } from '@components/ListTag';
+import { ImagePreview } from '@components/ImagePreview';
+import { InProgressTag } from '@components/InProgressTag';
+import { LinkSupplierToMaintenanceHistory } from '@components/LinkSupplierToMaintenanceHistory';
+import { MaintenanceHistoryActivities } from '@components/MaintenanceHistoryActivities';
+
+// GLOBAL UTILS
+import { applyMask, dateFormatter } from '@utils/functions';
+
+// GLOBAL ASSETS
+import { icon } from '@assets/icons';
+
+// UTILS
+import { requestMaintenanceDetails } from '../../functions';
 
 // STYLES
 import * as Style from './styles';
-import { icon } from '../../../assets/icons';
 
 // TYPES
-import { IModalMaintenanceDetails } from './types';
-import { IMaintenance } from '../../types';
-
-// FUNCTIONS
-import { requestMaintenanceDetails } from '../../functions';
-import { applyMask, dateFormatter } from '../../../utils/functions';
-import { ImagePreview } from '../../../components/ImagePreview';
-import { InProgressTag } from '../../../components/InProgressTag';
-import { LinkSupplierToMaintenanceHistory } from '../../../components/LinkSupplierToMaintenanceHistory';
-import { MaintenanceHistoryActivities } from '../../../components/MaintenanceHistoryActivities';
-import { ListTag } from '../../../components/ListTag';
+import type { IModalMaintenanceDetails } from './types';
+import type { IMaintenance } from '../../types';
 
 export const ModalMaintenanceDetails = ({
   setModal,
@@ -67,6 +71,17 @@ export const ModalMaintenanceDetails = ({
       name: 'pending',
     },
     MaintenanceReport: [{ cost: 0, id: '', observation: '', ReportAnnexes: [], ReportImages: [] }],
+    MaintenanceReportProgress: [
+      { cost: 0, id: '', observation: '', ReportAnnexesProgress: [], ReportImagesProgress: [] },
+    ],
+  });
+
+  const [maintenanceReport, setMaintenanceReport] = useState<IMaintenance['MaintenanceReport'][0]>({
+    id: '',
+    cost: 0,
+    observation: '',
+    ReportAnnexes: [],
+    ReportImages: [],
   });
 
   useEffect(() => {
@@ -76,6 +91,34 @@ export const ModalMaintenanceDetails = ({
       setModalLoading,
     });
   }, []);
+
+  useEffect(() => {
+    const formattedId =
+      maintenance?.MaintenanceReport[0]?.id || maintenance?.MaintenanceReportProgress[0]?.id;
+
+    const formattedObservation =
+      maintenance?.MaintenanceReport[0]?.observation ||
+      maintenance?.MaintenanceReportProgress[0]?.observation;
+
+    const formattedCost =
+      maintenance?.MaintenanceReport[0]?.cost || maintenance.MaintenanceReportProgress[0]?.cost;
+
+    const formattedImages =
+      maintenance?.MaintenanceReport[0]?.ReportImages ||
+      maintenance?.MaintenanceReportProgress[0]?.ReportImagesProgress;
+
+    const formattedAnnexes =
+      maintenance?.MaintenanceReport[0]?.ReportAnnexes ||
+      maintenance?.MaintenanceReportProgress[0]?.ReportAnnexesProgress;
+
+    setMaintenanceReport({
+      id: formattedId,
+      observation: formattedObservation,
+      cost: formattedCost,
+      ReportImages: formattedImages,
+      ReportAnnexes: formattedAnnexes,
+    });
+  }, [maintenance]);
 
   return (
     <Modal bodyWidth="475px" title="Detalhes de manutenção" setModal={setModal}>
@@ -210,70 +253,63 @@ export const ModalMaintenanceDetails = ({
               </>
             )}
 
-            {maintenance.MaintenanceReport.length > 0 && (
-              <>
-                <Style.Row>
-                  <h6>Custo</h6>
-                  <p className="p2">
-                    {
-                      applyMask({
-                        mask: 'BRL',
-                        value: String(maintenance.MaintenanceReport[0].cost),
-                      }).value
-                    }
-                  </p>
-                </Style.Row>
+            <Style.Row>
+              <h6>Custo</h6>
+              <p className="p2">
+                {
+                  applyMask({
+                    mask: 'BRL',
+                    value: String(maintenanceReport.cost),
+                  }).value
+                }
+              </p>
+            </Style.Row>
 
-                {/* <Style.Row>
-                  <h6>Observação do relato</h6>
-                  <pre className="p2">{maintenance.MaintenanceReport[0].observation ?? '-'}</pre>
-                </Style.Row> */}
+            <Style.FileStyleRow>
+              <h6>Anexos</h6>
 
-                <Style.FileStyleRow>
-                  <h6>Anexos</h6>
-                  <Style.FileAndImageRow>
-                    {maintenance.MaintenanceReport[0].ReportAnnexes.length > 0 ? (
-                      maintenance.MaintenanceReport[0].ReportAnnexes.map((annex, i: number) => (
-                        <Style.Tag key={annex.name + i}>
-                          <a
-                            title={annex.originalName}
-                            href={annex.url}
-                            download
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            <p className="p3">{annex.name}</p>
-                            <Image size="16px" img={icon.download} />
-                          </a>
-                        </Style.Tag>
-                      ))
-                    ) : (
-                      <p className="p2">Nenhum anexo enviado.</p>
-                    )}
-                  </Style.FileAndImageRow>
-                </Style.FileStyleRow>
+              <Style.FileAndImageRow>
+                {maintenanceReport.ReportAnnexes.length > 0 ? (
+                  maintenanceReport.ReportAnnexes.map((annex) => (
+                    <Style.Tag key={annex.originalName}>
+                      <a
+                        title={annex.originalName}
+                        href={annex.url}
+                        download
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <p className="p3">{annex.name}</p>
+                        <Image size="16px" img={icon.download} />
+                      </a>
+                    </Style.Tag>
+                  ))
+                ) : (
+                  <p className="p2">Nenhum anexo enviado.</p>
+                )}
+              </Style.FileAndImageRow>
+            </Style.FileStyleRow>
 
-                <Style.FileStyleRow>
-                  <h6>Imagens</h6>
-                  <Style.FileAndImageRow>
-                    {maintenance.MaintenanceReport[0].ReportImages.length > 0 ? (
-                      maintenance.MaintenanceReport[0].ReportImages.map((image, i: number) => (
-                        <ImagePreview
-                          key={image.name + i}
-                          src={image.url}
-                          downloadUrl={image.url}
-                          imageCustomName={image.name}
-                          width="97px"
-                          height="97px"
-                        />
-                      ))
-                    ) : (
-                      <p className="p2">Nenhuma imagem enviada.</p>
-                    )}
-                  </Style.FileAndImageRow>
-                </Style.FileStyleRow>
-              </>
-            )}
+            <Style.FileStyleRow>
+              <h6>Imagens</h6>
+
+              <Style.FileAndImageRow>
+                {maintenanceReport.ReportImages.length > 0 ? (
+                  maintenanceReport.ReportImages.map((image) => (
+                    <ImagePreview
+                      key={image.originalName}
+                      src={image.url}
+                      downloadUrl={image.url}
+                      imageCustomName={image.name}
+                      width="97px"
+                      height="97px"
+                    />
+                  ))
+                ) : (
+                  <p className="p2">Nenhuma imagem enviada.</p>
+                )}
+              </Style.FileAndImageRow>
+            </Style.FileStyleRow>
           </Style.Content>
 
           <Button

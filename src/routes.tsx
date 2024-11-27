@@ -1,22 +1,22 @@
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 
 import TicketsPage from '@screens/Tickets';
-import { NavBar } from './components/NavBar';
-import { MaintenancesPlan } from './screens/MaintenancesPlan';
-import { Informations } from './screens/Informations';
-import { SyndicArea } from './screens/SyndicArea';
-import { Home } from './screens/Home';
-import { Annexes } from './screens/Annexes';
-import { Settings } from './screens/Settings';
-import { ChooseSyndic } from './screens/ChooseSyndic';
-import { Videos } from './screens/Videos';
-import { Checklists } from './screens/Checklists';
-// import { PublicTickets } from './screens/PublicTickets';
-import { ResponsibleRequireAuth } from './contexts/ResponsibleAuth/ResponsibleRequireAuth';
-import { ResidentRequireAuth } from './contexts/ResidentAuth/ResidentRequireAuth';
-import { SupplierDetails } from './screens/Suppliers/Details';
-import { SuppliersList } from './screens/Suppliers/List';
-import { GuestMaintenanceHistory } from './screens/GuestMaintenanceHistory';
+import { NavBar } from '@components/NavBar';
+import { MaintenancesPlan } from '@screens/MaintenancesPlan';
+import { Informations } from '@screens/Informations';
+import { SyndicArea } from '@screens/SyndicArea';
+import { Home } from '@screens/Home';
+import { Annexes } from '@screens/Annexes';
+import { Settings } from '@screens/Settings';
+import { ChooseSyndic } from '@screens/ChooseSyndic';
+import { Videos } from '@screens/Videos';
+import { Checklists } from '@screens/Checklists';
+import { ResponsibleRequireAuth } from '@contexts/ResponsibleAuth/ResponsibleRequireAuth';
+import { ResidentRequireAuth } from '@contexts/ResidentAuth/ResidentRequireAuth';
+import { SupplierDetails } from '@screens/Suppliers/Details';
+import { SuppliersList } from '@screens/Suppliers/List';
+import { GuestMaintenanceHistory } from '@screens/GuestMaintenanceHistory';
+import { GuestTicket } from '@screens/GuestTicket';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -35,6 +35,15 @@ const AppRoutes = () => (
         element={
           <NavBar>
             <GuestMaintenanceHistory />
+          </NavBar>
+        }
+      />
+
+      <Route
+        path="/guest-ticket/:ticketId"
+        element={
+          <NavBar>
+            <GuestTicket />
           </NavBar>
         }
       />

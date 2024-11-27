@@ -72,6 +72,8 @@ import activityComment from './activityComment.svg';
 import upload from './upload.svg';
 import smallPaper from './smallPaper.svg';
 import activityNotification from './activityNotification.svg';
+import qrCode from './qrCode.svg';
+import qrCodeChecked from './qrCodeChecked.svg';
 
 export const icon = {
   activityNotification,
@@ -148,4 +150,6 @@ export const icon = {
   siren,
   eyeGray,
   smallPaper,
+  qrCode,
+  qrCodeChecked,
 };

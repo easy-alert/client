@@ -83,6 +83,7 @@ export const LinkSupplierToMaintenanceHistory = ({
     <>
       {/* PRA SCROLLAR A TELA PRA CIMA QUANDO ABRIR A MODAL, PORQUE SE NAO APARECE FORA DA TELA */}
       <div ref={ref} style={{ position: 'absolute', top: '-10000px' }} />
+
       {modalLinkSupplierOpen && (
         <ModalLinkSupplier
           setModal={setModalLinkSupplierOpen}
@@ -126,6 +127,7 @@ export const LinkSupplierToMaintenanceHistory = ({
         {suppliers.length === 0 && (
           <Style.Header>
             <h3>Fornecedor</h3>
+
             {syndicNanoId && (
               <IconButton
                 hideLabelOnMedia
