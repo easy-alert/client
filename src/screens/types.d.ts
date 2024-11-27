@@ -12,6 +12,14 @@ export interface MaintenanceReport {
   ReportImages: AnnexesAndImages[];
 }
 
+export interface MaintenanceReportProgress {
+  id: string;
+  cost: number;
+  observation: string;
+  ReportAnnexesProgress: AnnexesAndImages[];
+  ReportImagesProgress: AnnexesAndImages[];
+}
+
 export interface MaintenancesStatus {
   name: 'expired' | 'pending' | 'completed' | 'overdue';
 }
@@ -52,6 +60,7 @@ export interface IMaintenance {
   resolutionDate: string;
   notificationDate: string;
   MaintenanceReport: MaintenanceReport[];
+  MaintenanceReportProgress: MaintenanceReportProgress[];
   MaintenancesStatus: MaintenancesStatus;
   Building: Building;
   Maintenance: Maintenance;
