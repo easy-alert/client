@@ -1,3 +1,5 @@
+import type { ITicketStatus } from '@customTypes/ITicket';
+
 export interface DateInfos {
   dayNumber: number;
   name: string;
@@ -9,12 +11,15 @@ export interface Date {
   element: string;
   activity: string;
   status: 'expired' | 'pending' | 'completed' | 'overdue' | string;
+  statusLabel?: string;
+  statusColor?: string;
+  statusBgColor?: string;
   dateInfos: DateInfos;
   isFuture: boolean;
   id: string;
   expectedNotificationDate: string;
   expectedDueDate: string;
-  type: 'occasional' | null;
+  type: string;
   inProgress: boolean;
 }
 
@@ -41,7 +46,7 @@ export interface IFilterOptions {
     label: string;
   }[];
   status: {
-    name: 'expired' | 'pending' | 'completed' | 'overdue' | string;
+    name: 'expired' | 'pending' | 'completed' | 'overdue' | ITicketStatus | string;
     label: string;
   }[];
   years: string[];
