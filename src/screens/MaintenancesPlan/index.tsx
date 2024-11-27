@@ -1,24 +1,42 @@
-/* eslint-disable react/no-array-index-key */
-// LIBS
+// REACT
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+
+// LIBS
+import { useParams, useSearchParams } from 'react-router-dom';
 import { usePrevious } from 'react-use';
-import { icon } from '../../assets/icons';
+
+// HOOKS
+import { useTicketStatus } from '@hooks/useTicketStatus';
 
 // COMPONENTS
-import { Button } from '../../components/Buttons/Button';
-import { IconButton } from '../../components/Buttons/IconButton';
-import { EventTag } from '../../components/EventTag';
-import { Select } from '../../components/Inputs/Select';
-import { DotSpinLoading } from '../../components/Loadings/DotSpinLoading';
+import { Button } from '@components/Buttons/Button';
+import { IconButton } from '@components/Buttons/IconButton';
+import { EventTag } from '@components/EventTag';
+import { Select } from '@components/Inputs/Select';
+import { DotSpinLoading } from '@components/Loadings/DotSpinLoading';
+import { InProgressTag } from '@components/InProgressTag';
+import ModalTicketDetails from '@screens/Tickets/ModalTicketDetails';
+
+// GLOBAL UTILS
+import { capitalizeFirstLetter } from '@utils/functions';
+
+// GLOBAL STYLES
+import { theme } from '@styles/theme';
+
+// GLOBAL ASSETS
+import { icon } from '@assets/icons';
+
+// COMPONENTS
 import { ModalMaintenanceDetails } from './ModalMaintenanceDetails';
+
+// UTILS
+import { requestMaintenancesPlan } from './functions';
 
 // STYLES
 import * as Style from './styles';
-import { theme } from '../../styles/theme';
 
 // TYPES
-import {
+import type {
   IBuilding,
   IFilter,
   IFilterOptions,
@@ -27,12 +45,13 @@ import {
 } from './types';
 
 // FUNCTIONS
-import { requestMaintenancesPlan } from './functions';
-import { capitalizeFirstLetter } from '../../utils/functions';
-import { InProgressTag } from '../../components/InProgressTag';
 
 export const MaintenancesPlan = () => {
+  const { ticketStatus } = useTicketStatus({ statusName: 'all' });
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
+
+  const [search] = useSearchParams();
+  const syndicNanoId = search.get('syndicNanoId') ?? '';
 
   const [maintenancesPlan, setMaintenancesPlan] = useState<IMaintenancesPlan[]>([]);
 
@@ -41,6 +60,8 @@ export const MaintenancesPlan = () => {
   const [showFilter, setShowFilter] = useState<boolean>(false);
 
   const [building, setBuilding] = useState<IBuilding>({ Banners: [], name: '' });
+
+  const [ticketDetailsModal, setTicketDetailsModal] = useState<boolean>(false);
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -100,6 +121,10 @@ export const MaintenancesPlan = () => {
     setFilteredMaintenancesPlan(filteredStatus.length ? filteredStatus : filtered);
   };
 
+  const handleTicketDetailsModal = (modalState: boolean) => {
+    setTicketDetailsModal(modalState);
+  };
+
   useEffect(() => {
     requestMaintenancesPlan({
       buildingNanoId,
@@ -116,6 +141,20 @@ export const MaintenancesPlan = () => {
     });
   }, []);
 
+  useEffect(() => {
+    if (maintenancesPlan.find((month) => month.dates.find((date) => date.type === 'ticket'))) {
+      setFilterOptions((prevState) => {
+        const newState = { ...prevState };
+        const formattedTicketStatus = ticketStatus.map((status) => ({
+          name: status.name,
+          label: status.label || '',
+        }));
+        newState.status = [...formattedTicketStatus, ...prevState.status];
+        return newState;
+      });
+    }
+  }, [maintenancesPlan]);
+
   return loading ? (
     <DotSpinLoading />
   ) : (
@@ -126,8 +165,18 @@ export const MaintenancesPlan = () => {
           modalAdditionalInformations={modalAdditionalInformations}
         />
       )}
+
+      {ticketDetailsModal && (
+        <ModalTicketDetails
+          ticketId={modalAdditionalInformations.id}
+          syndicNanoId={syndicNanoId}
+          handleTicketDetailsModal={handleTicketDetailsModal}
+        />
+      )}
+
       <Style.Container>
         <h2>{building.name}</h2>
+
         {building.Banners.map(
           (banner) =>
             banner.type === 'Web' && (
@@ -160,10 +209,12 @@ export const MaintenancesPlan = () => {
               />
             ),
         )}
+
         <Style.Card>
           <Style.CardHeader>
             <Style.Header>
               <h4>Plano de manutenção</h4>
+
               <IconButton
                 icon={icon.filter}
                 size="16px"
@@ -174,6 +225,7 @@ export const MaintenancesPlan = () => {
                 }}
               />
             </Style.Header>
+
             {showFilter && (
               <Style.FilterWrapper>
                 <Select
@@ -195,6 +247,7 @@ export const MaintenancesPlan = () => {
                     </option>
                   ))}
                 </Select>
+
                 <Select
                   disabled={onQuery}
                   selectPlaceholderValue={' '}
@@ -215,6 +268,7 @@ export const MaintenancesPlan = () => {
                     </option>
                   ))}
                 </Select>
+
                 <Select
                   disabled={onQuery}
                   selectPlaceholderValue={' '}
@@ -230,11 +284,12 @@ export const MaintenancesPlan = () => {
                 >
                   <option value="">Todos</option>
                   {filterOptions.status.map((option) => (
-                    <option key={option.name} value={option.name}>
+                    <option key={String(option.name)} value={String(option.name)}>
                       {capitalizeFirstLetter(option.label)}
                     </option>
                   ))}
                 </Select>
+
                 <Button
                   type="button"
                   label="Filtrar"
@@ -265,6 +320,7 @@ export const MaintenancesPlan = () => {
               </Style.FilterWrapper>
             )}
           </Style.CardHeader>
+
           <Style.CalendarWrapper>
             {onQuery && (
               <Style.LoadingContainer>
@@ -277,34 +333,51 @@ export const MaintenancesPlan = () => {
               filteredMaintenancesPlan.map((month) => (
                 <Style.MonthSection key={month.name}>
                   <h5>{month.name}</h5>
+
                   {month.dates.length > 0 ? (
-                    month.dates.map((maintenance, i: number) => (
+                    month.dates.map((maintenance) => (
                       <Style.DayWrapper
-                        key={maintenance.activity + i}
+                        key={maintenance.id + maintenance.dateInfos.dayNumber}
                         onClick={() => {
-                          setModalAdditionalInformations({
-                            id: maintenance.id,
-                            expectedNotificationDate: maintenance.expectedNotificationDate ?? null,
-                            isFuture: maintenance.isFuture,
-                            expectedDueDate: maintenance.expectedDueDate ?? null,
-                          });
-                          setModalMaintenanceDetailsOpen(true);
+                          if (maintenance.type === 'ticket') {
+                            setModalAdditionalInformations({
+                              id: maintenance.id,
+                              expectedNotificationDate: '',
+                              isFuture: false,
+                              expectedDueDate: '',
+                            });
+
+                            setTicketDetailsModal(true);
+                          } else {
+                            setModalAdditionalInformations({
+                              id: maintenance.id,
+                              expectedNotificationDate:
+                                maintenance.expectedNotificationDate ?? null,
+                              isFuture: maintenance.isFuture,
+                              expectedDueDate: maintenance.expectedDueDate ?? null,
+                            });
+                            setModalMaintenanceDetailsOpen(true);
+                          }
                         }}
                       >
                         <Style.DayInfo>
                           <p className="p3">{maintenance.dateInfos.dayNumber}</p>
                           <p className="p3">{maintenance.dateInfos.smName}</p>
                         </Style.DayInfo>
-                        <Style.Maintenance status={maintenance.status}>
+                        <Style.Maintenance
+                          status={maintenance.status}
+                          bgColor={maintenance?.statusBgColor}
+                        >
                           <Style.MaintenanceTags>
                             {maintenance.status === 'overdue' && <EventTag status="completed" />}
-                            <EventTag status={maintenance.status as any} />
 
-                            {maintenance.type === 'occasional' ? (
-                              <EventTag status="occasional" />
-                            ) : (
-                              <EventTag status="common" />
-                            )}
+                            <EventTag
+                              status={maintenance.statusLabel || maintenance.status}
+                              color={maintenance?.statusColor}
+                              bgColor={maintenance?.statusBgColor}
+                            />
+
+                            <EventTag status={maintenance.type} />
 
                             {(maintenance.status === 'expired' ||
                               maintenance.status === 'pending') &&
@@ -313,6 +386,7 @@ export const MaintenancesPlan = () => {
                           </Style.MaintenanceTags>
 
                           <h6>{maintenance.element}</h6>
+
                           <p className="p2">{maintenance.activity}</p>
                         </Style.Maintenance>
                       </Style.DayWrapper>

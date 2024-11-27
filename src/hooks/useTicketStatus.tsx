@@ -4,12 +4,7 @@ import { Api } from '@services/api';
 
 import { handleToastify } from '@utils/toastifyResponses';
 
-interface ITicketStatus {
-  name: string;
-  label: string;
-  color: string;
-  backgroundColor: string;
-}
+import type { ITicketStatus } from '@customTypes/ITicket';
 
 export const useTicketStatus = ({ statusName }: { statusName: string }) => {
   const [ticketStatus, setTicketStatus] = useState<ITicketStatus[]>([]);

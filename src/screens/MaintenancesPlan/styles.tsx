@@ -137,6 +137,7 @@ export const DayInfo = styled.div<{ width?: string }>`
 
 export const Maintenance = styled.div<{
   status: 'expired' | 'pending' | 'completed' | 'overdue' | string;
+  bgColor?: string;
 }>`
   min-height: 62px;
   width: 100%;
@@ -144,6 +145,9 @@ export const Maintenance = styled.div<{
   flex-direction: column;
   border-radius: ${theme.size.xxsm};
   padding: ${theme.size.sm} ${theme.size.sm} ${theme.size.sm} ${theme.size.md};
+
+  background: ${({ bgColor }) =>
+    `linear-gradient(90deg, ${bgColor} 0%, ${bgColor} 7px, rgba(250, 250, 250, 1) 7px, rgba(250, 250, 250, 1) 100%)`};
 
   ${({ status }) =>
     (status === 'completed' || status === 'overdue') &&

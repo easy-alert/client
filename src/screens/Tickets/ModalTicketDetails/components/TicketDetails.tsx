@@ -3,6 +3,8 @@ import { EventTag } from '@components/EventTag';
 import { TicketHistoryActivities } from '@components/TicketHistoryActivities';
 import { ImagePreview } from '@components/ImagePreview';
 import { Button } from '@components/Buttons/Button';
+import { TicketShareButton } from '@components/TicketShareButton';
+import { TicketShowResidentButton } from '@components/TicketShowResidentButton';
 
 // GLOBAL THEMES
 import { theme } from '@styles/theme';
@@ -14,14 +16,11 @@ import { formatDateString } from '@utils/dateFunctions';
 import type { ITicket } from '@customTypes/ITicket';
 
 // STYLES
-import { TicketShareButton } from '@components/TicketShareButton';
 import * as Style from '../styles';
 
 interface ITicketDetails {
   ticket: ITicket;
   syndicNanoId?: string;
-  type?: 'guest' | 'syndic';
-  showButtons?: boolean;
   handleUpdateOneTicket: (updatedTicket: ITicket) => void;
   handleSetView: (viewState: 'details' | 'dismiss') => void;
 }
@@ -29,12 +28,10 @@ interface ITicketDetails {
 function TicketDetails({
   ticket,
   syndicNanoId,
-  type = 'syndic',
-  showButtons = true,
   handleUpdateOneTicket,
   handleSetView,
 }: ITicketDetails) {
-  const disableComment = ticket?.statusName !== 'awaitingToFinish' || type === 'guest';
+  const disableComment = ticket?.statusName !== 'awaitingToFinish' || !syndicNanoId;
 
   const ticketDetailsRows = {
     leftColumn: [
@@ -91,9 +88,20 @@ function TicketDetails({
     { label: 'Observação', value: ticket?.dismissObservation },
   ];
 
+  const handleToggleShowToResident = () => {
+    handleUpdateOneTicket({ id: ticket.id, showToResident: !ticket.showToResident });
+  };
+
   return (
     <Style.TicketDetailsContainer>
-      {type === 'syndic' && <TicketShareButton ticketId={ticket.id} />}
+      {syndicNanoId && <TicketShareButton ticketId={ticket.id} />}
+
+      {syndicNanoId && (
+        <TicketShowResidentButton
+          showToResident={ticket.showToResident}
+          handleToggleShowToResident={handleToggleShowToResident}
+        />
+      )}
 
       <Style.TicketDetailsColumnContainer>
         <Style.TicketDetailsLeftColumn>
@@ -120,15 +128,18 @@ function TicketDetails({
               return (
                 <Style.TicketDetailsColumnContent key={label}>
                   <Style.TicketDetailsRowLabel>{label}</Style.TicketDetailsRowLabel>
-                  {Array.isArray(types) &&
-                    types.map(({ type: ticketType }) => (
-                      <EventTag
-                        key={ticketType.id}
-                        label={ticketType.label}
-                        color={ticketType.color}
-                        bgColor={ticketType.backgroundColor}
-                      />
-                    ))}
+
+                  <Style.TicketDetailsTypesContainer>
+                    {Array.isArray(types) &&
+                      types.map(({ type: ticketType }) => (
+                        <EventTag
+                          key={ticketType.id}
+                          label={ticketType.label}
+                          color={ticketType.color}
+                          bgColor={ticketType.backgroundColor}
+                        />
+                      ))}
+                  </Style.TicketDetailsTypesContainer>
                 </Style.TicketDetailsColumnContent>
               );
             }
@@ -181,60 +192,68 @@ function TicketDetails({
         </Style.TicketDetailsColumnContent>
       )}
 
-      {showButtons && (
-        <Style.ButtonsContainer>
-          {ticket.statusName === 'open' && (
-            <Button
-              label="Executar"
-              bgColor={theme.background.awaitingToFinish}
-              onClick={() =>
-                handleUpdateOneTicket({
-                  id: ticket.id,
-                  statusName: 'awaitingToFinish',
-                  dismissedById: syndicNanoId,
-                })
-              }
-            />
-          )}
-
-          {ticket.statusName === 'awaitingToFinish' && (
-            <>
+      <Style.ButtonsContainer>
+        {syndicNanoId ? (
+          <>
+            {ticket.statusName === 'open' && (
               <Button
-                label="Voltar para Aberto"
-                bgColor="white"
-                textColor={theme.color.actionBlue}
+                label="Executar"
+                bgColor={theme.background.awaitingToFinish}
                 onClick={() =>
                   handleUpdateOneTicket({
                     id: ticket.id,
-                    statusName: 'open',
+                    statusName: 'awaitingToFinish',
                     dismissedById: syndicNanoId,
                   })
                 }
               />
+            )}
 
+            {ticket.statusName === 'awaitingToFinish' && (
+              <>
+                <Button
+                  label="Voltar para Aberto"
+                  bgColor="white"
+                  textColor={theme.color.actionBlue}
+                  onClick={() =>
+                    handleUpdateOneTicket({
+                      id: ticket.id,
+                      statusName: 'open',
+                      dismissedById: syndicNanoId,
+                    })
+                  }
+                />
+
+                <Button
+                  label="Finalizar"
+                  bgColor={theme.background.finished}
+                  onClick={() =>
+                    handleUpdateOneTicket({
+                      id: ticket.id,
+                      statusName: 'finished',
+                      dismissedById: syndicNanoId,
+                    })
+                  }
+                />
+              </>
+            )}
+
+            {(ticket.statusName === 'open' || ticket.statusName === 'awaitingToFinish') && (
               <Button
-                label="Finalizar"
-                bgColor={theme.background.finished}
-                onClick={() =>
-                  handleUpdateOneTicket({
-                    id: ticket.id,
-                    statusName: 'finished',
-                    dismissedById: syndicNanoId,
-                  })
-                }
+                label="Reprovar"
+                bgColor={theme.background.dismissed}
+                onClick={() => handleSetView('dismiss')}
               />
-            </>
-          )}
-
-          {(ticket.statusName === 'open' || ticket.statusName === 'awaitingToFinish') && (
-            <Button
-              label="Reprovar"
-              bgColor={theme.background.dismissed}
-              onClick={() => handleSetView('dismiss')}
-            />
-          )}
-        </Style.ButtonsContainer>
-      )}
+            )}
+          </>
+        ) : (
+          <Button
+            label="Fechar"
+            bgColor={theme.color.primary}
+            // onClick={() =>              }
+          />
+        )}
+      </Style.ButtonsContainer>
     </Style.TicketDetailsContainer>
   );
 }

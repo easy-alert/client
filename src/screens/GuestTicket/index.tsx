@@ -9,8 +9,6 @@ export const GuestTicket = () => {
     <ModalTicketDetails
       ticketId={ticketId}
       syndicNanoId=""
-      type="guest"
-      showButtons={false}
       handleTicketDetailsModal={() => ''}
       handleRefresh={() => ''}
     />
