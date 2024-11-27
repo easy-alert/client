@@ -143,7 +143,7 @@ export const KanbanTicketWrapper = styled.div`
 export const KanbanTicketInfo = styled.div<{
   statusBgColor?: string;
 }>`
-  padding: ${theme.size.sm} ${theme.size.sm} ${theme.size.sm} 23px;
+  padding: ${theme.size.sm} ${theme.size.xsm} ${theme.size.sm} 23px;
   background-color: ${theme.color.gray0};
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.08);
 
@@ -199,19 +199,17 @@ export const KanbanTicketNewTag = styled.span`
 
 export const KanbanTicketGrid = styled.div`
   display: grid;
-  grid-template-columns: auto auto;
-  grid-row: auto auto;
+  grid-template-columns: repeat(2, 1fr);
+  grid-row: repeat(2, 1fr);
   grid-column-gap: 10px;
   grid-row-gap: 10px;
 `;
 
 export const KanbanTicketGridBox = styled.div`
-  font-size: 40px;
-  font-family: sans-serif;
-  border-radius: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  border-radius: 10px;
 `;
 
 export const KanbanTicketTitle = styled.h6`
@@ -226,6 +224,13 @@ export const KanbanTicketDescription = styled.p`
   font-weight: 700;
   line-height: 16px;
   color: ${theme.color.black};
+`;
+
+export const KanbanTicketTypesContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: ${theme.size.xxsm};
 `;
 
 export const FilterWrapper = styled.div`

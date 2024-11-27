@@ -571,14 +571,16 @@ function TicketsPage() {
                         <Style.KanbanTicketGridBox>
                           <Style.KanbanTicketTitle>Tipo de manutenção</Style.KanbanTicketTitle>
 
-                          {ticket.types?.map((type) => (
-                            <EventTag
-                              key={type.type.id}
-                              label={type.type.label}
-                              color={type.type.color}
-                              bgColor={type.type.backgroundColor}
-                            />
-                          ))}
+                          <Style.KanbanTicketTypesContainer>
+                            {ticket.types?.map((type) => (
+                              <EventTag
+                                key={type.type.id}
+                                label={type.type.label}
+                                color={type.type.color}
+                                bgColor={type.type.backgroundColor}
+                              />
+                            ))}
+                          </Style.KanbanTicketTypesContainer>
                         </Style.KanbanTicketGridBox>
 
                         <Style.KanbanTicketGridBox>
