@@ -12,6 +12,7 @@ import { ImagePreview } from '@components/ImagePreview';
 import { InProgressTag } from '@components/InProgressTag';
 import { LinkSupplierToMaintenanceHistory } from '@components/LinkSupplierToMaintenanceHistory';
 import { MaintenanceHistoryActivities } from '@components/MaintenanceHistoryActivities';
+import { requestMaintenanceDetails } from '@screens/functions';
 
 // GLOBAL UTILS
 import { applyMask, dateFormatter } from '@utils/functions';
@@ -20,7 +21,6 @@ import { applyMask, dateFormatter } from '@utils/functions';
 import { icon } from '@assets/icons';
 
 // UTILS
-import { requestMaintenanceDetails } from '../../functions';
 
 // STYLES
 import * as Style from './styles';
@@ -255,11 +255,12 @@ export const ModalMaintenanceDetails = ({
 
             <Style.Row>
               <h6>Custo</h6>
+
               <p className="p2">
                 {
                   applyMask({
                     mask: 'BRL',
-                    value: String(maintenanceReport.cost),
+                    value: String(maintenanceReport?.cost),
                   }).value
                 }
               </p>
@@ -269,7 +270,7 @@ export const ModalMaintenanceDetails = ({
               <h6>Anexos</h6>
 
               <Style.FileAndImageRow>
-                {maintenanceReport.ReportAnnexes.length > 0 ? (
+                {maintenanceReport.ReportAnnexes?.length > 0 ? (
                   maintenanceReport.ReportAnnexes.map((annex) => (
                     <Style.Tag key={annex.originalName}>
                       <a
@@ -294,7 +295,7 @@ export const ModalMaintenanceDetails = ({
               <h6>Imagens</h6>
 
               <Style.FileAndImageRow>
-                {maintenanceReport.ReportImages.length > 0 ? (
+                {maintenanceReport.ReportImages?.length > 0 ? (
                   maintenanceReport.ReportImages.map((image) => (
                     <ImagePreview
                       key={image.originalName}
