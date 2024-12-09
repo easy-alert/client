@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 // LIBS
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Form, Formik } from 'formik';
 
 // HOOKS
@@ -12,6 +12,7 @@ import { useTicketStatus } from '@hooks/useTicketStatus';
 
 // SERVICES
 import { getTicketsByBuildingNanoId } from '@services/apis/getTicketsByBuildingNanoId';
+import { getBuildingsBySyndicId } from '@services/apis/getBuildingsBySyndicId';
 import { putTicketById } from '@services/apis/putTicketById';
 
 // GLOBAL COMPONENTS
@@ -57,7 +58,18 @@ export interface ITicketFilter {
   seen: string;
 }
 
+interface IBuildingsBySyndic {
+  buildingName: string;
+  syndicNanoId: string;
+  syndicName: string;
+  buildingNanoId: string;
+  companyName: string;
+  label: string;
+}
+
 function TicketsPage() {
+  const navigate = useNavigate();
+
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
   const [search] = useSearchParams();
   const syndicNanoId = search.get('syndicNanoId') ?? '';
@@ -70,6 +82,7 @@ function TicketsPage() {
   const [kanbanTickets, setKanbanTickets] = useState<IKanbanTicket[]>([]);
   const [buildingName, setBuildingName] = useState<string>('');
   const [selectedTicketId, setSelectedTicketId] = useState<string>('');
+  const [buildingsBySyndic, setBuildingsBySyndic] = useState<IBuildingsBySyndic[]>([]);
 
   const [showFilter, setShowFilter] = useState<boolean>(false);
   const [filter, setFilter] = useState<ITicketFilter>({
@@ -206,6 +219,16 @@ function TicketsPage() {
     }
   };
 
+  const handleGetBuildingsBySyndicId = async () => {
+    try {
+      const responseData = await getBuildingsBySyndicId(syndicNanoId);
+
+      setBuildingsBySyndic(responseData.buildings);
+    } catch (error: any) {
+      handleToastify(error);
+    }
+  };
+
   const handleUpdateOneTicket = async (updatedTicket: ITicket) => {
     try {
       await putTicketById(updatedTicket);
@@ -227,7 +250,8 @@ function TicketsPage() {
 
   useEffect(() => {
     handleGetTickets();
-  }, [refresh]);
+    handleGetBuildingsBySyndicId();
+  }, [buildingNanoId, syndicNanoId, refresh]);
 
   return (
     <>
@@ -252,8 +276,43 @@ function TicketsPage() {
       <Style.Container>
         <Style.Header>
           <Style.HeaderWrapper>
-            <h2>Chamados{buildingName ? ` / ${buildingName}` : ''}</h2>
+            {buildingsBySyndic.length > 1 ? (
+              <Select
+                className="select"
+                selectPlaceholderValue=" "
+                value={
+                  buildingsBySyndic.find(
+                    (e) => e.buildingNanoId === buildingNanoId && e.syndicNanoId === syndicNanoId,
+                  )?.syndicNanoId || ''
+                }
+                onChange={(evt) => {
+                  const foundData = buildingsBySyndic.find(
+                    (data) => data.syndicNanoId === evt.target.value,
+                  );
+                  setFilter((prev) => ({ ...prev, categoryId: '' }));
 
+                  if (foundData) {
+                    navigate(
+                      `/tickets/${foundData.buildingNanoId}?syndicNanoId=${foundData.syndicNanoId}`,
+                    );
+                    // Gambiarra pra forçar a buscar se precisa de senha
+                    window.location.reload();
+                  }
+                }}
+              >
+                <option value="" disabled hidden>
+                  Selecione uma edificação
+                </option>
+
+                {buildingsBySyndic.map((opt) => (
+                  <option key={opt.syndicNanoId} value={opt.syndicNanoId}>
+                    {opt.label}
+                  </option>
+                ))}
+              </Select>
+            ) : (
+              <h2>{buildingName}</h2>
+            )}
             <Style.HeaderSide>
               <IconButton
                 icon={icon.filter}

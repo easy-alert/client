@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 // SERVICES
-import { Api } from '@services/api';
+import { getBuildingsBySyndicId } from '@services/apis/getBuildingsBySyndicId';
 
 // GLOBAL COMPONENTS
 import { Button } from '@components/Buttons/Button';
@@ -29,7 +29,6 @@ import { theme } from '@styles/theme';
 // COMPONENTS
 import { ModalMaintenanceDetails } from '../MaintenancesPlan/ModalMaintenanceDetails';
 import { ModalSendMaintenanceReport } from './ModalSendMaintenanceReport';
-// import { ModalCreateOccasionalMaintenance } from './ModalCreateOccasionalMaintenance';
 
 // UTILS
 import { requestSyndicKanban } from './functions';
@@ -129,18 +128,18 @@ export const SyndicArea = () => {
     setShowPriority(response.showPriority);
   };
 
-  const getBuildingsBySyndic = async () => {
-    await Api.get(`/find-buildings-by-syndic-nano-id/${syndicNanoId}`)
-      .then((res) => {
-        setBuildingsBySyndic(res.data.buildings);
-      })
-      .catch((err) => {
-        catchHandler(err);
-      });
+  const handleGetBuildingsBySyndicId = async () => {
+    try {
+      const responseData = await getBuildingsBySyndicId(syndicNanoId);
+
+      setBuildingsBySyndic(responseData.buildings);
+    } catch (error) {
+      catchHandler(error);
+    }
   };
 
   useEffect(() => {
-    getBuildingsBySyndic();
+    handleGetBuildingsBySyndicId();
     handleGetSyndicKanban();
   }, [syndicNanoId]);
 
