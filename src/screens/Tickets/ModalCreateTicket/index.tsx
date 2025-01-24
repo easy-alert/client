@@ -1,13 +1,14 @@
 // REACT
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 // COMPONENTS
 import * as yup from 'yup';
-import { toast } from 'react-toastify';
 import { Formik, Form } from 'formik';
 
 // SERVICES
 import { Api } from '@services/api';
+import { getBuildingsApartmentsById } from '@services/apis/getBuildingsApartmentsById';
 
 // GLOBAL COMPONENTS
 import { Modal } from '@components/Modal';
@@ -23,7 +24,13 @@ import { ReactSelectComponent } from '@components/ReactSelectComponent';
 import { ListTag } from '@components/ListTag';
 
 // GLOBAL UTILS
-import { catchHandler, isImage, uploadManyFiles } from '../../../utils/functions';
+import { handleToastify } from '@utils/toastifyResponses';
+
+// GLOBAL TYPES
+import { IBuildingApartment } from '@customTypes/IBuildingApartments';
+
+// GLOBAL UTILS
+import { catchHandler, isImage, uploadManyFiles } from '@utils/functions';
 
 // STYLES
 import * as Style from './styles';
@@ -69,6 +76,7 @@ export const ModalCreateTicket = ({
   handleCreateTicketModal,
   handleRefresh,
 }: IModalCreateTicket) => {
+  const [buildingsApartments, setBuildingsApartments] = useState<IBuildingApartment[]>([]);
   const [places, setPlaces] = useState<IAuxiliaryData[]>([]);
   const [types, setTypes] = useState<IAuxiliaryData[]>([]);
 
@@ -86,6 +94,16 @@ export const ModalCreateTicket = ({
       .catch((err) => {
         catchHandler(err);
       });
+  };
+
+  const handleGetBuildingsApartmentsById = async (buildingId: string) => {
+    try {
+      const responseData = await getBuildingsApartmentsById({ buildingId });
+
+      setBuildingsApartments(responseData.buildingApartments);
+    } catch (error: any) {
+      handleToastify(error.response);
+    }
   };
 
   const submitForm = async (values: TSchema) => {
@@ -114,6 +132,7 @@ export const ModalCreateTicket = ({
 
   useEffect(() => {
     getAuxiliaryData();
+    handleGetBuildingsApartmentsById(buildingNanoId);
   }, []);
 
   return (
@@ -148,12 +167,32 @@ export const ModalCreateTicket = ({
                 error={touched.residentName && (errors.residentName || null)}
               />
 
-              <FormikInput
-                name="residentApartment"
-                label="Apartamento do morador *"
-                placeholder="Ex: Informe o apartamento"
-                error={touched.residentName && (errors.residentName || null)}
-              />
+              {buildingsApartments.length > 0 ? (
+                <FormikSelect
+                  name="residentApartment"
+                  label="Apartamento do morador *"
+                  selectPlaceholderValue={values.residentApartment}
+                  error={touched.residentApartment && (errors.residentApartment || null)}
+                >
+                  <option value="" disabled hidden>
+                    Selecione
+                  </option>
+
+                  {buildingsApartments.map(({ id, number }) => (
+                    <option value={number} key={id}>
+                      {number}
+                    </option>
+                  ))}
+                </FormikSelect>
+              ) : (
+                <FormikInput
+                  name="residentApartment"
+                  label="Apartamento do morador *"
+                  placeholder="Ex: Informe o apartamento"
+                  disabled={!values.buildingNanoId}
+                  error={touched.residentName && (errors.residentName || null)}
+                />
+              )}
 
               <FormikInput
                 name="residentEmail"
