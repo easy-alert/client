@@ -67,6 +67,7 @@ export interface IMaintenance {
   canReport: boolean;
   inProgress: boolean;
   daysInAdvance: number;
+  additionalInfo?: string;
 }
 
 export interface IRequestMaintenanceDetails {
