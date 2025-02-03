@@ -30,7 +30,7 @@ import { handleToastify } from '@utils/toastifyResponses';
 import { IBuildingApartment } from '@customTypes/IBuildingApartments';
 
 // GLOBAL UTILS
-import { catchHandler, isImage, uploadManyFiles } from '@utils/functions';
+import { applyMask, catchHandler, isImage, uploadManyFiles } from '@utils/functions';
 
 // STYLES
 import * as Style from './styles';
@@ -144,6 +144,7 @@ export const ModalCreateTicket = ({
             residentName: '',
             residentApartment: '',
             residentEmail: '',
+            residentCPF: '',
             description: '',
             placeId: '',
             types: [],
@@ -165,6 +166,22 @@ export const ModalCreateTicket = ({
                 label="Nome do morador *"
                 placeholder="Ex: Informe o nome"
                 error={touched.residentName && (errors.residentName || null)}
+              />
+
+              <FormikInput
+                label="CPF"
+                name="residentCPF"
+                placeholder="Ex: 000.000.000-00"
+                value={applyMask({ mask: 'CPF', value: values.residentCPF }).value}
+                error={touched.residentCPF && (errors.residentCPF || null)}
+                disabled={!values.buildingNanoId}
+                maxLength={
+                  applyMask({
+                    mask: 'CPF',
+                    value: values.residentCPF,
+                  }).length || 1
+                }
+                onChange={(e) => setFieldValue('residentCPF', e.target.value)}
               />
 
               {buildingsApartments.length > 0 ? (
