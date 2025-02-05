@@ -38,6 +38,7 @@ import { icon } from '@assets/icons';
 import type { ITicket } from '@customTypes/ITicket';
 
 // COMPONENTS
+import { useTicketApartments } from '@hooks/useTicketApartments';
 import ModalTicketDetails from './ModalTicketDetails';
 import { ModalCreateTicket } from './ModalCreateTicket';
 
@@ -53,6 +54,7 @@ export interface ITicketFilter {
   status: string[];
   places: string[];
   serviceTypes: string[];
+  apartments: string[];
   startDate: string;
   endDate: string;
   seen: string;
@@ -75,6 +77,7 @@ function TicketsPage() {
   const syndicNanoId = search.get('syndicNanoId') ?? '';
 
   const { serviceTypes } = useServiceTypes({ buildingNanoId });
+  const { ticketApartments } = useTicketApartments({ buildingNanoId });
   const { ticketPlaces } = useTicketPlaces({ placeId: 'all' });
   const { ticketStatus } = useTicketStatus({ statusName: 'all' });
 
@@ -89,6 +92,7 @@ function TicketsPage() {
     status: [],
     places: [],
     serviceTypes: [],
+    apartments: [],
     startDate: '',
     endDate: '',
     seen: '',
@@ -110,6 +114,7 @@ function TicketsPage() {
       status: [],
       places: [],
       serviceTypes: [],
+      apartments: [],
       startDate: '',
       endDate: '',
       seen: '',
@@ -445,6 +450,39 @@ function TicketsPage() {
                       ))}
                     </Select>
 
+                    {ticketApartments.length > 0 && (
+                      <Select
+                        selectPlaceholderValue={filter.status.length > 0 ? ' ' : ''}
+                        label="Apto/Bloco"
+                        value=""
+                        onChange={(e) => {
+                          handleFilterChange('apartments', e.target.value);
+
+                          if (e.target.value === 'all') {
+                            setFilter((prevState) => ({ ...prevState, apartments: [] }));
+                          }
+                        }}
+                      >
+                        <option value="" disabled hidden>
+                          Selecione
+                        </option>
+
+                        <option value="all" disabled={filter.apartments.length === 0}>
+                          Todos
+                        </option>
+
+                        {ticketApartments.map((apartment) => (
+                          <option
+                            key={apartment.id}
+                            value={apartment.id}
+                            disabled={filter.apartments.some((a) => a === apartment.id)}
+                          >
+                            {apartment.number}
+                          </option>
+                        ))}
+                      </Select>
+                    )}
+
                     <FormikInput
                       label="Data inicial"
                       typeDatePlaceholderValue={values.startDate}
@@ -546,6 +584,29 @@ function TicketsPage() {
                               setFilter((prevState) => ({
                                 ...prevState,
                                 status: prevState.status?.filter((s) => s !== status),
+                              }));
+                            }}
+                          />
+                        ))
+                      )}
+
+                      {filter.apartments?.length === 0 ? (
+                        <ListTag
+                          padding="4px 12px"
+                          fontWeight={500}
+                          label="Todos os apartamentos"
+                        />
+                      ) : (
+                        filter.apartments?.map((apartment) => (
+                          <ListTag
+                            key={apartment}
+                            label={ticketApartments.find((a) => a.id === apartment)?.number || ''}
+                            padding="4px 12px"
+                            fontWeight={500}
+                            onClick={() => {
+                              setFilter((prevState) => ({
+                                ...prevState,
+                                apartments: prevState.apartments?.filter((a) => a !== apartment),
                               }));
                             }}
                           />
