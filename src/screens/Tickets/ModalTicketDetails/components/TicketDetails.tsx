@@ -197,7 +197,7 @@ function TicketDetails({
 
       <TicketHistoryActivities ticketId={ticket.id} disableComment={disableComment} />
 
-      {ticket.statusName !== 'open' && (
+      {ticket.statusName !== 'open' && syndicNanoId && (
         <Style.TicketFinalSolutionContainer>
           <Typography variant="h3" marginBottom="sm">
             Colaborador
