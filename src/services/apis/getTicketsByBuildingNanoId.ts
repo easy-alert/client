@@ -36,7 +36,7 @@ export const getTicketsByBuildingNanoId = async ({
   const params = {
     placesId: filter?.places?.length === 0 ? '' : filter?.places?.join(','),
     serviceTypesId: filter?.serviceTypes?.length === 0 ? '' : filter?.serviceTypes?.join(','),
-    apartmentsId: filter?.apartments?.length === 0 ? '' : filter?.apartments?.join(','),
+    apartmentsNames: filter?.apartments?.length === 0 ? '' : filter?.apartments?.join(','),
     status: filter?.status?.length === 0 ? '' : filter?.status?.join(','),
     startDate: filter?.startDate,
     endDate: filter?.endDate,
