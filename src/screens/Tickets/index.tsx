@@ -388,38 +388,37 @@ function TicketsPage() {
                       ))}
                     </Select>
 
-                    {ticketApartments.length > 0 && (
-                      <Select
-                        selectPlaceholderValue={filter.status.length > 0 ? ' ' : ''}
-                        label="Apto/Bloco"
-                        value=""
-                        onChange={(e) => {
-                          handleFilterChange('apartments', e.target.value);
+                    <Select
+                      selectPlaceholderValue={filter.apartments.length > 0 ? ' ' : ''}
+                      disabled={ticketApartments.length === 0}
+                      label="Apto/Bloco"
+                      value=""
+                      onChange={(e) => {
+                        handleFilterChange('apartments', e.target.value);
 
-                          if (e.target.value === 'all') {
-                            setFilter((prevState) => ({ ...prevState, apartments: [] }));
-                          }
-                        }}
-                      >
-                        <option value="" disabled hidden>
-                          Selecione
+                        if (e.target.value === 'all') {
+                          setFilter((prevState) => ({ ...prevState, apartments: [] }));
+                        }
+                      }}
+                    >
+                      <option value="" disabled hidden>
+                        Selecione
+                      </option>
+
+                      <option value="all" disabled={filter.apartments.length === 0}>
+                        Todos
+                      </option>
+
+                      {ticketApartments.map((apartment) => (
+                        <option
+                          key={apartment.number}
+                          value={apartment.number}
+                          disabled={filter.apartments.some((a) => a === apartment.number)}
+                        >
+                          {apartment.number}
                         </option>
-
-                        <option value="all" disabled={filter.apartments.length === 0}>
-                          Todos
-                        </option>
-
-                        {ticketApartments.map((apartment) => (
-                          <option
-                            key={apartment.number}
-                            value={apartment.number}
-                            disabled={filter.apartments.some((a) => a === apartment.number)}
-                          >
-                            {apartment.number}
-                          </option>
-                        ))}
-                      </Select>
-                    )}
+                      ))}
+                    </Select>
 
                     <Select
                       selectPlaceholderValue={filter.serviceTypes.length > 0 ? ' ' : ''}
