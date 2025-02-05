@@ -1,4 +1,4 @@
-image: node:19.0.1
+image: node:20.17.0
 
 stages:
   - staging_build
@@ -60,4 +60,3 @@ production_deploy:
     - aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths '/*'
   only:
     - master
-

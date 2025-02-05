@@ -74,6 +74,7 @@ import smallPaper from './smallPaper.svg';
 import activityNotification from './activityNotification.svg';
 import qrCode from './qrCode.svg';
 import qrCodeChecked from './qrCodeChecked.svg';
+import signing from './signing.svg';
 
 export const icon = {
   activityNotification,
@@ -152,4 +153,5 @@ export const icon = {
   smallPaper,
   qrCode,
   qrCodeChecked,
+  signing,
 };
