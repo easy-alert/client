@@ -39,9 +39,12 @@ export interface ITicketImage {
 
 export interface ITicket {
   id: string;
+
   residentName?: string;
   residentApartment?: string;
   residentEmail?: string;
+  residentCPF?: string;
+
   description?: string;
   placeId?: string;
   statusName?: ITicketStatusNames;
@@ -58,6 +61,9 @@ export interface ITicket {
   dismissObservation?: string;
   dismissedAt?: string;
   dismissedById?: string;
+
+  collaborator?: string;
+  signature?: string;
 
   createdAt?: string;
   updatedAt?: string;
