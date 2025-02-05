@@ -473,9 +473,9 @@ function TicketsPage() {
 
                         {ticketApartments.map((apartment) => (
                           <option
-                            key={apartment.id}
-                            value={apartment.id}
-                            disabled={filter.apartments.some((a) => a === apartment.id)}
+                            key={apartment.number}
+                            value={apartment.number}
+                            disabled={filter.apartments.some((a) => a === apartment.number)}
                           >
                             {apartment.number}
                           </option>
@@ -600,7 +600,7 @@ function TicketsPage() {
                         filter.apartments?.map((apartment) => (
                           <ListTag
                             key={apartment}
-                            label={ticketApartments.find((a) => a.id === apartment)?.number || ''}
+                            label={apartment}
                             padding="4px 12px"
                             fontWeight={500}
                             onClick={() => {
