@@ -51,48 +51,44 @@ function TicketDetails({
 
   const disableComment = ticket?.statusName !== 'awaitingToFinish' || !syndicNanoId;
 
-  const ticketDetailsRows = {
-    leftColumn: [
-      {
-        label: 'Edificação',
-        value: ticket?.building?.name,
-      },
-      {
-        label: 'Nome do morador',
-        value: ticket?.residentName,
-      },
-      {
-        label: 'Apartamento do morador',
-        value: ticket?.residentApartment,
-      },
-      {
-        label: 'CPF do morador',
-        value: applyMask({ value: ticket?.residentCPF || '', mask: 'CPF' }).value,
-      },
-      {
-        label: 'E-mail do morador',
-        value: ticket?.residentEmail,
-      },
-    ],
-    rightColumn: [
-      {
-        label: 'Descrição',
-        value: ticket?.description,
-      },
-      {
-        label: 'Local da ocorrência',
-        place: ticket?.place,
-      },
-      {
-        label: 'Tipo de assistência',
-        types: ticket?.types,
-      },
-      {
-        label: 'Data de abertura',
-        value: ticket?.createdAt ? formatDateString(ticket.createdAt, 'dd/MM/yyyy - HH:mm') : '',
-      },
-    ],
-  };
+  const ticketDetailsRows = [
+    {
+      label: 'Edificação',
+      value: ticket?.building?.name,
+    },
+    {
+      label: 'Apartamento do morador',
+      value: ticket?.residentApartment,
+    },
+    {
+      label: 'Nome do morador',
+      value: ticket?.residentName,
+    },
+    {
+      label: 'Telefone do morador',
+      value: applyMask({ value: ticket?.residentPhone || '', mask: 'TEL' }).value,
+    },
+    {
+      label: 'E-mail do morador',
+      value: ticket?.residentEmail,
+    },
+    {
+      label: 'CPF do morador',
+      value: applyMask({ value: ticket?.residentCPF || '', mask: 'CPF' }).value,
+    },
+    {
+      label: 'Local da ocorrência',
+      place: ticket?.place,
+    },
+    {
+      label: 'Tipo de assistência',
+      types: ticket?.types,
+    },
+    {
+      label: 'Data de abertura',
+      value: ticket?.createdAt ? formatDateString(ticket.createdAt, 'dd/MM/yyyy - HH:mm') : '',
+    },
+  ];
 
   const ticketDetailsDismissedRows = [
     {
@@ -126,57 +122,49 @@ function TicketDetails({
       )}
 
       <Style.TicketDetailsColumnContainer>
-        <Style.TicketDetailsLeftColumn>
-          {ticketDetailsRows.leftColumn.map(({ label, value }) => (
+        {ticketDetailsRows.map(({ label, value, place, types }) => {
+          if (label === 'Local da ocorrência') {
+            return (
+              <Style.TicketDetailsColumnContent key={label}>
+                <Style.TicketDetailsRowLabel>{label}</Style.TicketDetailsRowLabel>
+                <EventTag label={place?.label} />
+              </Style.TicketDetailsColumnContent>
+            );
+          }
+
+          if (label === 'Tipo de assistência') {
+            return (
+              <Style.TicketDetailsColumnContent key={label}>
+                <Style.TicketDetailsRowLabel>{label}</Style.TicketDetailsRowLabel>
+
+                <Style.TicketDetailsTypesContainer>
+                  {Array.isArray(types) &&
+                    types.map(({ type: ticketType }) => (
+                      <EventTag
+                        key={ticketType.id}
+                        label={ticketType.label}
+                        color={ticketType.color}
+                        bgColor={ticketType.backgroundColor}
+                      />
+                    ))}
+                </Style.TicketDetailsTypesContainer>
+              </Style.TicketDetailsColumnContent>
+            );
+          }
+
+          return (
             <Style.TicketDetailsColumnContent key={label}>
               <Style.TicketDetailsRowLabel>{label}</Style.TicketDetailsRowLabel>
               <Style.TicketDetailsRowValue>{value}</Style.TicketDetailsRowValue>
             </Style.TicketDetailsColumnContent>
-          ))}
-        </Style.TicketDetailsLeftColumn>
-
-        <Style.TicketDetailsRightColumn>
-          {ticketDetailsRows.rightColumn.map(({ label, value, place, types }) => {
-            if (label === 'Local da ocorrência') {
-              return (
-                <Style.TicketDetailsColumnContent key={label}>
-                  <Style.TicketDetailsRowLabel>{label}</Style.TicketDetailsRowLabel>
-                  <EventTag label={place?.label} />
-                </Style.TicketDetailsColumnContent>
-              );
-            }
-
-            if (label === 'Tipo de assistência') {
-              return (
-                <Style.TicketDetailsColumnContent key={label}>
-                  <Style.TicketDetailsRowLabel>{label}</Style.TicketDetailsRowLabel>
-
-                  <Style.TicketDetailsTypesContainer>
-                    {Array.isArray(types) &&
-                      types.map(({ type: ticketType }) => (
-                        <EventTag
-                          key={ticketType.id}
-                          label={ticketType.label}
-                          color={ticketType.color}
-                          bgColor={ticketType.backgroundColor}
-                        />
-                      ))}
-                  </Style.TicketDetailsTypesContainer>
-                </Style.TicketDetailsColumnContent>
-              );
-            }
-
-            return (
-              <Style.TicketDetailsColumnContent key={label}>
-                <Style.TicketDetailsRowLabel>{label}</Style.TicketDetailsRowLabel>
-                <Style.TicketDetailsRowValue>
-                  {!Array.isArray(value) && value}
-                </Style.TicketDetailsRowValue>
-              </Style.TicketDetailsColumnContent>
-            );
-          })}
-        </Style.TicketDetailsRightColumn>
+          );
+        })}
       </Style.TicketDetailsColumnContainer>
+
+      <Style.TicketDetailsDescriptionContainer>
+        <Style.TicketDetailsRowLabel>Descrição</Style.TicketDetailsRowLabel>
+        <Style.TicketDetailsRowValue>{ticket.description}</Style.TicketDetailsRowValue>
+      </Style.TicketDetailsDescriptionContainer>
 
       <Style.TicketDetailsImagesContainer>
         <Style.TicketDetailsRowLabel>Imagens</Style.TicketDetailsRowLabel>
