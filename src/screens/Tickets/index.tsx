@@ -628,7 +628,7 @@ function TicketsPage() {
                         </Style.KanbanTicketGridBox>
 
                         <Style.KanbanTicketGridBox>
-                          <Style.KanbanTicketTitle>Tipo de manutenção</Style.KanbanTicketTitle>
+                          <Style.KanbanTicketTitle>Tipo de assistência</Style.KanbanTicketTitle>
 
                           <Style.KanbanTicketTypesContainer>
                             {ticket.types?.map((type) => (

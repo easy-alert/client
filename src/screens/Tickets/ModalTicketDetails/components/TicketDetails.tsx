@@ -84,7 +84,7 @@ function TicketDetails({
         place: ticket?.place,
       },
       {
-        label: 'Tipo da manutenção',
+        label: 'Tipo de assistência',
         types: ticket?.types,
       },
       {
@@ -146,7 +146,7 @@ function TicketDetails({
               );
             }
 
-            if (label === 'Tipo da manutenção') {
+            if (label === 'Tipo de assistência') {
               return (
                 <Style.TicketDetailsColumnContent key={label}>
                   <Style.TicketDetailsRowLabel>{label}</Style.TicketDetailsRowLabel>

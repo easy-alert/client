@@ -250,7 +250,7 @@ export const PublicTickets = () => {
                 </Style.CardRow>
 
                 <Style.CardRow>
-                  <p className="p3">Tipo da manutenção</p>
+                  <p className="p3">Tipo de assistência</p>
                   <TagsArray data={types.map(({ type }) => type.label)} />
                 </Style.CardRow>
 
