@@ -238,7 +238,7 @@ export const ModalCreateTicket = ({
                 selectPlaceholderValue={values.types.length}
                 isMulti
                 isClearable={false}
-                label="Tipo da manutenção *"
+                label="Tipo da assistência *"
                 id="1"
                 name="2"
                 options={types.map(({ id, label }) => ({
