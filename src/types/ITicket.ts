@@ -41,6 +41,7 @@ export interface ITicket {
   id: string;
 
   residentName?: string;
+  residentPhone?: string;
   residentApartment?: string;
   residentEmail?: string;
   residentCPF?: string;
