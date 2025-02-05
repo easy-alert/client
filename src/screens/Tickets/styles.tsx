@@ -235,7 +235,7 @@ export const KanbanTicketTypesContainer = styled.div`
 
 export const FilterWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: ${theme.size.xsm};
 
   @media (max-width: 1100px) {

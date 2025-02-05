@@ -89,6 +89,7 @@ export const NavBar = ({ children }: ISidebar) => {
           status: [],
           places: [],
           serviceTypes: [],
+          apartments: [],
           startDate: '',
           endDate: '',
         },
