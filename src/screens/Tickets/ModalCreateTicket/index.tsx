@@ -54,6 +54,7 @@ const schema = yup
     residentName: yup.string().required('Campo obrigatório.'),
     residentApartment: yup.string().required('Campo obrigatório.'),
     residentEmail: yup.string().email('E-mail inválido.').required('Campo obrigatório.'),
+    residentCPF: yup.string().required('Campo obrigatório.'),
     description: yup.string().required('Campo obrigatório.'),
     placeId: yup.string().required('Campo obrigatório.'),
     types: yup
