@@ -26,6 +26,7 @@ export const Home = () => {
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
   const [search] = useSearchParams();
   const syndicNanoId = search.get('syndicNanoId') ?? '';
+  console.log('🚀 ~ Home ~ buildingNanoId:', buildingNanoId);
 
   const [createTicketModal, setCreateTicketModal] = useState<boolean>(false);
 
@@ -90,9 +91,11 @@ export const Home = () => {
           )}
 
           <Style.ButtonGrid>
-            <Link to={`/maintenancesplan/${buildingNanoId}${window.location.search}`}>
-              <button type="button">Plano de manutenção</button>
-            </Link>
+            {buildingNanoId !== 'z0atz4huXTq4' && (
+              <Link to={`/maintenancesplan/${buildingNanoId}${window.location.search}`}>
+                <button type="button">Plano de manutenção</button>
+              </Link>
+            )}
 
             <Link to={`/informations/${buildingNanoId}${window.location.search}`}>
               <button type="button">Colaboradores</button>
