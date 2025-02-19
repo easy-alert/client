@@ -1,17 +1,27 @@
 // LIBS
 import { endOfDay, format, isAfter } from 'date-fns';
+import { Formik, Form } from 'formik';
+import * as Yup from 'yup';
 
 // GLOBAL COMPONENTS
-import { Select } from '@components/Inputs/Select';
 import { Button } from '@components/Buttons/Button';
-import { Input } from '@components/Inputs/Input';
-import { CRUDInput } from '@components/Inputs/CRUDInput';
+import { FormikSelect } from '@components/Form/FormikSelect';
+import { FormikInput } from '@components/Form/FormikInput';
 
 // STYLES
 import * as Style from '../styles';
 
 // TYPES
 import type { IModalSecondView } from '../types';
+
+const validationSchema = Yup.object().shape({
+  category: Yup.string().required('Categoria é obrigatória.'),
+  element: Yup.string().required('Elemento é obrigatório.'),
+  activity: Yup.string().required('Atividade é obrigatória.'),
+  responsible: Yup.string().required('Responsável é obrigatório.'),
+  priorityName: Yup.string().required('Prioridade é obrigatória.'),
+  executionDate: Yup.string().required('Data de execução é obrigatória.'),
+});
 
 const ModalSecondView = ({
   categoriesData,
@@ -20,7 +30,6 @@ const ModalSecondView = ({
   checklistActivity,
   handleSetView,
   handleOccasionalMaintenanceDataChange,
-  handleCreateOccasionalMaintenance,
 }: IModalSecondView) => {
   const responsibleArray = [
     { id: '1', name: 'Equipe de manutenção local' },
@@ -30,163 +39,126 @@ const ModalSecondView = ({
 
   const today = format(endOfDay(new Date()), 'yyyy-MM-dd');
   const isAfterToday = isAfter(occasionalMaintenanceData.executionDate, today);
-
   const disableFinishedButton = isAfterToday;
 
+  const initialValues = {
+    category: occasionalMaintenanceData.categoryData?.id || '',
+    element: occasionalMaintenanceData.element || '',
+    activity: occasionalMaintenanceData.activity || '',
+    responsible: occasionalMaintenanceData.responsible || '',
+    priorityName: occasionalMaintenanceData.priorityName || '',
+    executionDate: occasionalMaintenanceData.executionDate || '',
+  };
+
   return (
-    <Style.FormContainer>
-      <CRUDInput
-        label="Categoria *"
-        value={occasionalMaintenanceData.categoryData.name}
-        select={{
-          createLabel: 'Criar categoria',
-          options: categoriesData.map((category) => ({
-            value: category.id || '',
-            label: category.name || '',
-          })),
-          getEvtValue: (value) => {
-            const selectedCategory = categoriesData.find((category) => category.id === value);
+    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={() => undefined}>
+      {({ touched, errors }) => (
+        <Form>
+          <Style.FormContainer>
+            <FormikSelect
+              label="Categoria *"
+              name="category"
+              value={occasionalMaintenanceData.categoryData.id}
+              onChange={(e) =>
+                handleOccasionalMaintenanceDataChange({
+                  primaryKey: 'categoryData',
+                  value: e.target.value,
+                  secondaryKey: 'id',
+                })
+              }
+              error={touched.category && errors.category ? errors.category : null}
+            >
+              <option value="" disabled>
+                Selecione uma categoria
+              </option>
+              {categoriesData.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </FormikSelect>
 
-            if (!selectedCategory) return;
+            <FormikInput
+              label="Elemento *"
+              placeholder="Informe o elemento"
+              name="element"
+              value={occasionalMaintenanceData.element}
+              onChange={(e) =>
+                handleOccasionalMaintenanceDataChange({ primaryKey: 'element', value: e.target.value })
+              }
+              error={touched.element && errors.element ? errors.element : null}
+            />
 
-            handleOccasionalMaintenanceDataChange({
-              primaryKey: 'categoryData',
-              value: selectedCategory.id || '',
-              secondaryKey: 'id',
-            });
+            <FormikInput
+              label="Atividade *"
+              placeholder="Ex: Troca de lâmpada"
+              name="activity"
+              value={occasionalMaintenanceData.activity}
+              disabled={!!checklistActivity}
+              onChange={(e) =>
+                handleOccasionalMaintenanceDataChange({ primaryKey: 'activity', value: e.target.value })
+              }
+              error={touched.activity && errors.activity ? errors.activity : null}
+            />
 
-            handleOccasionalMaintenanceDataChange({
-              primaryKey: 'categoryData',
-              value: selectedCategory.name || '',
-              secondaryKey: 'name',
-            });
-          },
-        }}
-        input={{
-          placeholder: 'Digite o nome da categoria',
-          getEvtValue: (value) =>
-            handleOccasionalMaintenanceDataChange({
-              primaryKey: 'categoryData',
-              value,
-              secondaryKey: 'name',
-            }),
-          onXClick: () =>
-            handleOccasionalMaintenanceDataChange({
-              primaryKey: 'categoryData',
-              value: { id: '', name: '' },
-            }),
-        }}
-      />
+            <FormikSelect
+              label="Responsável *"
+              name="responsible"
+              value={occasionalMaintenanceData.responsible}
+              onChange={(e) =>
+                handleOccasionalMaintenanceDataChange({ primaryKey: 'responsible', value: e.target.value })
+              }
+              error={touched.responsible && errors.responsible ? errors.responsible : null}
+            >
+              <option value="" disabled>
+                Selecione
+              </option>
+              {responsibleArray.map((responsible) => (
+                <option key={responsible.id} value={responsible.name}>
+                  {responsible.name}
+                </option>
+              ))}
+            </FormikSelect>
 
-      <Input
-        label="Elemento *"
-        placeholder="Informe o elemento"
-        value={occasionalMaintenanceData.element}
-        onChange={(e) =>
-          handleOccasionalMaintenanceDataChange({
-            primaryKey: 'element',
-            value: e.target.value,
-          })
-        }
-      />
+            <FormikSelect
+              label="Prioridade *"
+              name="priorityName"
+              value={occasionalMaintenanceData.priorityName}
+              onChange={(e) =>
+                handleOccasionalMaintenanceDataChange({ primaryKey: 'priorityName', value: e.target.value })
+              }
+              error={touched.priorityName && errors.priorityName ? errors.priorityName : null}
+            >
+              <option value="" disabled>
+                Selecione
+              </option>
+              {priorityData.map((priority) => (
+                <option key={priority.name} value={priority.name}>
+                  {priority.label}
+                </option>
+              ))}
+            </FormikSelect>
 
-      <Input
-        label="Atividade *"
-        placeholder="Ex: Troca de lâmpada"
-        value={occasionalMaintenanceData.activity}
-        disabled={!!checklistActivity}
-        onChange={(e) =>
-          handleOccasionalMaintenanceDataChange({
-            primaryKey: 'activity',
-            value: e.target.value,
-          })
-        }
-      />
+            <FormikInput
+              label="Data de execução *"
+              type="date"
+              name="executionDate"
+              value={occasionalMaintenanceData.executionDate}
+              onChange={(evt) =>
+                handleOccasionalMaintenanceDataChange({ primaryKey: 'executionDate', value: evt.target.value })
+              }
+              error={touched.executionDate && errors.executionDate ? errors.executionDate : null}
+            />
 
-      <Select
-        label="Responsável *"
-        value={occasionalMaintenanceData.responsible}
-        selectPlaceholderValue={occasionalMaintenanceData.responsible}
-        onChange={(e) =>
-          handleOccasionalMaintenanceDataChange({
-            primaryKey: 'responsible',
-            value: e.target.value,
-          })
-        }
-      >
-        <option value="" disabled>
-          Selecione
-        </option>
-
-        {responsibleArray.map((responsible) => (
-          <option key={responsible.id} value={responsible.name}>
-            {responsible.name}
-          </option>
-        ))}
-      </Select>
-
-      <Select
-        label="Prioridade *"
-        value={occasionalMaintenanceData.priorityName}
-        selectPlaceholderValue={occasionalMaintenanceData.priorityName}
-        onChange={(e) =>
-          handleOccasionalMaintenanceDataChange({
-            primaryKey: 'priorityName',
-            value: e.target.value,
-          })
-        }
-      >
-        <option value="" disabled>
-          Selecione
-        </option>
-
-        {priorityData.map((priority) => (
-          <option key={priority.name} value={priority.name}>
-            {priority.label}
-          </option>
-        ))}
-      </Select>
-
-      <Input
-        label="Data de execução *"
-        type="date"
-        value={occasionalMaintenanceData.executionDate}
-        typeDatePlaceholderValue={occasionalMaintenanceData.executionDate}
-        onChange={(evt) =>
-          handleOccasionalMaintenanceDataChange({
-            primaryKey: 'executionDate',
-            value: evt.target.value,
-          })
-        }
-      />
-
-      <Style.ButtonContainer>
-        <Button
-          label="Criar"
-          bgColor="transparent"
-          textColor="actionBlue"
-          onClick={() =>
-            handleCreateOccasionalMaintenance({ occasionalMaintenanceType: 'pending' })
-          }
-        />
-        <Button
-          label="Iniciar execução"
-          bgColor="transparent"
-          textColor="actionBlue"
-          onClick={() => {
-            handleCreateOccasionalMaintenance({
-              occasionalMaintenanceType: 'pending',
-              inProgress: true,
-            });
-          }}
-        />
-        <Button
-          label="Criar finalizada"
-          onClick={() => handleSetView(3)}
-          disable={disableFinishedButton}
-        />
-      </Style.ButtonContainer>
-    </Style.FormContainer>
+            <Style.ButtonContainer>
+              <Button label="Criar" bgColor="transparent" textColor="actionBlue" type="submit" />
+              <Button label="Iniciar execução" bgColor="transparent" textColor="actionBlue" type="submit" />
+              <Button label="Criar finalizada" onClick={() => handleSetView(3)} disabled={disableFinishedButton} />
+            </Style.ButtonContainer>
+          </Style.FormContainer>
+        </Form>
+      )}
+    </Formik>
   );
 };
 
