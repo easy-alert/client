@@ -49,4 +49,10 @@ export const TagContainer = styled.div<IEventTag>`
     css`
       background-color: ${theme.color.common};
     `};
+
+  ${({ status }) =>
+    status === 'checklist' &&
+    css`
+      background-color: ${theme.color.black};
+    `};
 `;
