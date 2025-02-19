@@ -11,7 +11,7 @@ interface IServerResponse {
 
 interface IToastifyMessage {
   message: string;
-  type: 'success' | 'error';
+  type: 'success' | 'warning' | 'error';
 }
 
 export const handleToastify = (serverResponse: IServerResponse) => {
