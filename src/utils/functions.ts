@@ -446,3 +446,5 @@ export const isImage = (src: string) => {
   const imagesExtensions = ['png', 'jpg', 'jpeg'];
   return imagesExtensions.includes((src.split('.').pop()?.toLowerCase() || '').toLowerCase());
 };
+
+export const query = new URLSearchParams(window.location.search);

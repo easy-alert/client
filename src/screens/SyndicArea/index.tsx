@@ -29,6 +29,8 @@ import { theme } from '@styles/theme';
 // COMPONENTS
 import { ModalMaintenanceDetails } from '../MaintenancesPlan/ModalMaintenanceDetails';
 import { ModalSendMaintenanceReport } from './ModalSendMaintenanceReport';
+import { ModalChecklistCreate } from './ModalChecklistCreate';
+import { ModalChecklistDetails } from './ModalChecklistDetails';
 
 // UTILS
 import { requestSyndicKanban } from './functions';
@@ -95,8 +97,31 @@ export const SyndicArea = () => {
   });
 
   const [loading, setLoading] = useState<boolean>(true);
+  const [refresh, setRefresh] = useState<boolean>(false);
+
   const [onQuery, setOnQuery] = useState<boolean>(false);
   const [showPriority, setShowPriority] = useState<boolean>(false);
+
+  // # region Checklists states
+  const [checklistId, setChecklistId] = useState<string>('');
+
+  const [modalChecklistCreate, setModalChecklistCreate] = useState(false);
+  const [modalChecklistDetails, setModalChecklist] = useState(false);
+  // # endregion
+
+  const handleModals = (modal: string, modalState: boolean) => {
+    switch (modal) {
+      case 'modalChecklistCreate':
+        setModalChecklistCreate(modalState);
+        break;
+      case 'modalChecklistDetails':
+        setModalChecklist(modalState);
+        break;
+
+      default:
+        break;
+    }
+  };
 
   const handleModalCreateOccasionalMaintenance = (modalState: boolean) => {
     setModalCreateOccasionalMaintenance(modalState);
@@ -112,6 +137,10 @@ export const SyndicArea = () => {
 
   const handleMaintenanceHistoryIdChange = (id: string) => {
     setMaintenanceHistoryId(id);
+  };
+
+  const handleRefresh = () => {
+    setRefresh((prevState) => !prevState);
   };
 
   const handleGetSyndicKanban = async () => {
@@ -141,7 +170,7 @@ export const SyndicArea = () => {
   useEffect(() => {
     handleGetBuildingsBySyndicId();
     handleGetSyndicKanban();
-  }, [syndicNanoId]);
+  }, [syndicNanoId, refresh]);
 
   return loading ? (
     <DotSpinLoading />
@@ -181,6 +210,22 @@ export const SyndicArea = () => {
           handleModalCreateOccasionalMaintenance={handleModalCreateOccasionalMaintenance}
           handleModalMaintenanceDetails={handleModalMaintenanceDetails}
           handleModalSendMaintenanceReport={handleModalSendMaintenanceReport}
+        />
+      )}
+
+      {modalChecklistCreate && (
+        <ModalChecklistCreate
+          buildingId={buildingNanoId}
+          handleModals={handleModals}
+          handleRefresh={handleRefresh}
+        />
+      )}
+
+      {modalChecklistDetails && checklistId && (
+        <ModalChecklistDetails
+          buildingId={buildingNanoId}
+          checklistId={checklistId}
+          handleModals={handleModals}
         />
       )}
 
@@ -235,11 +280,22 @@ export const SyndicArea = () => {
             />
           </Style.HeaderWrapper>
 
-          <IconButton
-            icon={icon.plus}
-            label="Manutenção avulsa"
-            onClick={() => setModalCreateOccasionalMaintenance(true)}
-          />
+          <Style.IconsContainer>
+            <IconButton
+              disabled={loading}
+              label="Checklist"
+              icon={icon.plus}
+              onClick={() => {
+                handleModals('modalChecklistCreate', true);
+              }}
+            />
+
+            <IconButton
+              icon={icon.plus}
+              label="Manutenção avulsa"
+              onClick={() => setModalCreateOccasionalMaintenance(true)}
+            />
+          </Style.IconsContainer>
         </Style.Header>
 
         {showFilter && (
@@ -469,7 +525,11 @@ export const SyndicArea = () => {
                         <Style.MaintenanceInfo
                           status={maintenance.status}
                           onClick={() => {
-                            setMaintenanceHistoryId(maintenance.id);
+                            if (maintenance.type === 'checklist') {
+                              setChecklistId(maintenance.id);
+                              handleModals('modalChecklistDetails', true);
+                              return;
+                            }
 
                             setModalAdditionalInformations({
                               id: maintenance.id,
@@ -491,11 +551,7 @@ export const SyndicArea = () => {
                           <h6>
                             <span>
                               <Style.EventsWrapper>
-                                <EventTag
-                                  status={
-                                    maintenance.type === 'occasional' ? 'occasional' : 'common'
-                                  }
-                                />
+                                <EventTag status={maintenance.type} />
 
                                 {maintenance.status === 'pending' &&
                                   new Date(maintenance.date) >
@@ -514,9 +570,11 @@ export const SyndicArea = () => {
                               />
                             </span>
 
-                            {maintenance.element}
+                            {maintenance.element || maintenance.name}
                           </h6>
-                          <p className="p2">{maintenance.activity}</p>
+                          <p className="p2">
+                            {maintenance.activity || maintenance.checklistProgress}
+                          </p>
 
                           <p className="p3">
                             {maintenance.status === 'pending' && maintenance.label}
