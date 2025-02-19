@@ -55,11 +55,11 @@ export const NavBar = ({ children }: ISidebar) => {
       restricted: true,
     },
 
-    {
-      name: 'Checklists',
-      url: `/checklists/${buildingNanoId}${window.location.search}`,
-      restricted: true,
-    },
+    // {
+    //   name: 'Checklists',
+    //   url: `/checklists/${buildingNanoId}${window.location.search}`,
+    //   restricted: true,
+    // },
 
     {
       name: 'Configurações',

@@ -82,7 +82,7 @@ const AppRoutes = () => (
           {/* <Route path="/tickets/:buildingNanoId" element={<Tickets />} /> */}
 
           <Route path="/syndicarea/:buildingNanoId" element={<SyndicArea />} />
-          <Route path="/checklists/:buildingNanoId" element={<Checklists />} />
+          {/* <Route path="/checklists/:buildingNanoId" element={<Checklists />} /> */}
           <Route path="/settings/:buildingNanoId" element={<Settings />} />
           <Route path="/suppliers/:buildingNanoId" element={<SuppliersList />} />
           <Route path="/suppliers/:buildingNanoId/:supplierId" element={<SupplierDetails />} />
