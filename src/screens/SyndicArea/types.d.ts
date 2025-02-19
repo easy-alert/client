@@ -6,11 +6,14 @@ export interface MaintenanceKanban {
   date: string;
   label: string;
   cantReportExpired?: boolean;
-  type: 'common' | 'occasional';
+  type: 'common' | 'occasional' | 'checklist';
   inProgress: boolean;
   priorityLabel: string;
   priorityColor: string;
   priorityBackgroundColor: string;
+
+  name?: string;
+  checklistProgress?: string;
 }
 
 export interface IKanban {

@@ -62,6 +62,12 @@ export const FilterWrapper = styled.div`
   }
 `;
 
+export const IconsContainer = styled.div`
+  display: flex;
+  align-items: center;
+
+  gap: ${theme.size.sm};
+`;
 export const Kanban = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -131,7 +137,7 @@ export const MaintenanceWrapper = styled.div`
 `;
 
 export const MaintenanceInfo = styled.div<{
-  status: 'expired' | 'pending' | 'completed' | 'overdue';
+  status: 'expired' | 'pending' | 'completed' | 'overdue' | 'inProgress';
 }>`
   padding: ${theme.size.sm} ${theme.size.sm} ${theme.size.sm} 23px;
   background-color: ${theme.color.gray0};
@@ -158,7 +164,7 @@ export const MaintenanceInfo = styled.div<{
   word-break: break-word;
 
   ${({ status }) =>
-    status === 'pending' &&
+    (status === 'pending' || status === 'inProgress') &&
     css`
       p.p3 {
         color: ${theme.color.warning};
