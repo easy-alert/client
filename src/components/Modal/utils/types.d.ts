@@ -1,6 +1,10 @@
 export interface IModal {
-  title: string;
   children: JSX.Element;
-  setModal: (setModal: boolean) => void;
+  id?: string;
+  title: string;
   bodyWidth?: string;
+  closeOutside?: boolean;
+  deleteButton?: boolean;
+  setModal: (setModal: boolean) => void;
+  handleDelete?: (modalState: boolean) => void;
 }
