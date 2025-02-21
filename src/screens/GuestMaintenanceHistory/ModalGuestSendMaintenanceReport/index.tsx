@@ -1,52 +1,62 @@
 /* eslint-disable react/no-array-index-key */
+// REACT
 import { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
 import { useDropzone } from 'react-dropzone';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { Input } from '../../../components/Inputs/Input';
+
+// GLOBAL COMPONENTS
+import { Input } from '@components/Inputs/Input';
+import { Button } from '@components/Buttons/Button';
+import { PopoverButton } from '@components/Buttons/PopoverButton';
+import { EventTag } from '@components/EventTag';
+import { InProgressTag } from '@components/InProgressTag';
+import { DotSpinLoading } from '@components/Loadings/DotSpinLoading';
+import { MaintenanceHistoryActivities } from '@components/MaintenanceHistoryActivities';
+import { Modal } from '@components/Modal';
+import { IconButton } from '@components/Buttons/IconButton';
+import { ImagePreview } from '@components/ImagePreview';
+import { DotLoading } from '@components/Loadings/DotLoading';
+import { ImageComponent } from '@components/ImageComponent';
+import { ListTag } from '@components/ListTag';
+
+// GLOBAL UTILS
+import { applyMask, dateFormatter } from '@utils/functions';
+
+// GLOBAL ICONS
+import { icon } from '@assets/icons';
+
+// GLOBAL THEME
+import { theme } from '@styles/theme';
+
+import { requestMaintenanceDetails } from '@screens/SyndicArea/functions';
+
 import * as Style from '../../SyndicArea/ModalSendMaintenanceReport/styles';
-import { Button } from '../../../components/Buttons/Button';
-import { PopoverButton } from '../../../components/Buttons/PopoverButton';
-import { EventTag } from '../../../components/EventTag';
-import { InProgressTag } from '../../../components/InProgressTag';
-import { DotSpinLoading } from '../../../components/Loadings/DotSpinLoading';
-import { MaintenanceHistoryActivities } from '../../../components/MaintenanceHistoryActivities';
-import { Modal } from '../../../components/Modal';
-import { theme } from '../../../styles/theme';
+
 import {
-  dateFormatter,
-  applyMask,
-  catchHandler,
-  unMaskBRL,
-  uploadManyFiles,
-} from '../../../utils/functions';
-import { requestMaintenanceDetails } from '../../functions';
-import { requestReportProgress } from '../../SyndicArea/ModalSendMaintenanceReport/functions';
+  requestReportProgress,
+  requestSaveReportProgress,
+  requestSendReport,
+  requestToggleInProgress,
+} from '../../SyndicArea/ModalSendMaintenanceReport/functions';
 import {
   IModalSendMaintenanceReport,
   IMaintenanceReport,
 } from '../../SyndicArea/ModalSendMaintenanceReport/types';
 import { AnnexesAndImages, IMaintenance } from '../../types';
-import { Api } from '../../../services/api';
-import { icon } from '../../../assets/icons';
-import { IconButton } from '../../../components/Buttons/IconButton';
-import { ImagePreview } from '../../../components/ImagePreview';
-import { DotLoading } from '../../../components/Loadings/DotLoading';
-import { ImageComponent } from '../../../components/ImageComponent';
+
 import { Tag } from '../../MaintenancesPlan/ModalMaintenanceDetails/styles';
-import { ListTag } from '../../../components/ListTag';
 
 export const ModalGuestSendMaintenanceReport = ({
-  setModal,
-  modalAdditionalInformations,
+  maintenanceHistoryId,
+  userId,
 }: IModalSendMaintenanceReport) => {
   const [query] = useSearchParams();
   const location = useLocation();
 
-  const isGuest = location.pathname.includes('guest-maintenance-history');
+  const isGuest = location.pathname.includes('guest-maintenanceDetails-history');
   const syndicNanoId = query.get('syndicNanoId') || (isGuest ? 'guest' : '');
 
-  const [maintenance, setMaintenance] = useState<IMaintenance>({
+  const [maintenanceDetails, setMaintenanceDetails] = useState<IMaintenance>({
     Building: {
       name: '',
       guestCanCompleteMaintenance: false,
@@ -118,153 +128,99 @@ export const ModalGuestSendMaintenanceReport = ({
     disabled: onImageQuery,
   });
 
-  useEffect(() => {
-    if (acceptedFiles.length > 0) {
-      const uploadAcceptedFiles = async () => {
-        setOnFileQuery(true);
-
-        const uploadedFiles = await uploadManyFiles(acceptedFiles);
-
-        const formattedFiles = uploadedFiles.map((file) => ({
-          name: file.originalname,
-          originalName: file.originalname,
-          url: file.Location,
-        }));
-
-        setFiles((prevState) => {
-          let newState = [...prevState];
-          newState = [...newState, ...formattedFiles];
-          return newState;
-        });
-        setOnFileQuery(false);
-      };
-
-      uploadAcceptedFiles();
-    }
-  }, [acceptedFiles]);
-
-  useEffect(() => {
-    if (acceptedImages.length > 0) {
-      const uploadAcceptedImages = async () => {
-        setOnImageQuery(true);
-
-        const uploadedImages = await uploadManyFiles(acceptedImages);
-
-        const formattedImages = uploadedImages.map((file) => ({
-          name: file.originalname,
-          originalName: file.originalname,
-          url: file.Location,
-        }));
-
-        setImages((prevState) => {
-          let newState = [...prevState];
-          newState = [...newState, ...formattedImages];
-          return newState;
-        });
-        setOnImageQuery(false);
-      };
-
-      uploadAcceptedImages();
-    }
-  }, [acceptedImages]);
-
-  useEffect(() => {
-    requestReportProgress({
-      maintenanceHistoryId: modalAdditionalInformations.id,
-      setMaintenanceReport,
-      setFiles,
-      setImages,
-    }).then(() => {
-      requestMaintenanceDetails({
-        maintenanceHistoryId: modalAdditionalInformations.id,
-        setMaintenance,
-        setModalLoading,
-      });
+  // #region api function
+  const handleGetMaintenanceDetails = async () => {
+    const responseData = await requestMaintenanceDetails({
+      maintenanceHistoryId,
     });
+
+    setMaintenanceDetails(responseData);
+  };
+
+  const handleGetReportProgress = async () => {
+    const responseData = await requestReportProgress({
+      maintenanceHistoryId,
+    });
+
+    if (responseData.progress) {
+      setMaintenanceReport({
+        cost: applyMask({ mask: 'BRL', value: String(responseData.progress.cost) }).value,
+        observation: responseData.progress.observation || '',
+      });
+      setFiles(responseData.progress.ReportAnnexesProgress);
+      setImages(responseData.progress.ReportImagesProgress);
+    }
+  };
+
+  const handleChangeMaintenanceProgress = async () => {
+    setOnQuery(true);
+
+    try {
+      await requestToggleInProgress({
+        syndicNanoId: '',
+        userId: userId ?? '',
+        maintenanceHistoryId,
+        inProgressChange: !maintenanceDetails.inProgress,
+      });
+    } finally {
+      setOnQuery(false);
+    }
+  };
+
+  const handleSaveMaintenance = async () => {
+    setOnQuery(true);
+
+    try {
+      await requestSaveReportProgress({
+        syndicNanoId: '',
+        userId: userId ?? '',
+        maintenanceHistoryId,
+        maintenanceReport,
+        files,
+        images,
+      });
+    } finally {
+      setOnQuery(false);
+    }
+  };
+
+  const handleSendReportMaintenance = async () => {
+    setOnQuery(true);
+
+    try {
+      await requestSendReport({
+        syndicNanoId: '',
+        userId: userId ?? '',
+        maintenanceHistoryId,
+        maintenanceReport,
+        files,
+        images,
+      });
+    } finally {
+      setOnQuery(false);
+    }
+  };
+
+  // #endregion
+
+  useEffect(() => {
+    setModalLoading(true);
+
+    try {
+      handleGetReportProgress();
+      handleGetMaintenanceDetails();
+    } finally {
+      setTimeout(() => {
+        setModalLoading(false);
+      }, 500);
+    }
   }, []);
-
-  const requestToggleInProgress = async () => {
-    setOnQuery(true);
-
-    await Api.post(`/maintenances/set/in-progress?syndicNanoId=${syndicNanoId}`, {
-      maintenanceHistoryId: modalAdditionalInformations.id,
-      inProgressChange: !maintenance.inProgress,
-    })
-      .then(async (res) => {
-        await requestMaintenanceDetails({
-          maintenanceHistoryId: modalAdditionalInformations.id,
-          setMaintenance,
-          setModalLoading,
-        });
-        toast.success(res.data.ServerMessage.message);
-      })
-      .catch((err) => {
-        catchHandler(err);
-      })
-      .finally(() => {
-        setOnQuery(false);
-      });
-  };
-
-  const requestSendReport = async () => {
-    setOnQuery(true);
-
-    await Api.post('/maintenances/create/report', {
-      origin: 'Convidado',
-      maintenanceHistoryId: modalAdditionalInformations.id,
-      cost: Number(unMaskBRL(maintenanceReport.cost)),
-      observation: maintenanceReport.observation !== '' ? maintenanceReport.observation : null,
-      responsibleSyndicId: syndicNanoId,
-      ReportAnnexes: files,
-      ReportImages: images,
-    })
-      .then(async (res) => {
-        toast.success(res.data.ServerMessage.message);
-        await requestMaintenanceDetails({
-          maintenanceHistoryId: modalAdditionalInformations.id,
-          setMaintenance,
-          setModalLoading,
-        });
-      })
-      .catch((err) => {
-        catchHandler(err);
-      })
-      .finally(() => {
-        setOnQuery(false);
-      });
-  };
-
-  const requestSaveReportProgress = async () => {
-    setOnQuery(true);
-
-    await Api.post(`/maintenances/create/report/progress?syndicNanoId=${syndicNanoId}`, {
-      maintenanceHistoryId: modalAdditionalInformations.id,
-      cost: Number(unMaskBRL(maintenanceReport.cost)),
-      observation: maintenanceReport.observation !== '' ? maintenanceReport.observation : null,
-      ReportAnnexes: files,
-      ReportImages: images,
-    })
-      .then(async (res) => {
-        await requestMaintenanceDetails({
-          maintenanceHistoryId: modalAdditionalInformations.id,
-          setMaintenance,
-          setModalLoading,
-        });
-        toast.success(res.data.ServerMessage.message);
-      })
-      .catch((err) => {
-        catchHandler(err);
-      })
-      .finally(() => {
-        setOnQuery(false);
-      });
-  };
 
   return (
     <Modal
       bodyWidth="475px"
-      title={maintenance.canReport ? 'Enviar relato' : 'Detalhes de manutenção'}
-      setModal={setModal}
+      title={maintenanceDetails.canReport ? 'Enviar relato' : 'Detalhes de manutenção'}
+      setModal={() => ''}
     >
       {modalLoading ? (
         <Style.LoadingContainer>
@@ -272,68 +228,70 @@ export const ModalGuestSendMaintenanceReport = ({
         </Style.LoadingContainer>
       ) : (
         <Style.Container>
-          <h3>{maintenance?.Building.name}</h3>
+          <h3>{maintenanceDetails?.Building.name}</h3>
           <Style.StatusTagWrapper>
-            {maintenance.MaintenancesStatus.name === 'overdue' && <EventTag status="completed" />}
-            <EventTag status={maintenance?.MaintenancesStatus.name} />
-            {maintenance?.Maintenance.MaintenanceType.name === 'occasional' ? (
+            {maintenanceDetails.MaintenancesStatus.name === 'overdue' && (
+              <EventTag status="completed" />
+            )}
+            <EventTag status={maintenanceDetails?.MaintenancesStatus.name} />
+            {maintenanceDetails?.Maintenance.MaintenanceType.name === 'occasional' ? (
               <EventTag status="occasional" />
             ) : (
               <EventTag status="common" />
             )}
-            {(maintenance?.MaintenancesStatus.name === 'expired' ||
-              maintenance?.MaintenancesStatus.name === 'pending') &&
-              maintenance.inProgress && <InProgressTag />}
+            {(maintenanceDetails?.MaintenancesStatus.name === 'expired' ||
+              maintenanceDetails?.MaintenancesStatus.name === 'pending') &&
+              maintenanceDetails.inProgress && <InProgressTag />}
           </Style.StatusTagWrapper>
           <Style.Content>
             <Style.Row>
               <h6>Categoria</h6>
-              <p className="p2">{maintenance.Maintenance.Category.name}</p>
+              <p className="p2">{maintenanceDetails.Maintenance.Category.name}</p>
             </Style.Row>
             <Style.Row>
               <h6>Elemento</h6>
-              <p className="p2">{maintenance.Maintenance.element}</p>
+              <p className="p2">{maintenanceDetails.Maintenance.element}</p>
             </Style.Row>
             <Style.Row>
               <h6>Atividade</h6>
-              <p className="p2">{maintenance.Maintenance.activity}</p>
+              <p className="p2">{maintenanceDetails.Maintenance.activity}</p>
             </Style.Row>
             <Style.Row>
               <h6>Responsável</h6>
-              <p className="p2">{maintenance.Maintenance.responsible}</p>
+              <p className="p2">{maintenanceDetails.Maintenance.responsible}</p>
             </Style.Row>
 
             <Style.Row>
               <h6>Fonte</h6>
-              <p className="p2">{maintenance.Maintenance.source}</p>
+              <p className="p2">{maintenanceDetails.Maintenance.source}</p>
             </Style.Row>
 
             <Style.Row>
               <h6>Observação da manutenção</h6>
-              <p className="p2">{maintenance.Maintenance.observation ?? '-'}</p>
+              <p className="p2">{maintenanceDetails.Maintenance.observation ?? '-'}</p>
             </Style.Row>
 
             <Style.Row>
               <h6>Instruções</h6>
               <Style.FileAndImageRow>
-                {maintenance.Maintenance.instructions.length > 0
-                  ? maintenance.Maintenance.instructions.map(({ url, name }) => (
+                {maintenanceDetails.Maintenance.instructions.length > 0
+                  ? maintenanceDetails.Maintenance.instructions.map(({ url, name }) => (
                       <ListTag padding="4px 12px" downloadUrl={url} key={url} label={name} />
                     ))
                   : '-'}
               </Style.FileAndImageRow>
             </Style.Row>
 
-            {maintenance.Maintenance.MaintenanceType.name !== 'occasional' && (
+            {maintenanceDetails.Maintenance.MaintenanceType.name !== 'occasional' && (
               <Style.Row>
                 <h6>Periodicidade</h6>
                 <p className="p2">
-                  {!!maintenance.Maintenance.frequency &&
+                  {!!maintenanceDetails.Maintenance.frequency &&
                     `A cada${' '}
                     ${
-                      maintenance.Maintenance.frequency > 1
-                        ? `${maintenance.Maintenance.frequency} ${maintenance.Maintenance.FrequencyTimeInterval.pluralLabel}`
-                        : `${maintenance.Maintenance.frequency} ${maintenance.Maintenance.FrequencyTimeInterval.singularLabel}`
+                      maintenanceDetails.Maintenance.frequency > 1
+                        ? `${maintenanceDetails.Maintenance.frequency} ${maintenanceDetails.Maintenance.FrequencyTimeInterval.pluralLabel}`
+                        : `${maintenanceDetails.Maintenance.frequency} ${maintenanceDetails.Maintenance.FrequencyTimeInterval.singularLabel}`
                     }`}
                 </p>
               </Style.Row>
@@ -342,55 +300,59 @@ export const ModalGuestSendMaintenanceReport = ({
             <Style.Row>
               <h6>Data de notificação</h6>
               <p className="p2">
-                {maintenance.notificationDate ? dateFormatter(maintenance.notificationDate) : ''}
+                {maintenanceDetails.notificationDate
+                  ? dateFormatter(maintenanceDetails.notificationDate)
+                  : ''}
               </p>
             </Style.Row>
 
-            {maintenance.Maintenance.MaintenanceType.name !== 'occasional' && (
+            {maintenanceDetails.Maintenance.MaintenanceType.name !== 'occasional' && (
               <Style.Row>
                 <h6>Data de vencimento</h6>
                 <p className="p2">
-                  {maintenance.dueDate ? dateFormatter(maintenance.dueDate) : ''}
+                  {maintenanceDetails.dueDate ? dateFormatter(maintenanceDetails.dueDate) : ''}
                 </p>
               </Style.Row>
             )}
 
-            {!!maintenance.daysInAdvance && (
+            {!!maintenanceDetails.daysInAdvance && (
               <Style.Row>
                 <h6>Dias antecipados</h6>
-                <p className="p2">{maintenance.daysInAdvance}</p>
+                <p className="p2">{maintenanceDetails.daysInAdvance}</p>
               </Style.Row>
             )}
 
-            {maintenance.additionalInfo && (
+            {maintenanceDetails.additionalInfo && (
               <Style.Row>
                 <h6>Info. Adicional</h6>
-                <p className="p2">{maintenance.additionalInfo}</p>
+                <p className="p2">{maintenanceDetails.additionalInfo}</p>
               </Style.Row>
             )}
 
-            <MaintenanceHistoryActivities maintenanceHistoryId={maintenance.id} />
+            <MaintenanceHistoryActivities maintenanceHistoryId={maintenanceDetails.id} />
 
-            {['completed', 'overdue'].includes(maintenance.MaintenancesStatus.name) && (
+            {['completed', 'overdue'].includes(maintenanceDetails.MaintenancesStatus.name) && (
               <>
                 <Style.FileStyleRow>
                   <h6>Anexos</h6>
                   <Style.FileAndImageRow>
-                    {maintenance.MaintenanceReport[0].ReportAnnexes.length > 0 ? (
-                      maintenance.MaintenanceReport[0].ReportAnnexes.map((annex, i: number) => (
-                        <Tag key={annex.name + i}>
-                          <a
-                            title={annex.originalName}
-                            href={annex.url}
-                            download
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            <p className="p3">{annex.name}</p>
-                            <ImageComponent size="16px" src={icon.download} />
-                          </a>
-                        </Tag>
-                      ))
+                    {maintenanceDetails.MaintenanceReport[0].ReportAnnexes.length > 0 ? (
+                      maintenanceDetails.MaintenanceReport[0].ReportAnnexes.map(
+                        (annex, i: number) => (
+                          <Tag key={annex.name + i}>
+                            <a
+                              title={annex.originalName}
+                              href={annex.url}
+                              download
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              <p className="p3">{annex.name}</p>
+                              <ImageComponent size="16px" src={icon.download} />
+                            </a>
+                          </Tag>
+                        ),
+                      )
                     ) : (
                       <p className="p2">Nenhum anexo enviado.</p>
                     )}
@@ -400,17 +362,19 @@ export const ModalGuestSendMaintenanceReport = ({
                 <Style.FileStyleRow>
                   <h6>Imagens</h6>
                   <Style.FileAndImageRow>
-                    {maintenance.MaintenanceReport[0].ReportImages.length > 0 ? (
-                      maintenance.MaintenanceReport[0].ReportImages.map((image, i: number) => (
-                        <ImagePreview
-                          key={image.name + i}
-                          src={image.url}
-                          downloadUrl={image.url}
-                          imageCustomName={image.name}
-                          width="97px"
-                          height="97px"
-                        />
-                      ))
+                    {maintenanceDetails.MaintenanceReport[0].ReportImages.length > 0 ? (
+                      maintenanceDetails.MaintenanceReport[0].ReportImages.map(
+                        (image, i: number) => (
+                          <ImagePreview
+                            key={image.name + i}
+                            src={image.url}
+                            downloadUrl={image.url}
+                            imageCustomName={image.name}
+                            width="97px"
+                            height="97px"
+                          />
+                        ),
+                      )
                     ) : (
                       <p className="p2">Nenhuma imagem enviada.</p>
                     )}
@@ -419,8 +383,8 @@ export const ModalGuestSendMaintenanceReport = ({
               </>
             )}
 
-            {maintenance.canReport &&
-              ['expired', 'pending'].includes(maintenance.MaintenancesStatus.name) && (
+            {maintenanceDetails.canReport &&
+              ['expired', 'pending'].includes(maintenanceDetails.MaintenancesStatus.name) && (
                 <>
                   <Input
                     label="Custo"
@@ -525,18 +489,18 @@ export const ModalGuestSendMaintenanceReport = ({
                 </>
               )}
           </Style.Content>
-          {maintenance.canReport &&
-          ['expired', 'pending'].includes(maintenance.MaintenancesStatus.name) ? (
+          {maintenanceDetails.canReport &&
+          ['expired', 'pending'].includes(maintenanceDetails.MaintenancesStatus.name) ? (
             <Style.ButtonContainer>
               {!onQuery && (
                 <PopoverButton
                   disabled={onQuery}
-                  actionButtonClick={requestToggleInProgress}
+                  actionButtonClick={() => handleChangeMaintenanceProgress()}
                   borderless
                   textColor={theme.color.actionBlue}
-                  label={maintenance.inProgress ? 'Parar execução' : 'Iniciar execução'}
+                  label={maintenanceDetails.inProgress ? 'Parar execução' : 'Iniciar execução'}
                   message={{
-                    title: maintenance.inProgress
+                    title: maintenanceDetails.inProgress
                       ? 'Tem certeza que deseja alterar a execução?'
                       : 'Iniciar a execução apenas indica que a manutenção está sendo realizada, mas não conclui a manutenção.',
                     content: 'Esta ação é reversível.',
@@ -548,7 +512,7 @@ export const ModalGuestSendMaintenanceReport = ({
               {!onQuery && (
                 <PopoverButton
                   disabled={onFileQuery || onImageQuery || onQuery}
-                  actionButtonClick={requestSaveReportProgress}
+                  actionButtonClick={() => handleSaveMaintenance()}
                   textColor={theme.color.actionBlue}
                   borderless
                   label="Salvar"
@@ -559,10 +523,11 @@ export const ModalGuestSendMaintenanceReport = ({
                   type="Button"
                 />
               )}
-              {maintenance.Building.guestCanCompleteMaintenance && (
+
+              {maintenanceDetails.Building.guestCanCompleteMaintenance && (
                 <PopoverButton
                   loading={onQuery}
-                  actionButtonClick={requestSendReport}
+                  actionButtonClick={() => handleSendReportMaintenance()}
                   label="Finalizar manutenção"
                   message={{
                     title: 'Tem certeza que deseja enviar o relato?',
@@ -574,13 +539,7 @@ export const ModalGuestSendMaintenanceReport = ({
               )}
             </Style.ButtonContainer>
           ) : (
-            <Button
-              label="Fechar"
-              center
-              onClick={() => {
-                setModal(false);
-              }}
-            />
+            <Button label="Fechar" center onClick={() => ''} />
           )}
         </Style.Container>
       )}
