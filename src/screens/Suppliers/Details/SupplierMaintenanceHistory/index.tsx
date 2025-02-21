@@ -12,6 +12,7 @@ import { EventTag } from '@components/EventTag';
 import { dateFormatter, applyMask } from '@utils/functions';
 
 // COMPONENTS
+import { TModalNames } from '@screens/SyndicArea';
 import { ModalMaintenanceDetails } from '../../../MaintenancesPlan/ModalMaintenanceDetails';
 import { ModalSendMaintenanceReport } from '../../../SyndicArea/ModalSendMaintenanceReport';
 import { ReportDataTable, ReportDataTableContent } from '../ReportDataTable';
@@ -35,6 +36,17 @@ export const SupplierMaintenanceHistory = ({
   const [modalSendMaintenanceReportOpen, setModalSendMaintenanceReportOpen] =
     useState<boolean>(false);
 
+  const handleModals = (modal: TModalNames, modalState: boolean) => {
+    switch (modal) {
+      case 'modalMaintenanceDetails':
+        setModalMaintenanceDetails(modalState);
+        break;
+
+      default:
+        break;
+    }
+  };
+
   useEffect(() => {
     getMaintenanceHistory();
   }, [modalSendMaintenanceReportOpen]);
@@ -55,27 +67,11 @@ export const SupplierMaintenanceHistory = ({
 
       {modalSendMaintenanceReportOpen && maintenanceHistoryId && (
         <ModalSendMaintenanceReport
-          setModal={setModalSendMaintenanceReportOpen}
-          modalAdditionalInformations={{
-            expectedDueDate: '',
-            expectedNotificationDate: '',
-            id: maintenanceHistoryId,
-            isFuture: false,
-          }}
           syndicNanoId={syndicNanoId}
-          filter={{ categoryId: '', months: '', status: '', years: '', priorityName: '' }}
-          setBuildingName={() => {
-            //
-          }}
-          setFilterOptions={() => {
-            //
-          }}
-          setKanban={() => {
-            //
-          }}
-          setLoading={() => {
-            //
-          }}
+          userId=""
+          maintenanceHistoryId={maintenanceHistoryId}
+          handleModals={handleModals}
+          handleRefresh={() => ''}
         />
       )}
 
