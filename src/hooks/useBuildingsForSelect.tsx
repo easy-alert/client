@@ -43,6 +43,10 @@ export const useBuildingsForSelect = ({
   }, [checkPerms]);
 
   useEffect(() => {
+    if (!companyId && !userId) {
+      return;
+    }
+
     getBuildingsForSelect();
   }, [getBuildingsForSelect]);
 

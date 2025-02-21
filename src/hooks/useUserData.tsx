@@ -24,6 +24,8 @@ export const useUserData = ({ userId }: IGetUserById) => {
   }, [userId]);
 
   useEffect(() => {
+    if (!userId) return;
+
     handleGetUserById();
   }, [handleGetUserById]);
 
