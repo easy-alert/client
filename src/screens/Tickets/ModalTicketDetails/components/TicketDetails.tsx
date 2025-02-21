@@ -185,38 +185,6 @@ function TicketDetails({
 
       <TicketHistoryActivities ticketId={ticket.id} disableComment={disableComment} />
 
-      {ticket.statusName !== 'open' && syndicNanoId && (
-        <Style.TicketFinalSolutionContainer>
-          <Typography variant="h3" marginBottom="sm">
-            Colaborador
-          </Typography>
-
-          <Style.TicketFinalSolutionContent>
-            {!ticket?.collaborator ? (
-              <>
-                <Input
-                  label=""
-                  typeDatePlaceholderValue="Finalizar solução"
-                  value={collaborator}
-                  onChange={(e) => setCollaborator(e.target.value)}
-                />
-
-                <Button
-                  label="Salvar"
-                  bgColor="transparent"
-                  textColor="finished"
-                  onClick={() =>
-                    handleUpdateOneTicket({ id: ticket.id, collaborator }, false, false)
-                  }
-                />
-              </>
-            ) : (
-              <Style.TicketDetailsRowValue>{ticket.collaborator}</Style.TicketDetailsRowValue>
-            )}
-          </Style.TicketFinalSolutionContent>
-        </Style.TicketFinalSolutionContainer>
-      )}
-
       {ticket.statusName !== 'open' && (
         <Style.TicketSignatureContainer>
           <Style.TicketSignatureHeader>

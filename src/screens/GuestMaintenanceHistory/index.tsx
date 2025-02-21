@@ -6,19 +6,11 @@ export const GuestMaintenanceHistory = () => {
 
   return (
     <ModalGuestSendMaintenanceReport
-      modalAdditionalInformations={{
-        id: maintenanceHistoryId,
-        expectedNotificationDate: '',
-        expectedDueDate: '',
-        isFuture: false,
-      }}
-      filter={{ categoryId: '', months: '', status: '', years: '', priorityName: '' }}
-      setBuildingName={() => ''}
-      setFilterOptions={() => ''}
-      setKanban={() => ''}
-      setLoading={() => ''}
-      setModal={() => ''}
+      maintenanceHistoryId={maintenanceHistoryId}
+      userId=""
       syndicNanoId=""
+      handleModals={() => ''}
+      handleRefresh={() => ''}
     />
   );
 };

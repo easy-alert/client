@@ -12,7 +12,6 @@ import { ImagePreview } from '@components/ImagePreview';
 import { InProgressTag } from '@components/InProgressTag';
 import { LinkSupplierToMaintenanceHistory } from '@components/LinkSupplierToMaintenanceHistory';
 import { MaintenanceHistoryActivities } from '@components/MaintenanceHistoryActivities';
-import { requestMaintenanceDetails } from '@screens/functions';
 
 // GLOBAL UTILS
 import { applyMask, dateFormatter } from '@utils/functions';
@@ -23,6 +22,7 @@ import { icon } from '@assets/icons';
 // UTILS
 
 // STYLES
+import { requestMaintenanceDetails } from '@screens/SyndicArea/functions';
 import * as Style from './styles';
 
 // TYPES
@@ -36,7 +36,7 @@ export const ModalMaintenanceDetails = ({
   const [modalLoading, setModalLoading] = useState<boolean>(true);
 
   // MODAL DETALHE DE MANUTENÇÃO
-  const [maintenance, setMaintenance] = useState<IMaintenance>({
+  const [maintenanceDetails, setMaintenanceDetails] = useState<IMaintenance>({
     Building: {
       name: '',
       guestCanCompleteMaintenance: false,
@@ -84,15 +84,7 @@ export const ModalMaintenanceDetails = ({
     ReportImages: [],
   });
 
-  useEffect(() => {
-    requestMaintenanceDetails({
-      maintenanceHistoryId: modalAdditionalInformations.id,
-      setMaintenance,
-      setModalLoading,
-    });
-  }, []);
-
-  useEffect(() => {
+  const handleMaintenanceReport = (maintenance: IMaintenance) => {
     const formattedId =
       maintenance?.MaintenanceReport[0]?.id || maintenance?.MaintenanceReportProgress[0]?.id;
 
@@ -118,7 +110,56 @@ export const ModalMaintenanceDetails = ({
       ReportImages: formattedImages,
       ReportAnnexes: formattedAnnexes,
     });
-  }, [maintenance]);
+  };
+
+  const handleGetMaintenanceDetails = async () => {
+    try {
+      const responseData = await requestMaintenanceDetails({
+        maintenanceHistoryId: modalAdditionalInformations.id,
+      });
+
+      setMaintenanceDetails(responseData);
+      handleMaintenanceReport(responseData);
+    } finally {
+      setTimeout(() => {
+        setModalLoading(false);
+      }, 500);
+    }
+  };
+
+  useEffect(() => {
+    handleGetMaintenanceDetails();
+  }, []);
+
+  useEffect(() => {
+    const formattedId =
+      maintenanceDetails?.MaintenanceReport[0]?.id ||
+      maintenanceDetails?.MaintenanceReportProgress[0]?.id;
+
+    const formattedObservation =
+      maintenanceDetails?.MaintenanceReport[0]?.observation ||
+      maintenanceDetails?.MaintenanceReportProgress[0]?.observation;
+
+    const formattedCost =
+      maintenanceDetails?.MaintenanceReport[0]?.cost ||
+      maintenanceDetails.MaintenanceReportProgress[0]?.cost;
+
+    const formattedImages =
+      maintenanceDetails?.MaintenanceReport[0]?.ReportImages ||
+      maintenanceDetails?.MaintenanceReportProgress[0]?.ReportImagesProgress;
+
+    const formattedAnnexes =
+      maintenanceDetails?.MaintenanceReport[0]?.ReportAnnexes ||
+      maintenanceDetails?.MaintenanceReportProgress[0]?.ReportAnnexesProgress;
+
+    setMaintenanceReport({
+      id: formattedId,
+      observation: formattedObservation,
+      cost: formattedCost,
+      ReportImages: formattedImages,
+      ReportAnnexes: formattedAnnexes,
+    });
+  }, [maintenanceDetails]);
 
   return (
     <Modal bodyWidth="475px" title="Detalhes de manutenção" setModal={setModal}>
@@ -128,76 +169,78 @@ export const ModalMaintenanceDetails = ({
         </Style.LoadingContainer>
       ) : (
         <Style.Container>
-          <h3>{maintenance?.Building.name}</h3>
+          <h3>{maintenanceDetails?.Building.name}</h3>
           <Style.StatusTagWrapper>
-            {maintenance.MaintenancesStatus.name === 'overdue' && <EventTag status="completed" />}
+            {maintenanceDetails.MaintenancesStatus.name === 'overdue' && (
+              <EventTag status="completed" />
+            )}
 
-            <EventTag status={maintenance?.MaintenancesStatus.name} />
+            <EventTag status={maintenanceDetails?.MaintenancesStatus.name} />
 
             <EventTag
               status={
-                maintenance?.Maintenance.MaintenanceType.name === 'occasional'
+                maintenanceDetails?.Maintenance.MaintenanceType.name === 'occasional'
                   ? 'occasional'
                   : 'common'
               }
             />
 
-            {(maintenance?.MaintenancesStatus.name === 'expired' ||
-              maintenance?.MaintenancesStatus.name === 'pending') &&
-              maintenance.inProgress &&
+            {(maintenanceDetails?.MaintenancesStatus.name === 'expired' ||
+              maintenanceDetails?.MaintenancesStatus.name === 'pending') &&
+              maintenanceDetails.inProgress &&
               !modalAdditionalInformations.isFuture && <InProgressTag />}
           </Style.StatusTagWrapper>
 
           <Style.Content>
             <Style.Row>
               <h6>Categoria</h6>
-              <p className="p2">{maintenance.Maintenance.Category.name}</p>
+              <p className="p2">{maintenanceDetails.Maintenance.Category.name}</p>
             </Style.Row>
 
             <Style.Row>
               <h6>Elemento</h6>
-              <p className="p2">{maintenance.Maintenance.element}</p>
+              <p className="p2">{maintenanceDetails.Maintenance.element}</p>
             </Style.Row>
 
             <Style.Row>
               <h6>Atividade</h6>
-              <p className="p2">{maintenance.Maintenance.activity}</p>
+              <p className="p2">{maintenanceDetails.Maintenance.activity}</p>
             </Style.Row>
 
             <Style.Row>
               <h6>Responsável</h6>
-              <p className="p2">{maintenance.Maintenance.responsible}</p>
+              <p className="p2">{maintenanceDetails.Maintenance.responsible}</p>
             </Style.Row>
 
             <Style.Row>
               <h6>Fonte</h6>
-              <p className="p2">{maintenance.Maintenance.source}</p>
+              <p className="p2">{maintenanceDetails.Maintenance.source}</p>
             </Style.Row>
 
             <Style.Row>
               <h6>Observação da manutenção</h6>
-              <p className="p2">{maintenance.Maintenance.observation ?? '-'}</p>
+              <p className="p2">{maintenanceDetails.Maintenance.observation ?? '-'}</p>
             </Style.Row>
 
             <Style.Row>
               <h6>Instruções</h6>
               <Style.FileAndImageRow>
-                {maintenance.Maintenance.instructions.length > 0
-                  ? maintenance.Maintenance.instructions.map(({ url, name }) => (
+                {maintenanceDetails.Maintenance.instructions.length > 0
+                  ? maintenanceDetails.Maintenance.instructions.map(({ url, name }) => (
                       <ListTag padding="4px 12px" downloadUrl={url} key={url} label={name} />
                     ))
                   : '-'}
               </Style.FileAndImageRow>
             </Style.Row>
 
-            {maintenance.Maintenance.MaintenanceType.name !== 'occasional' && (
+            {maintenanceDetails.Maintenance.MaintenanceType.name !== 'occasional' && (
               <Style.Row>
                 <h6>Periodicidade</h6>
                 <p className="p2">
                   A cada{' '}
-                  {maintenance.Maintenance.frequency > 1
-                    ? `${maintenance.Maintenance.frequency} ${maintenance.Maintenance.FrequencyTimeInterval.pluralLabel}`
-                    : `${maintenance.Maintenance.frequency} ${maintenance.Maintenance.FrequencyTimeInterval.singularLabel}`}
+                  {maintenanceDetails.Maintenance.frequency > 1
+                    ? `${maintenanceDetails.Maintenance.frequency} ${maintenanceDetails.Maintenance.FrequencyTimeInterval.pluralLabel}`
+                    : `${maintenanceDetails.Maintenance.frequency} ${maintenanceDetails.Maintenance.FrequencyTimeInterval.singularLabel}`}
                 </p>
               </Style.Row>
             )}
@@ -220,43 +263,43 @@ export const ModalMaintenanceDetails = ({
               <>
                 <Style.Row>
                   <h6>Data de notificação</h6>
-                  <p className="p2">{dateFormatter(maintenance.notificationDate)}</p>
+                  <p className="p2">{dateFormatter(maintenanceDetails.notificationDate)}</p>
                 </Style.Row>
 
-                {maintenance.Maintenance.MaintenanceType.name !== 'occasional' && (
+                {maintenanceDetails.Maintenance.MaintenanceType.name !== 'occasional' && (
                   <Style.Row>
                     <h6>Data de vencimento</h6>
-                    <p className="p2">{dateFormatter(maintenance.dueDate)}</p>
+                    <p className="p2">{dateFormatter(maintenanceDetails.dueDate)}</p>
                   </Style.Row>
                 )}
               </>
             )}
 
-            {maintenance.resolutionDate && (
+            {maintenanceDetails.resolutionDate && (
               <Style.Row>
                 <h6>Data de conclusão</h6>
-                <p className="p2">{dateFormatter(maintenance.resolutionDate)}</p>
+                <p className="p2">{dateFormatter(maintenanceDetails.resolutionDate)}</p>
               </Style.Row>
             )}
 
-            {!!maintenance.daysInAdvance && (
+            {!!maintenanceDetails.daysInAdvance && (
               <Style.Row>
                 <h6>Dias antecipados</h6>
-                <p className="p2">{maintenance.daysInAdvance}</p>
+                <p className="p2">{maintenanceDetails.daysInAdvance}</p>
               </Style.Row>
             )}
 
-            {maintenance.additionalInfo && (
+            {maintenanceDetails.additionalInfo && (
               <Style.Row>
                 <h6>Info. Adicional</h6>
-                <p className="p2">{maintenance.additionalInfo}</p>
+                <p className="p2">{maintenanceDetails.additionalInfo}</p>
               </Style.Row>
             )}
 
             {!modalAdditionalInformations.isFuture && (
               <>
-                <LinkSupplierToMaintenanceHistory maintenanceHistoryId={maintenance.id} />
-                <MaintenanceHistoryActivities maintenanceHistoryId={maintenance.id} />
+                <LinkSupplierToMaintenanceHistory maintenanceHistoryId={maintenanceDetails.id} />
+                <MaintenanceHistoryActivities maintenanceHistoryId={maintenanceDetails.id} />
               </>
             )}
 

@@ -14,7 +14,9 @@ interface IToastifyMessage {
   type: 'success' | 'warning' | 'error';
 }
 
-export const handleToastify = (serverResponse: IServerResponse) => {
+export const handleToastify = (serverResponse: IServerResponse, dismiss = true) => {
+  if (dismiss) toast.dismiss();
+
   if (serverResponse.status === 200) {
     toast.success(serverResponse?.data?.ServerMessage?.message || 'Operação realizada com sucesso');
   } else {

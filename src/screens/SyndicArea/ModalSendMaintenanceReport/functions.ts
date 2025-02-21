@@ -1,8 +1,10 @@
 import { toast } from 'react-toastify';
-import { Api } from '../../../services/api';
-import { applyMask, catchHandler, unMaskBRL } from '../../../utils/functions';
-import { requestSyndicKanban } from '../functions';
-import {
+import { handleToastify } from '@utils/toastifyResponses';
+import { Api } from '@services/api';
+
+import { unMaskBRL } from '@utils/functions';
+
+import type {
   IRequestReportProgress,
   IRequestSaveReportProgress,
   IRequestSendReport,
@@ -10,152 +12,102 @@ import {
 } from './types';
 
 export const requestSendReport = async ({
-  maintenanceReport,
-  setModal,
+  syndicNanoId,
+  userId,
   maintenanceHistoryId,
+  maintenanceReport,
   files,
   images,
-  setOnQuery,
-  filter,
-  setBuildingName,
-  setFilterOptions,
-  setKanban,
-  setLoading,
-  syndicNanoId,
 }: IRequestSendReport) => {
-  setOnQuery(true);
+  const uri = `/maintenances/create/report`;
 
-  await Api.post('/maintenances/create/report', {
-    origin: 'Client',
+  const body = {
+    userId,
+    responsibleSyndicId: syndicNanoId,
     maintenanceHistoryId,
     cost: Number(unMaskBRL(maintenanceReport.cost)),
     observation: maintenanceReport.observation !== '' ? maintenanceReport.observation : null,
     ReportAnnexes: files,
     ReportImages: images,
-    responsibleSyndicId: syndicNanoId,
-  })
-    .then((res) => {
-      toast.success(res.data.ServerMessage.message);
-      requestSyndicKanban({
-        setLoading,
-        syndicNanoId,
-        setFilterOptions,
-        filter,
-        setOnQuery,
-        setKanban,
-        setBuildingName,
-      });
-      setModal(false);
-    })
-    .catch((err) => {
-      catchHandler(err);
-    })
-    .finally(() => {
-      setOnQuery(false);
-    });
+  };
+
+  try {
+    const response = await Api.post(uri, body);
+
+    handleToastify(response);
+  } catch (error: any) {
+    handleToastify(error.response);
+  }
 };
 
 export const requestToggleInProgress = async ({
-  setModal,
-  maintenanceHistoryId,
-  setOnQuery,
-  filter,
-  setBuildingName,
-  setFilterOptions,
-  setKanban,
-  setLoading,
   syndicNanoId,
+  userId,
+  maintenanceHistoryId,
   inProgressChange,
 }: IRequestToggleInProgress) => {
-  setOnQuery(true);
+  const uri = `/maintenances/set/in-progress`;
 
-  await Api.post(`/maintenances/set/in-progress?syndicNanoId=${syndicNanoId}`, {
+  const params = {
+    syndicNanoId,
+  };
+
+  const body = {
+    userId,
     maintenanceHistoryId,
     inProgressChange,
-  })
-    .then((res) => {
-      toast.success(res.data.ServerMessage.message);
-      requestSyndicKanban({
-        setLoading,
-        syndicNanoId,
-        setFilterOptions,
-        filter,
-        setOnQuery,
-        setKanban,
-        setBuildingName,
-      });
-      setModal(false);
-    })
-    .catch((err) => {
-      catchHandler(err);
-    })
-    .finally(() => {
-      setOnQuery(false);
-    });
+  };
+
+  try {
+    const response = await Api.post(uri, body, { params });
+
+    handleToastify(response);
+  } catch (error: any) {
+    handleToastify(error.response);
+  }
 };
 
-export const requestReportProgress = async ({
-  maintenanceHistoryId,
-  setFiles,
-  setImages,
-  setMaintenanceReport,
-}: IRequestReportProgress) => {
-  await Api.get(`/maintenances/list/report/progress/${maintenanceHistoryId}`)
-    .then((res) => {
-      if (res.data.progress) {
-        setMaintenanceReport({
-          cost: applyMask({ mask: 'BRL', value: String(res.data.progress.cost) }).value,
-          observation: res.data.progress.observation || '',
-        });
-        setFiles(res.data.progress.ReportAnnexesProgress);
-        setImages(res.data.progress.ReportImagesProgress);
-      }
-    })
-    .catch((err) => {
-      catchHandler(err);
-    });
+export const requestReportProgress = async ({ maintenanceHistoryId }: IRequestReportProgress) => {
+  const uri = `/maintenances/list/report/progress/${maintenanceHistoryId}`;
+
+  try {
+    const response = await Api.get(uri);
+
+    return response.data;
+  } catch (error: any) {
+    handleToastify(error.response, false);
+    return {};
+  }
 };
 
 export const requestSaveReportProgress = async ({
+  syndicNanoId,
+  userId,
   maintenanceReport,
-  setModal,
   maintenanceHistoryId,
   files,
   images,
-  setOnQuery,
-  filter,
-  setBuildingName,
-  setFilterOptions,
-  setKanban,
-  setLoading,
-  syndicNanoId,
 }: IRequestSaveReportProgress) => {
-  setOnQuery(true);
+  const uri = `/maintenances/create/report/progress`;
 
-  await Api.post(`/maintenances/create/report/progress?syndicNanoId=${syndicNanoId}`, {
+  const params = {
+    syndicNanoId,
+  };
+
+  const body = {
+    userId,
     maintenanceHistoryId,
     cost: Number(unMaskBRL(maintenanceReport.cost)),
     observation: maintenanceReport.observation !== '' ? maintenanceReport.observation : null,
     ReportAnnexes: files,
     ReportImages: images,
-  })
-    .then((res) => {
-      toast.success(res.data.ServerMessage.message);
-      requestSyndicKanban({
-        setLoading,
-        syndicNanoId,
-        setFilterOptions,
-        filter,
-        setOnQuery,
-        setKanban,
-        setBuildingName,
-      });
-      setModal(false);
-    })
-    .catch((err) => {
-      catchHandler(err);
-    })
-    .finally(() => {
-      setOnQuery(false);
-    });
+  };
+
+  try {
+    const response = await Api.post(uri, body, { params });
+
+    handleToastify(response);
+  } catch (error: any) {
+    handleToastify(error.response);
+  }
 };

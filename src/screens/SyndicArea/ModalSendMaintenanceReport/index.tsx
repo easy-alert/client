@@ -1,53 +1,57 @@
 /* eslint-disable react/no-array-index-key */
-// LIBS
+// REACT
+import { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 // COMPONENTS
-import { useEffect, useState } from 'react';
-import { EventTag } from '../../../components/EventTag';
-import { Input } from '../../../components/Inputs/Input';
-import { Button } from '../../../components/Buttons/Button';
-import { Modal } from '../../../components/Modal';
-import { Image } from '../../../components/Image';
-import { DotLoading } from '../../../components/Loadings/DotLoading';
-import { ImagePreview } from '../../../components/ImagePreview';
-import { IconButton } from '../../../components/Buttons/IconButton';
-import { DotSpinLoading } from '../../../components/Loadings/DotSpinLoading';
+import { EventTag } from '@components/EventTag';
+import { Input } from '@components/Inputs/Input';
+import { Button } from '@components/Buttons/Button';
+import { Modal } from '@components/Modal';
+import { Image } from '@components/Image';
+import { DotLoading } from '@components/Loadings/DotLoading';
+import { ImagePreview } from '@components/ImagePreview';
+import { IconButton } from '@components/Buttons/IconButton';
+import { DotSpinLoading } from '@components/Loadings/DotSpinLoading';
+import { LinkSupplierToMaintenanceHistory } from '@components/LinkSupplierToMaintenanceHistory';
+import { MaintenanceHistoryActivities } from '@components/MaintenanceHistoryActivities';
+import { ShareMaintenanceHistoryButton } from '@components/ShareMaintenanceHistoryButton';
+import { ListTag } from '@components/ListTag';
+import { InProgressTag } from '@components/InProgressTag';
+import { PopoverButton } from '@components/Buttons/PopoverButton';
+import UserResponsible from '@components/UserResponsible';
 
-// STYLES
-import * as Style from './styles';
-import { icon } from '../../../assets/icons';
+// GLOBAL TYLES
+import { icon } from '@assets/icons';
 
-// TYPES
-import { IMaintenanceReport, IModalSendMaintenanceReport } from './types';
-import { AnnexesAndImages, IMaintenance } from '../../types';
+// GLOBAL FUNCTIONS
+import { applyMask, dateFormatter, uploadManyFiles } from '@utils/functions';
 
-// FUNCTIONS
-import { applyMask, dateFormatter, uploadManyFiles } from '../../../utils/functions';
-import { requestMaintenanceDetails } from '../../functions';
+// GLOBAL THEMES
+import { theme } from '@styles/theme';
+
+// UTILS
 import {
   requestReportProgress,
   requestSaveReportProgress,
   requestSendReport,
   requestToggleInProgress,
 } from './functions';
-import { InProgressTag } from '../../../components/InProgressTag';
-import { PopoverButton } from '../../../components/Buttons/PopoverButton';
-import { theme } from '../../../styles/theme';
-import { LinkSupplierToMaintenanceHistory } from '../../../components/LinkSupplierToMaintenanceHistory';
-import { MaintenanceHistoryActivities } from '../../../components/MaintenanceHistoryActivities';
-import { ShareMaintenanceHistoryButton } from '../../../components/ShareMaintenanceHistoryButton';
-import { ListTag } from '../../../components/ListTag';
+import { requestMaintenanceDetails } from '../functions';
+
+// STYLES
+import * as Style from './styles';
+
+// TYPES
+import type { AnnexesAndImages, IMaintenance } from '../types';
+import type { IMaintenanceReport, IModalSendMaintenanceReport } from './types';
 
 export const ModalSendMaintenanceReport = ({
-  setModal,
-  modalAdditionalInformations,
-  filter,
-  setBuildingName,
-  setFilterOptions,
-  setKanban,
-  setLoading,
+  maintenanceHistoryId,
+  userId,
   syndicNanoId,
+  handleModals,
+  handleRefresh,
 }: IModalSendMaintenanceReport) => {
   const [maintenance, setMaintenance] = useState<IMaintenance>({
     Building: {
@@ -96,7 +100,6 @@ export const ModalSendMaintenanceReport = ({
   });
 
   const [modalLoading, setModalLoading] = useState<boolean>(true);
-
   const [onQuery, setOnQuery] = useState<boolean>(false);
 
   const [files, setFiles] = useState<AnnexesAndImages[]>([]);
@@ -120,6 +123,89 @@ export const ModalSendMaintenanceReport = ({
     },
     disabled: onImageQuery,
   });
+
+  // #region api function
+  const handleGetMaintenanceDetails = async () => {
+    const responseData = await requestMaintenanceDetails({
+      maintenanceHistoryId,
+    });
+
+    setMaintenance(responseData);
+  };
+
+  const handleGetReportProgress = async () => {
+    const responseData = await requestReportProgress({
+      maintenanceHistoryId,
+    });
+
+    if (responseData.progress) {
+      setMaintenanceReport({
+        cost: applyMask({ mask: 'BRL', value: String(responseData.progress.cost) }).value,
+        observation: responseData.progress.observation || '',
+      });
+      setFiles(responseData.progress.ReportAnnexesProgress);
+      setImages(responseData.progress.ReportImagesProgress);
+    }
+  };
+
+  const handleChangeMaintenanceProgress = async () => {
+    setOnQuery(true);
+
+    try {
+      await requestToggleInProgress({
+        syndicNanoId: '',
+        userId: userId ?? '',
+        maintenanceHistoryId,
+        inProgressChange: !maintenance.inProgress,
+      });
+
+      handleModals('modalSendMaintenanceReport', false);
+    } finally {
+      handleRefresh();
+      setOnQuery(false);
+    }
+  };
+
+  const handleSaveMaintenance = async () => {
+    setOnQuery(true);
+
+    try {
+      await requestSaveReportProgress({
+        syndicNanoId: '',
+        userId: userId ?? '',
+        maintenanceHistoryId,
+        maintenanceReport,
+        files,
+        images,
+      });
+
+      handleModals('modalSendMaintenanceReport', false);
+    } finally {
+      handleRefresh();
+      setOnQuery(false);
+    }
+  };
+
+  const handleSendReportMaintenance = async () => {
+    setOnQuery(true);
+
+    try {
+      await requestSendReport({
+        syndicNanoId: '',
+        userId: userId ?? '',
+        maintenanceHistoryId,
+        maintenanceReport,
+        files,
+        images,
+      });
+
+      handleModals('modalSendMaintenanceReport', false);
+    } finally {
+      handleRefresh();
+      setOnQuery(false);
+    }
+  };
+  // #endregion
 
   useEffect(() => {
     if (acceptedFiles.length > 0) {
@@ -172,25 +258,23 @@ export const ModalSendMaintenanceReport = ({
   }, [acceptedImages]);
 
   useEffect(() => {
-    requestReportProgress({
-      maintenanceHistoryId: modalAdditionalInformations.id,
-      setFiles,
-      setImages,
-      setMaintenanceReport,
-    }).then(() => {
-      requestMaintenanceDetails({
-        maintenanceHistoryId: modalAdditionalInformations.id,
-        setMaintenance,
-        setModalLoading,
-      });
-    });
+    setModalLoading(true);
+
+    try {
+      handleGetReportProgress();
+      handleGetMaintenanceDetails();
+    } finally {
+      setTimeout(() => {
+        setModalLoading(false);
+      }, 500);
+    }
   }, []);
 
   return (
     <Modal
       bodyWidth="475px"
       title={maintenance.canReport ? 'Enviar relato' : 'Detalhes de manutenção'}
-      setModal={setModal}
+      setModal={(modalState) => handleModals('modalSendMaintenanceReport', modalState)}
     >
       {modalLoading ? (
         <Style.LoadingContainer>
@@ -198,7 +282,7 @@ export const ModalSendMaintenanceReport = ({
         </Style.LoadingContainer>
       ) : (
         <Style.Container>
-          <ShareMaintenanceHistoryButton maintenanceHistoryId={modalAdditionalInformations.id} />
+          <ShareMaintenanceHistoryButton maintenanceHistoryId={maintenanceHistoryId} />
 
           <h3>{maintenance?.Building.name}</h3>
           <Style.StatusTagWrapper>
@@ -289,6 +373,12 @@ export const ModalSendMaintenanceReport = ({
                 <p className="p2">{maintenance.additionalInfo}</p>
               </Style.Row>
             )}
+
+            <div style={{ marginTop: '12px' }}>
+              {maintenance?.userResponsible && (
+                <UserResponsible user={maintenance?.userResponsible} />
+              )}
+            </div>
 
             <LinkSupplierToMaintenanceHistory maintenanceHistoryId={maintenance.id} />
             <MaintenanceHistoryActivities maintenanceHistoryId={maintenance.id} />
@@ -401,20 +491,7 @@ export const ModalSendMaintenanceReport = ({
               {!onQuery && (
                 <PopoverButton
                   disabled={onFileQuery || onImageQuery || onQuery}
-                  actionButtonClick={() => {
-                    requestToggleInProgress({
-                      maintenanceHistoryId: modalAdditionalInformations.id,
-                      setModal,
-                      setOnQuery,
-                      filter,
-                      setBuildingName,
-                      setFilterOptions,
-                      setKanban,
-                      setLoading,
-                      syndicNanoId,
-                      inProgressChange: !maintenance.inProgress,
-                    });
-                  }}
+                  actionButtonClick={() => handleChangeMaintenanceProgress()}
                   borderless
                   textColor={theme.color.actionBlue}
                   label={maintenance.inProgress ? 'Parar execução' : 'Iniciar execução'}
@@ -431,22 +508,7 @@ export const ModalSendMaintenanceReport = ({
               {!onQuery && (
                 <PopoverButton
                   disabled={onFileQuery || onImageQuery || onQuery}
-                  actionButtonClick={() => {
-                    requestSaveReportProgress({
-                      files,
-                      images,
-                      maintenanceHistoryId: modalAdditionalInformations.id,
-                      maintenanceReport,
-                      setModal,
-                      setOnQuery,
-                      filter,
-                      setBuildingName,
-                      setFilterOptions,
-                      setKanban,
-                      setLoading,
-                      syndicNanoId,
-                    });
-                  }}
+                  actionButtonClick={() => handleSaveMaintenance()}
                   textColor={theme.color.actionBlue}
                   borderless
                   label="Salvar"
@@ -460,22 +522,7 @@ export const ModalSendMaintenanceReport = ({
               <PopoverButton
                 disabled={onFileQuery || onImageQuery}
                 loading={onQuery}
-                actionButtonClick={() => {
-                  requestSendReport({
-                    files,
-                    images,
-                    maintenanceHistoryId: modalAdditionalInformations.id,
-                    maintenanceReport,
-                    setModal,
-                    setOnQuery,
-                    filter,
-                    setBuildingName,
-                    setFilterOptions,
-                    setKanban,
-                    setLoading,
-                    syndicNanoId,
-                  });
-                }}
+                actionButtonClick={() => handleSendReportMaintenance()}
                 label="Finalizar manutenção"
                 message={{
                   title: 'Tem certeza que deseja enviar o relato?',
@@ -489,9 +536,7 @@ export const ModalSendMaintenanceReport = ({
             <Button
               label="Fechar"
               center
-              onClick={() => {
-                setModal(false);
-              }}
+              onClick={() => handleModals('modalSendMaintenanceReport', false)}
             />
           )}
         </Style.Container>
