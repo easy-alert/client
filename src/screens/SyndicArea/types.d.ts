@@ -1,5 +1,6 @@
 export interface MaintenanceKanban {
   id: string;
+  buildingName: string;
   element: string;
   activity: string;
   status: 'expired' | 'pending' | 'completed' | 'overdue';

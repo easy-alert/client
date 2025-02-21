@@ -30,10 +30,12 @@ import { IChecklist, TChecklistStatus } from '@customTypes/IChecklist';
 
 import * as Style from './styles';
 
+import type { TModalNames } from '..';
+
 interface ModalSendReportProps {
   buildingId: string;
   checklistId: string;
-  handleModals: (modal: string, modalState: boolean) => void;
+  handleModals: (modal: TModalNames, modalState: boolean) => void;
 }
 
 type TDeleteMode = 'this' | 'all' | 'thisAndFollowing' | '';

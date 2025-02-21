@@ -4,8 +4,13 @@ import { useState, useEffect } from 'react';
 // LIBS
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
+// HOOKS
+import { useUserData } from '@hooks/useUserData';
+import { useMaintenanceStatusForSelect } from '@hooks/useMaintenanceStatusForSelect';
+
 // SERVICES
 import { getBuildingsBySyndicId } from '@services/apis/getBuildingsBySyndicId';
+import { getMaintenancesKanban } from '@services/apis/getMaintenancesKanban';
 
 // GLOBAL COMPONENTS
 import { Button } from '@components/Buttons/Button';
@@ -27,19 +32,22 @@ import { icon } from '@assets/icons';
 import { theme } from '@styles/theme';
 
 // COMPONENTS
+import { Form, Formik } from 'formik';
+import { FormikSelect } from '@components/Form/FormikSelect';
+import { FormikInput } from '@components/Form/FormikInput';
+import { ListTag } from '@components/ListTag';
+
+import { useBuildingsForSelect } from '@hooks/useBuildingsForSelect';
 import { ModalMaintenanceDetails } from '../MaintenancesPlan/ModalMaintenanceDetails';
 import { ModalSendMaintenanceReport } from './ModalSendMaintenanceReport';
 import { ModalChecklistCreate } from './ModalChecklistCreate';
 import { ModalChecklistDetails } from './ModalChecklistDetails';
 
-// UTILS
-import { requestSyndicKanban } from './functions';
-
 // STYLES
 import * as Style from './styles';
 
 // TYPES
-import type { IFilter, IFilterOptions, IKanban } from './types';
+import type { IKanban } from './types';
 import type { IModalAdditionalInformations } from '../MaintenancesPlan/types';
 
 interface IBuildingsBySyndic {
@@ -51,9 +59,33 @@ interface IBuildingsBySyndic {
   label: string;
 }
 
+export interface IMaintenanceFilter {
+  buildings: string[];
+  status: string[];
+  categories: string[];
+  users: string[];
+  priorityName: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+interface IMaintenanceCategoryForSelect {
+  id: string;
+  name: string;
+}
+
+export type TModalNames =
+  | 'modalSendMaintenanceReport'
+  | 'modalMaintenanceDetails'
+  | 'modalCreateOccasionalMaintenance'
+  | 'modalChecklistCreate'
+  | 'modalChecklistDetails';
+
 export const SyndicArea = () => {
-  const { buildingNanoId } = useParams() as { buildingNanoId: string };
   const navigate = useNavigate();
+  const { buildingNanoId } = useParams() as { buildingNanoId: string };
+
+  const { maintenanceStatusForSelect } = useMaintenanceStatusForSelect();
 
   const [buildingName, setBuildingName] = useState<string>('');
   const [buildingsBySyndic, setBuildingsBySyndic] = useState<IBuildingsBySyndic[]>([]);
@@ -69,37 +101,40 @@ export const SyndicArea = () => {
       isFuture: false,
     });
 
-  const [modalSendReportOpen, setModalSendReportOpen] = useState<boolean>(false);
+  const [modalMaintenanceSendReport, setModalMaintenanceSendReport] = useState<boolean>(false);
+  const [modalMaintenanceDetails, setModalMaintenanceDetails] = useState<boolean>(false);
   const [modalCreateOccasionalMaintenance, setModalCreateOccasionalMaintenance] =
     useState<boolean>(false);
-  const [modalMaintenanceDetailsOpen, setModalMaintenanceDetailsOpen] = useState<boolean>(false);
 
   const [showFutureMaintenances, setShowFutureMaintenances] = useState<boolean>(false);
   const [showOldExpireds, setShowOldExpireds] = useState<boolean>(false);
 
-  const [search, setSearch] = useSearchParams();
+  const [search] = useSearchParams();
+  const userId = search.get('userId') ?? '';
   const syndicNanoId = search.get('syndicNanoId') ?? '';
-  const categoryId = search.get('categoryId') ?? '';
+  const buildingId = search.get('buildingId') ?? '';
 
-  const [showFilter, setShowFilter] = useState<boolean>(false);
-  const [filterOptions, setFilterOptions] = useState<IFilterOptions>({
-    months: [],
+  const { buildingsForSelect } = useBuildingsForSelect({ userId, checkPerms: true });
+  const { userData } = useUserData({ userId });
+
+  const [maintenanceCategoriesForSelect, setMaintenanceCategoriesForSelect] = useState<
+    IMaintenanceCategoryForSelect[]
+  >([]);
+  const [filter, setFilter] = useState<IMaintenanceFilter>({
+    buildings: [],
     status: [],
-    years: [],
     categories: [],
-  });
-  const [filter, setFilter] = useState<IFilter>({
-    months: '',
-    status: '',
-    years: '',
-    categoryId,
+    users: [],
     priorityName: '',
+    startDate: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0],
+    endDate: new Date().toISOString().split('T')[0],
   });
+  const [showFilter, setShowFilter] = useState<boolean>(false);
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [refresh, setRefresh] = useState<boolean>(false);
-
   const [onQuery, setOnQuery] = useState<boolean>(false);
+
   const [showPriority, setShowPriority] = useState<boolean>(false);
 
   // # region Checklists states
@@ -109,8 +144,17 @@ export const SyndicArea = () => {
   const [modalChecklistDetails, setModalChecklist] = useState(false);
   // # endregion
 
-  const handleModals = (modal: string, modalState: boolean) => {
+  const handleModals = (modal: TModalNames, modalState: boolean) => {
     switch (modal) {
+      case 'modalSendMaintenanceReport':
+        setModalMaintenanceSendReport(modalState);
+        break;
+      case 'modalMaintenanceDetails':
+        setModalMaintenanceDetails(modalState);
+        break;
+      case 'modalCreateOccasionalMaintenance':
+        setModalCreateOccasionalMaintenance(modalState);
+        break;
       case 'modalChecklistCreate':
         setModalChecklistCreate(modalState);
         break;
@@ -123,39 +167,69 @@ export const SyndicArea = () => {
     }
   };
 
-  const handleModalCreateOccasionalMaintenance = (modalState: boolean) => {
-    setModalCreateOccasionalMaintenance(modalState);
+  const handleRefresh = () => {
+    setRefresh((prevState) => !prevState);
   };
 
-  const handleModalMaintenanceDetails = (modalState: boolean) => {
-    setModalMaintenanceDetailsOpen(modalState);
-  };
-
-  const handleModalSendMaintenanceReport = (modalState: boolean) => {
-    setModalSendReportOpen(modalState);
+  const handleQuery = (queryState: boolean) => {
+    setOnQuery(queryState);
   };
 
   const handleMaintenanceHistoryIdChange = (id: string) => {
     setMaintenanceHistoryId(id);
   };
 
-  const handleRefresh = () => {
-    setRefresh((prevState) => !prevState);
-  };
+  // region filter functions
+  const handleFilterChange = (key: keyof IMaintenanceFilter, value: string) => {
+    setFilter((prevState) => {
+      const checkArray = Array.isArray(prevState[key]);
+      const newFilter = { ...prevState, [key]: value };
 
-  const handleGetSyndicKanban = async () => {
-    const response = await requestSyndicKanban({
-      setLoading,
-      syndicNanoId,
-      setFilterOptions,
-      filter,
-      setOnQuery,
-      setKanban,
-      setBuildingName,
+      if (checkArray) {
+        return {
+          ...newFilter,
+          [key]: [...(prevState[key] as string[]), value],
+        };
+      }
+
+      return newFilter;
     });
-
-    setShowPriority(response.showPriority);
   };
+
+  const handleClearFilter = () => {
+    setFilter({
+      buildings: [],
+      status: [],
+      categories: [],
+      users: [],
+      priorityName: '',
+      startDate: new Date(new Date().setDate(new Date().getDate() - 30))
+        .toISOString()
+        .split('T')[0],
+      endDate: new Date().toISOString().split('T')[0],
+    });
+  };
+  // endregion
+
+  // region api functions
+  const handleGetMaintenances = async () => {
+    setLoading(true);
+
+    try {
+      const responseData = await getMaintenancesKanban({
+        userId: userData.id,
+        filter,
+      });
+
+      setKanban(responseData.kanban);
+      setMaintenanceCategoriesForSelect(responseData.maintenanceCategoriesForSelect);
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+    }
+  };
+  // # endregion
 
   const handleGetBuildingsBySyndicId = async () => {
     try {
@@ -168,15 +242,23 @@ export const SyndicArea = () => {
   };
 
   useEffect(() => {
+    handleGetMaintenances();
     handleGetBuildingsBySyndicId();
-    handleGetSyndicKanban();
-  }, [syndicNanoId, refresh]);
+  }, [userData, refresh]);
 
-  return loading ? (
-    <DotSpinLoading />
-  ) : (
+  return (
     <>
-      {modalSendReportOpen && (
+      {modalCreateOccasionalMaintenance && (
+        <ModalCreateOccasionalMaintenance
+          handleModalCreateOccasionalMaintenance={setModalCreateOccasionalMaintenance}
+          handleMaintenanceHistoryIdChange={handleMaintenanceHistoryIdChange}
+          handleModalMaintenanceDetails={setModalMaintenanceDetails}
+          handleModalSendMaintenanceReport={setModalMaintenanceSendReport}
+          handleGetBackgroundData={handleGetMaintenances}
+        />
+      )}
+
+      {/* {modalMaintenanceSendReport && (
         <ModalSendMaintenanceReport
           modalAdditionalInformations={{
             ...modalAdditionalInformations,
@@ -190,9 +272,10 @@ export const SyndicArea = () => {
           setLoading={setLoading}
           syndicNanoId={syndicNanoId}
         />
-      )}
+      )} */}
 
-      {modalMaintenanceDetailsOpen && (
+      {/*
+      {modalMaintenanceDetails && (
         <ModalMaintenanceDetails
           modalAdditionalInformations={{
             ...modalAdditionalInformations,
@@ -200,9 +283,9 @@ export const SyndicArea = () => {
           }}
           setModal={setModalMaintenanceDetailsOpen}
         />
-      )}
+      )} */}
 
-      {modalCreateOccasionalMaintenance && (
+      {/* {modalCreateOccasionalMaintenance && (
         <ModalCreateOccasionalMaintenance
           syndicNanoId={syndicNanoId}
           handleGetBackgroundData={handleGetSyndicKanban}
@@ -211,7 +294,7 @@ export const SyndicArea = () => {
           handleModalMaintenanceDetails={handleModalMaintenanceDetails}
           handleModalSendMaintenanceReport={handleModalSendMaintenanceReport}
         />
-      )}
+      )} */}
 
       {modalChecklistCreate && (
         <ModalChecklistCreate
@@ -232,47 +315,10 @@ export const SyndicArea = () => {
       <Style.Container>
         <Style.Header>
           <Style.HeaderWrapper>
-            {buildingsBySyndic.length > 1 ? (
-              <Select
-                className="select"
-                selectPlaceholderValue=" "
-                value={
-                  buildingsBySyndic.find(
-                    (e) => e.buildingNanoId === buildingNanoId && e.syndicNanoId === syndicNanoId,
-                  )?.syndicNanoId || ''
-                }
-                onChange={(evt) => {
-                  const foundData = buildingsBySyndic.find(
-                    (data) => data.syndicNanoId === evt.target.value,
-                  );
-                  setFilter((prev) => ({ ...prev, categoryId: '' }));
-
-                  if (foundData) {
-                    navigate(
-                      `/syndicarea/${foundData.buildingNanoId}?syndicNanoId=${foundData.syndicNanoId}`,
-                    );
-                    // Gambiarra pra forçar a buscar se precisa de senha
-                    window.location.reload();
-                  }
-                }}
-              >
-                <option value="" disabled hidden>
-                  Selecione uma edificação
-                </option>
-                {buildingsBySyndic.map((opt) => (
-                  <option key={opt.syndicNanoId} value={opt.syndicNanoId}>
-                    {opt.label}
-                  </option>
-                ))}
-              </Select>
-            ) : (
-              <h2>{buildingName}</h2>
-            )}
+            <h2>Filtros</h2>
 
             <IconButton
               icon={icon.filter}
-              size="16px"
-              label={showFilter ? 'Ocultar' : 'Filtrar'}
               color={theme.color.gray5}
               onClick={() => {
                 setShowFilter(!showFilter);
@@ -299,137 +345,290 @@ export const SyndicArea = () => {
         </Style.Header>
 
         {showFilter && (
-          <Style.FilterWrapper>
-            <Select
-              disabled={onQuery}
-              selectPlaceholderValue={' '}
-              label="Ano"
-              value={filter.years}
-              onChange={(e) => {
-                setFilter((prevState) => {
-                  const newState = { ...prevState };
-                  newState.years = e.target.value;
+          <Style.FiltersContainer>
+            <Formik initialValues={filter} onSubmit={async () => handleGetMaintenances()}>
+              {() => (
+                <Form>
+                  <Style.FilterWrapper>
+                    <FormikSelect
+                      id="building-select"
+                      label="Edificação"
+                      selectPlaceholderValue={' '}
+                      value=""
+                      onChange={(e) => {
+                        handleFilterChange('buildings', e.target.value);
 
-                  if (prevState.months !== '' && newState.years === '') {
-                    newState.months = '';
-                  }
+                        if (e.target.value === 'all') {
+                          setFilter((prevState) => ({
+                            ...prevState,
+                            buildings: [],
+                          }));
+                        }
+                      }}
+                    >
+                      <option value="" disabled hidden>
+                        Selecione
+                      </option>
 
-                  return newState;
-                });
-              }}
-            >
-              <option value="">Todos</option>
-              {filterOptions.years.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </Select>
+                      <option value="all" disabled={filter.buildings.length === 0}>
+                        Todas
+                      </option>
 
-            <Select
-              disabled={onQuery || filter.years === ''}
-              selectPlaceholderValue={' '}
-              label="Mês"
-              value={filter.months}
-              onChange={(e) => {
-                setFilter((prevState) => {
-                  const newState = { ...prevState };
-                  newState.months = e.target.value;
-                  return newState;
-                });
-              }}
-            >
-              <option value="">Todos</option>
-              {filterOptions.months.map((option) => (
-                <option key={option.monthNumber} value={option.monthNumber}>
-                  {capitalizeFirstLetter(option.label)}
-                </option>
-              ))}
-            </Select>
+                      {buildingsForSelect.map((building) => (
+                        <option
+                          value={building.id}
+                          key={building.id}
+                          disabled={filter.buildings.some((b) => b === building.id)}
+                        >
+                          {building.name}
+                        </option>
+                      ))}
+                    </FormikSelect>
 
-            <Select
-              disabled={onQuery}
-              selectPlaceholderValue={' '}
-              label="Status"
-              value={filter.status}
-              onChange={(e) => {
-                setFilter((prevState) => {
-                  const newState = { ...prevState };
-                  newState.status = e.target.value;
-                  return newState;
-                });
-              }}
-            >
-              <option value="">Todos</option>
-              {filterOptions.status.map((option) => (
-                <option key={option.name} value={option.name}>
-                  {capitalizeFirstLetter(option.label)}
-                </option>
-              ))}
-            </Select>
+                    {/* <FormikSelect
+                      id="users-select"
+                      label="Usuário"
+                      selectPlaceholderValue=" "
+                      value=""
+                      onChange={(e) => {
+                        handleFilterChange('users', e.target.value);
 
-            <Select
-              disabled={onQuery}
-              selectPlaceholderValue={' '}
-              label="Categoria"
-              value={filter.categoryId}
-              onChange={(e) => {
-                setFilter((prevState) => {
-                  const newState = { ...prevState };
-                  newState.categoryId = e.target.value;
-                  return newState;
-                });
-              }}
-            >
-              <option value="">Todas</option>
-              {filterOptions.categories.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.name}
-                </option>
-              ))}
-            </Select>
+                        if (e.target.value === 'all') {
+                          setFilter((prevState) => ({
+                            ...prevState,
+                            users: [],
+                          }));
+                        }
+                      }}
+                    >
+                      <option value="" disabled hidden>
+                        Selecione
+                      </option>
 
-            {showPriority && (
-              <Select
-                disabled={onQuery}
-                selectPlaceholderValue={' '}
-                label="Prioridade"
-                value={filter.priorityName}
-                onChange={(e) => {
-                  setFilter((prevState) => {
-                    const newState = { ...prevState };
-                    newState.priorityName = e.target.value;
-                    return newState;
-                  });
-                }}
-              >
-                <option value="">Todas</option>
-                <option value="low">Baixa</option>
-                <option value="medium">Média</option>
-                <option value="high">Alta</option>
-              </Select>
-            )}
+                      <option value="all" disabled={filter.users.length === 0}>
+                        Todos
+                      </option>
 
-            <Button
-              type="button"
-              label="Filtrar"
-              disable={onQuery}
-              onClick={() => {
-                search.set('syndicNanoId', syndicNanoId);
-                search.delete('categoryId');
-                setSearch(search);
-                requestSyndicKanban({
-                  setLoading,
-                  syndicNanoId,
-                  setFilterOptions,
-                  filter,
-                  setOnQuery,
-                  setKanban,
-                  setBuildingName,
-                });
-              }}
-            />
-          </Style.FilterWrapper>
+                      {usersForSelect.map((user) => (
+                        <option
+                          value={user.id}
+                          key={user.id}
+                          disabled={filter.users.some((u) => u === user.id)}
+                        >
+                          {user.name}
+                        </option>
+                      ))}
+                    </FormikSelect> */}
+
+                    <FormikSelect
+                      id="status-select"
+                      label="Status"
+                      selectPlaceholderValue={' '}
+                      value=""
+                      onChange={(e) => {
+                        handleFilterChange('status', e.target.value);
+
+                        if (e.target.value === 'all') {
+                          setFilter((prevState) => ({
+                            ...prevState,
+                            status: [],
+                          }));
+                        }
+                      }}
+                    >
+                      <option value="" disabled hidden>
+                        Selecione
+                      </option>
+
+                      <option value="all" disabled={filter.status.length === 0}>
+                        Todas
+                      </option>
+
+                      {maintenanceStatusForSelect.map((maintenanceStatus) => (
+                        <option
+                          key={maintenanceStatus.id}
+                          value={maintenanceStatus.name}
+                          disabled={filter.status.some((s) => s === maintenanceStatus.id)}
+                        >
+                          {capitalizeFirstLetter(maintenanceStatus.singularLabel ?? '')}
+                        </option>
+                      ))}
+                    </FormikSelect>
+
+                    <FormikSelect
+                      id="category-select"
+                      label="Categoria"
+                      selectPlaceholderValue={' '}
+                      value=""
+                      onChange={(e) => {
+                        handleFilterChange('categories', e.target.value);
+
+                        if (e.target.value === 'all') {
+                          setFilter((prevState) => ({
+                            ...prevState,
+                            status: [],
+                          }));
+                        }
+                      }}
+                    >
+                      <option value="" disabled hidden>
+                        Selecione
+                      </option>
+
+                      <option value="all" disabled={filter.categories.length === 0}>
+                        Todas
+                      </option>
+
+                      {maintenanceCategoriesForSelect.map((maintenanceCategory) => (
+                        <option
+                          key={maintenanceCategory.id}
+                          value={maintenanceCategory.id}
+                          disabled={filter.categories.some((c) => c === maintenanceCategory.id)}
+                        >
+                          {maintenanceCategory.name}
+                        </option>
+                      ))}
+                    </FormikSelect>
+
+                    <Select
+                      disabled={loading || !showPriority}
+                      selectPlaceholderValue={' '}
+                      label="Prioridade"
+                      value={filter.priorityName}
+                      onChange={(e) => {
+                        setFilter((prevState) => {
+                          const newState = { ...prevState };
+                          newState.priorityName = e.target.value;
+                          return newState;
+                        });
+                      }}
+                    >
+                      <option value="">Todas</option>
+                      <option value="low">Baixa</option>
+                      <option value="medium">Média</option>
+                      <option value="high">Alta</option>
+                    </Select>
+
+                    <FormikInput
+                      label="Data inicial"
+                      typeDatePlaceholderValue={filter.startDate}
+                      name="startDate"
+                      type="date"
+                      value={filter.startDate}
+                      onChange={(e) => handleFilterChange('startDate', e.target.value)}
+                    />
+
+                    <FormikInput
+                      label="Data final"
+                      typeDatePlaceholderValue={filter.endDate}
+                      name="endDate"
+                      type="date"
+                      value={filter.endDate}
+                      onChange={(e) => handleFilterChange('endDate', e.target.value)}
+                    />
+                  </Style.FilterWrapper>
+
+                  <Style.FilterWrapperFooter>
+                    <Style.FilterButtonWrapper>
+                      <Button
+                        type="button"
+                        label="Limpar filtros"
+                        borderless
+                        disable={loading}
+                        onClick={() => handleClearFilter()}
+                      />
+
+                      <Button type="submit" label="Filtrar" disable={loading} />
+                    </Style.FilterButtonWrapper>
+
+                    <Style.FilterTags>
+                      {filter.buildings?.length === 0 ? (
+                        <ListTag padding="4px 12px" fontWeight={500} label="Todas as edificações" />
+                      ) : (
+                        filter.buildings?.map((building) => (
+                          <ListTag
+                            key={building}
+                            label={buildingsForSelect.find((b) => b.id === building)?.name || ''}
+                            padding="4px 12px"
+                            fontWeight={500}
+                            onClick={() => {
+                              setFilter((prevState) => ({
+                                ...prevState,
+                                buildings: prevState.buildings?.filter((b) => b !== building),
+                              }));
+                            }}
+                          />
+                        ))
+                      )}
+
+                      {/* {filter.users?.length === 0 ? (
+                        <ListTag padding="4px 12px" fontWeight={500} label="Todos os usuários" />
+                      ) : (
+                        filter.users?.map((user) => (
+                          <ListTag
+                            key={user}
+                            label={usersForSelect.find((u) => u.id === user)?.name || ''}
+                            padding="4px 12px"
+                            fontWeight={500}
+                            onClick={() => {
+                              setFilter((prevState) => ({
+                                ...prevState,
+                                users: prevState.users?.filter((u) => u !== user),
+                              }));
+                            }}
+                          />
+                        ))
+                      )} */}
+
+                      {filter.status?.length === 0 ? (
+                        <ListTag padding="4px 12px" fontWeight={500} label="Todos os status" />
+                      ) : (
+                        filter.status?.map((status) => (
+                          <ListTag
+                            key={status}
+                            label={capitalizeFirstLetter(
+                              maintenanceStatusForSelect.find((ms) => ms.name === status)
+                                ?.singularLabel || '',
+                            )}
+                            padding="4px 12px"
+                            fontWeight={500}
+                            onClick={() => {
+                              setFilter((prevState) => ({
+                                ...prevState,
+                                status: prevState.status?.filter((s) => s !== status),
+                              }));
+                            }}
+                          />
+                        ))
+                      )}
+
+                      {filter.categories?.length === 0 ? (
+                        <ListTag padding="4px 12px" fontWeight={500} label="Todos as categorias" />
+                      ) : (
+                        filter.categories?.map((category) => (
+                          <ListTag
+                            key={category}
+                            label={
+                              maintenanceCategoriesForSelect.find((mc) => mc.id === category)
+                                ?.name || ''
+                            }
+                            padding="4px 12px"
+                            fontWeight={500}
+                            onClick={() => {
+                              setFilter((prevState) => ({
+                                ...prevState,
+                                status: prevState.categories?.filter((c) => c !== category),
+                              }));
+                            }}
+                          />
+                        ))
+                      )}
+                    </Style.FilterTags>
+                  </Style.FilterWrapperFooter>
+                </Form>
+              )}
+            </Formik>
+          </Style.FiltersContainer>
         )}
 
         <Style.Kanban>
@@ -467,7 +666,7 @@ export const SyndicArea = () => {
                 )}
               </Style.KanbanHeader>
 
-              {onQuery && (
+              {loading && (
                 <>
                   {(i === 1 || i === 2 || i === 3) && (
                     <Style.MaintenanceWrapper>
@@ -495,7 +694,7 @@ export const SyndicArea = () => {
                 </>
               )}
 
-              {!onQuery &&
+              {!loading &&
                 card.maintenances.length > 0 &&
                 card.maintenances.map((maintenance) => {
                   const isPending = maintenance.status === 'pending';
@@ -528,26 +727,32 @@ export const SyndicArea = () => {
                             if (maintenance.type === 'checklist') {
                               setChecklistId(maintenance.id);
                               handleModals('modalChecklistDetails', true);
-                              return;
-                            }
-
-                            setModalAdditionalInformations({
-                              id: maintenance.id,
-                              expectedNotificationDate: '',
-                              expectedDueDate: '',
-                              isFuture: false,
-                            });
-
-                            if (
+                            } else if (
                               maintenance.status === 'pending' ||
                               maintenance.status === 'expired'
                             ) {
-                              setModalSendReportOpen(true);
+                              setModalAdditionalInformations({
+                                id: maintenance.id,
+                                expectedNotificationDate: '',
+                                expectedDueDate: '',
+                                isFuture: false,
+                              });
+                              handleMaintenanceHistoryIdChange(maintenance.id);
+                              handleModals('modalSendMaintenanceReport', true);
                             } else {
-                              setModalMaintenanceDetailsOpen(true);
+                              setModalAdditionalInformations({
+                                id: maintenance.id,
+                                expectedNotificationDate: '',
+                                expectedDueDate: '',
+                                isFuture: false,
+                              });
+                              handleMaintenanceHistoryIdChange(maintenance.id);
+                              handleModals('modalMaintenanceDetails', true);
                             }
                           }}
                         >
+                          <h5>{maintenance?.buildingName}</h5>
+
                           <h6>
                             <span>
                               <Style.EventsWrapper>
@@ -589,7 +794,7 @@ export const SyndicArea = () => {
                   );
                 })}
 
-              {!onQuery &&
+              {!loading &&
                 (card.maintenances.length === 0 ||
                   (!showFutureMaintenances &&
                     card.maintenances.every(

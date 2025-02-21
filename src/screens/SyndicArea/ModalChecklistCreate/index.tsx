@@ -32,9 +32,11 @@ import { ModelTemplate } from './ModelTemplate';
 // STYLES
 import * as Style from './styles';
 
+import type { TModalNames } from '..';
+
 interface IModalChecklistCreate {
   buildingId: string;
-  handleModals: (modal: string, modalState: boolean) => void;
+  handleModals: (modal: TModalNames, modalState: boolean) => void;
   handleRefresh: () => void;
 }
 
