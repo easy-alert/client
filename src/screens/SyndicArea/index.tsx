@@ -2,11 +2,12 @@
 import { useState, useEffect } from 'react';
 
 // LIBS
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 // HOOKS
 import { useUserData } from '@hooks/useUserData';
 import { useMaintenanceStatusForSelect } from '@hooks/useMaintenanceStatusForSelect';
+import { useBuildingsForSelect } from '@hooks/useBuildingsForSelect';
 
 // SERVICES
 import { getBuildingsBySyndicId } from '@services/apis/getBuildingsBySyndicId';
@@ -17,7 +18,6 @@ import { Button } from '@components/Buttons/Button';
 import { IconButton } from '@components/Buttons/IconButton';
 import { EventTag } from '@components/EventTag';
 import { Select } from '@components/Inputs/Select';
-import { DotSpinLoading } from '@components/Loadings/DotSpinLoading';
 import { Skeleton } from '@components/Skeleton';
 import { FutureMaintenanceTag } from '@components/FutureMaintenanceTag';
 import { ModalCreateOccasionalMaintenance } from '@components/ModalCreateOccasionalMaintenance';
@@ -37,8 +37,10 @@ import { FormikSelect } from '@components/Form/FormikSelect';
 import { FormikInput } from '@components/Form/FormikInput';
 import { ListTag } from '@components/ListTag';
 
-import { useBuildingsForSelect } from '@hooks/useBuildingsForSelect';
-import { ModalMaintenanceDetails } from '../MaintenancesPlan/ModalMaintenanceDetails';
+import { getBuildingsById } from '@services/apis/getBuildingsById';
+import { IBuilding } from '@customTypes/IBuilding';
+import { IUser } from '@customTypes/IUser';
+import { ModalMaintenanceDetails } from './ModalMaintenanceDetails';
 import { ModalSendMaintenanceReport } from './ModalSendMaintenanceReport';
 import { ModalChecklistCreate } from './ModalChecklistCreate';
 import { ModalChecklistDetails } from './ModalChecklistDetails';
@@ -82,13 +84,12 @@ export type TModalNames =
   | 'modalChecklistDetails';
 
 export const SyndicArea = () => {
-  const navigate = useNavigate();
   const { buildingNanoId } = useParams() as { buildingNanoId: string };
 
   const { maintenanceStatusForSelect } = useMaintenanceStatusForSelect();
 
-  const [buildingName, setBuildingName] = useState<string>('');
-  const [buildingsBySyndic, setBuildingsBySyndic] = useState<IBuildingsBySyndic[]>([]);
+  const [buildingDetail, setBuildingDetails] = useState<IBuilding>();
+  const [user, setUser] = useState<IUser>();
 
   const [maintenanceHistoryId, setMaintenanceHistoryId] = useState<string>('');
   const [kanban, setKanban] = useState<IKanban[]>([]);
@@ -212,13 +213,13 @@ export const SyndicArea = () => {
   // endregion
 
   // region api functions
-  const handleGetMaintenances = async () => {
+  const handleGetMaintenances = async (newFilter?: IMaintenanceFilter, newUserId?: string) => {
     setLoading(true);
 
     try {
       const responseData = await getMaintenancesKanban({
-        userId: userData.id,
-        filter,
+        userId: userData.id ?? user?.id ?? newUserId,
+        filter: newFilter || filter,
       });
 
       setKanban(responseData.kanban);
@@ -229,21 +230,52 @@ export const SyndicArea = () => {
       }, 1000);
     }
   };
-  // # endregion
 
-  const handleGetBuildingsBySyndicId = async () => {
+  const handleGetBuildingById = async () => {
     try {
-      const responseData = await getBuildingsBySyndicId(syndicNanoId);
+      const responseData = await getBuildingsById({ buildingId });
 
-      setBuildingsBySyndic(responseData.buildings);
+      setBuildingDetails(responseData.building);
+      setUser(responseData.building.UserBuildingsPermissions[0]);
+
+      return responseData.building;
     } catch (error) {
       catchHandler(error);
+      return null;
     }
   };
+  // # endregion
+
+  // const handleGetBuildingsBySyndicId = async () => {
+  //   try {
+  //     const responseData = await getBuildingsBySyndicId(syndicNanoId);
+
+  //     setBuildingsBySyndic(responseData.buildings);
+  //   } catch (error) {
+  //     catchHandler(error);
+  //   }
+  // };
 
   useEffect(() => {
-    handleGetMaintenances();
-    handleGetBuildingsBySyndicId();
+    if (!buildingsForSelect.length) {
+      handleGetBuildingById().then((res) => {
+        const newFilter = {
+          buildings: [res?.id ?? ''],
+          status: [],
+          categories: [],
+          users: [],
+          priorityName: '',
+          startDate: new Date(new Date().setDate(new Date().getDate() - 30))
+            .toISOString()
+            .split('T')[0],
+          endDate: new Date().toISOString().split('T')[0],
+        };
+
+        handleGetMaintenances(newFilter, res?.UserBuildingsPermissions[0].userId);
+      });
+    } else {
+      handleGetMaintenances();
+    }
   }, [userData, refresh]);
 
   return (
@@ -258,43 +290,25 @@ export const SyndicArea = () => {
         />
       )}
 
-      {/* {modalMaintenanceSendReport && (
+      {modalMaintenanceSendReport && (
         <ModalSendMaintenanceReport
-          modalAdditionalInformations={{
-            ...modalAdditionalInformations,
-            id: maintenanceHistoryId || modalAdditionalInformations.id,
-          }}
-          setModal={setModalSendReportOpen}
-          filter={filter}
-          setBuildingName={setBuildingName}
-          setFilterOptions={setFilterOptions}
-          setKanban={setKanban}
-          setLoading={setLoading}
+          maintenanceHistoryId={maintenanceHistoryId}
           syndicNanoId={syndicNanoId}
+          handleModals={handleModals}
+          handleRefresh={handleRefresh}
         />
-      )} */}
+      )}
 
-      {/*
       {modalMaintenanceDetails && (
         <ModalMaintenanceDetails
           modalAdditionalInformations={{
             ...modalAdditionalInformations,
             id: maintenanceHistoryId || modalAdditionalInformations.id,
           }}
-          setModal={setModalMaintenanceDetailsOpen}
+          handleModals={handleModals}
+          handleQuery={handleQuery}
         />
-      )} */}
-
-      {/* {modalCreateOccasionalMaintenance && (
-        <ModalCreateOccasionalMaintenance
-          syndicNanoId={syndicNanoId}
-          handleGetBackgroundData={handleGetSyndicKanban}
-          handleMaintenanceHistoryIdChange={handleMaintenanceHistoryIdChange}
-          handleModalCreateOccasionalMaintenance={handleModalCreateOccasionalMaintenance}
-          handleModalMaintenanceDetails={handleModalMaintenanceDetails}
-          handleModalSendMaintenanceReport={handleModalSendMaintenanceReport}
-        />
-      )} */}
+      )}
 
       {modalChecklistCreate && (
         <ModalChecklistCreate
@@ -632,7 +646,7 @@ export const SyndicArea = () => {
         )}
 
         <Style.Kanban>
-          {kanban.map((card, i: number) => (
+          {kanban?.map((card, i: number) => (
             <Style.KanbanCard key={card.status}>
               <Style.KanbanHeader>
                 <h5>{card.status}</h5>

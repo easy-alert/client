@@ -1,8 +1,9 @@
-import { Api } from '../../services/api';
+import { handleToastify } from '@utils/toastifyResponses';
+import { Api } from '@services/api';
 
-import { catchHandler } from '../../utils/functions';
+import { catchHandler } from '@utils/functions';
 
-import type { IRequestSyndicKanban } from './types';
+import type { IRequestSyndicKanban, IRequestMaintenanceDetails } from './types';
 
 export const requestSyndicKanban = async ({
   setLoading,
@@ -46,5 +47,20 @@ export const requestSyndicKanban = async ({
     return {};
   } finally {
     setOnQuery(false);
+  }
+};
+
+export const requestMaintenanceDetails = async ({
+  maintenanceHistoryId,
+}: IRequestMaintenanceDetails) => {
+  const uri = `/maintenances/list/details/${maintenanceHistoryId}`;
+
+  try {
+    const response = await Api.get(uri);
+
+    return response.data;
+  } catch (error: any) {
+    handleToastify(error.response, false);
+    return {};
   }
 };
