@@ -1,19 +1,9 @@
+import type { IUser } from '@customTypes/IUser';
+
 export interface IAccount {
-  User: {
-    id: string;
-    lastAccess: string;
-    name: string;
-    email: string;
-    createdAt: string;
-    Permissions?: [
-      {
-        Permission: {
-          name: string;
-        };
-      },
-    ];
-  };
-  Company: {
+  User?: IUser;
+
+  Company?: {
     id: string;
     name: string;
     contactNumber: string;
