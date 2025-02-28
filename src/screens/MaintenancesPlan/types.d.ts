@@ -66,7 +66,7 @@ export interface IModalAdditionalInformations {
 }
 
 export interface IRequestMaintenancesPlan {
-  buildingNanoId: string;
+  buildingId: string;
   setMaintenancesPlan: React.Dispatch<React.SetStateAction<IMaintenancesPlan[]>>;
   setFilteredMaintenancesPlan: React.Dispatch<React.SetStateAction<IMaintenancesPlan[]>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
