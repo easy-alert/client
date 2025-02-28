@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
+// SERVICES
+import { getMaintenanceHistoryById } from '@services/apis/getMaintenanceHistoryById';
+
 // GLOBAL COMPONENTS
 import { Input } from '@components/Inputs/Input';
 import { Button } from '@components/Buttons/Button';
@@ -28,23 +31,20 @@ import { icon } from '@assets/icons';
 // GLOBAL THEME
 import { theme } from '@styles/theme';
 
-import { requestMaintenanceDetails } from '@screens/SyndicArea/functions';
-
-import * as Style from '../../SyndicArea/ModalSendMaintenanceReport/styles';
-
+// UTILS
 import {
   requestReportProgress,
   requestSaveReportProgress,
   requestSendReport,
   requestToggleInProgress,
-} from '../../SyndicArea/ModalSendMaintenanceReport/functions';
-import {
-  IModalSendMaintenanceReport,
-  IMaintenanceReport,
-} from '../../SyndicArea/ModalSendMaintenanceReport/types';
-import { AnnexesAndImages, IMaintenance } from '../../types';
+} from '../functions';
 
-import { Tag } from '../../MaintenancesPlan/ModalMaintenanceDetails/styles';
+// STYLES
+import * as Style from './styles';
+
+// TYPES
+import type { IModalSendMaintenanceReport, IMaintenanceReport } from './types';
+import type { AnnexesAndImages, IMaintenance } from '../../types';
 
 export const ModalGuestSendMaintenanceReport = ({
   maintenanceHistoryId,
@@ -130,7 +130,7 @@ export const ModalGuestSendMaintenanceReport = ({
 
   // #region api function
   const handleGetMaintenanceDetails = async () => {
-    const responseData = await requestMaintenanceDetails({
+    const responseData = await getMaintenanceHistoryById({
       maintenanceHistoryId,
     });
 
@@ -335,11 +335,12 @@ export const ModalGuestSendMaintenanceReport = ({
               <>
                 <Style.FileStyleRow>
                   <h6>Anexos</h6>
+
                   <Style.FileAndImageRow>
                     {maintenanceDetails.MaintenanceReport[0].ReportAnnexes.length > 0 ? (
                       maintenanceDetails.MaintenanceReport[0].ReportAnnexes.map(
                         (annex, i: number) => (
-                          <Tag key={annex.name + i}>
+                          <Style.Tag key={annex.name + i}>
                             <a
                               title={annex.originalName}
                               href={annex.url}
@@ -350,7 +351,7 @@ export const ModalGuestSendMaintenanceReport = ({
                               <p className="p3">{annex.name}</p>
                               <ImageComponent size="16px" src={icon.download} />
                             </a>
-                          </Tag>
+                          </Style.Tag>
                         ),
                       )
                     ) : (
