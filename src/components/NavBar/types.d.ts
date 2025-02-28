@@ -12,5 +12,5 @@ export interface ISidebar {
 
 export interface IRequestCompanyLogo {
   setCompanyLogo: React.Dispatch<React.SetStateAction<string | null>>;
-  buildingNanoId: string;
+  buildingId: string;
 }
