@@ -1,23 +1,21 @@
 // COMPONENTS
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Skeleton } from '../../components/Skeleton';
+
+import { getBuildingDocuments } from '@services/apis/getBuildingDocuments';
+import { getBuildingFolderDetails } from '@services/apis/getBuildingFolderDetails';
+
+import { Skeleton } from '@components/Skeleton';
+import { ReadOnlyFolderComponent, ReadOnlyFileComponent } from '@components/ReadOnlyFileSystem';
 
 // STYLES
 import * as Style from './styles';
 
-// FUNCTIONS
-import { requestAnnexInformations, requestFolderDetails } from './functions';
-import { Folder, Folders } from './types';
-import {
-  ReadOnlyFolderComponent,
-  ReadOnlyFileComponent,
-} from '../../components/ReadOnlyFileSystem';
-
 // TYPES
+import type { Folder, Folders } from './types';
 
 export const Annexes = () => {
-  const { buildingNanoId } = useParams() as { buildingNanoId: string };
+  const { buildingId } = useParams() as { buildingId: string };
 
   const [buildingName, setBuildingName] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
@@ -28,26 +26,40 @@ export const Annexes = () => {
   const [rootFolder, setRootFolder] = useState<Folder>({ id: '', name: '' });
   const [breadcrumb, setBreadcrumb] = useState<Folder[]>([{ id: '', name: 'Início' }]);
 
-  useEffect(() => {
-    if (folderId) {
-      requestFolderDetails({
-        folderId,
-        setInformations,
-        setBreadcrumb,
-        rootFolder,
-      });
+  // #region api calls
+  const handleGetBuildingDocuments = async () => {
+    setLoading(true);
+
+    try {
+      const responseData = await getBuildingDocuments({ buildingNanoId: buildingId });
+
+      setBuildingName(responseData.name);
+      setInformations(responseData.Folders);
+      setRootFolder(responseData.Folders);
+    } finally {
+      setLoading(false);
     }
-  }, [folderId]);
+  };
+
+  const handleGetFolderDetails = async () => {
+    if (!folderId) return;
+
+    const responseData = await getBuildingFolderDetails({ folderId, rootFolder });
+
+    if (!responseData) return;
+
+    setInformations(responseData?.informations);
+    setBreadcrumb(responseData?.breadcrumb);
+  };
+  // #endregion
 
   useEffect(() => {
-    requestAnnexInformations({
-      buildingNanoId,
-      setLoading,
-      setInformations,
-      setBuildingName,
-      setRootFolder,
-    });
+    handleGetBuildingDocuments();
   }, []);
+
+  useEffect(() => {
+    handleGetFolderDetails();
+  }, [folderId]);
 
   return (
     <Style.Container>
@@ -55,6 +67,7 @@ export const Annexes = () => {
       <Style.Card>
         <Style.Header>
           <h4>Documentos</h4>
+
           <Style.BreadcrumbWrapper>
             {breadcrumb.map((element, i) => (
               <React.Fragment key={element.id}>

@@ -5,7 +5,7 @@ import { IMaintenancesPlan, IRequestMaintenancesPlan } from './types';
 export const requestMaintenancesPlan = async ({
   setMaintenancesPlan,
   setFilteredMaintenancesPlan,
-  buildingNanoId,
+  buildingId,
   setLoading,
   setOnQuery,
   setBuilding,
@@ -17,13 +17,19 @@ export const requestMaintenancesPlan = async ({
 }: IRequestMaintenancesPlan) => {
   setOnQuery(true);
 
-  await Api.get(
-    `/building/${buildingNanoId}?year=${String(currentYear) < year ? String(currentYear) : year}`,
-  )
-    .then((res) => {
+  const uri = `/building/${buildingId}`;
+
+  const params = {
+    year: String(currentYear) < year ? String(currentYear) : year,
+  };
+
+  try {
+    const response = await Api.get(uri, { params });
+
+    if (response.status === 200) {
       let filtered: IMaintenancesPlan[] = [];
 
-      res.data.months.forEach((maintenance: IMaintenancesPlan) => {
+      response.data.months.forEach((maintenance: IMaintenancesPlan) => {
         filtered.push({
           ...maintenance,
           dates: maintenance.dates.filter((date) => date.dateInfos.year === Number(year)),
@@ -46,20 +52,19 @@ export const requestMaintenancesPlan = async ({
       }
 
       setFilteredMaintenancesPlan(filteredStatus.length ? filteredStatus : filtered);
-      setMaintenancesPlan(res.data.months);
-      setFilterOptions(res.data.Filters);
-      setBuilding(res.data.building);
+      setMaintenancesPlan(response.data.months);
+      setFilterOptions(response.data.Filters);
+      setBuilding(response.data.building);
       setLoading(false);
-    })
-    .catch((err) => {
-      if (err.response && err.response.status === 404) {
-        window.open('https://easyalert.com.br/', '_self');
-      } else {
-        catchHandler(err);
-        setLoading(false);
-      }
-    })
-    .finally(() => {
-      setOnQuery(false);
-    });
+    }
+  } catch (error: any) {
+    if (error.response && error.response.status === 404) {
+      window.open('https://easyalert.com.br/', '_self');
+    } else {
+      catchHandler(error);
+      setLoading(false);
+    }
+  } finally {
+    setOnQuery(false);
+  }
 };

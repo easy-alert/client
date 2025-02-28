@@ -22,7 +22,7 @@ import { icon } from '@assets/icons';
 // UTILS
 
 // STYLES
-import { requestMaintenanceDetails } from '@screens/SyndicArea/functions';
+import { getMaintenanceHistoryById } from '@services/apis/getMaintenanceHistoryById';
 import * as Style from './styles';
 
 // TYPES
@@ -114,7 +114,7 @@ export const ModalMaintenanceDetails = ({
 
   const handleGetMaintenanceDetails = async () => {
     try {
-      const responseData = await requestMaintenanceDetails({
+      const responseData = await getMaintenanceHistoryById({
         maintenanceHistoryId: modalAdditionalInformations.id,
       });
 

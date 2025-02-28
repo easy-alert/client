@@ -15,7 +15,7 @@ import { EventTag } from '@components/EventTag';
 import { Select } from '@components/Inputs/Select';
 import { DotSpinLoading } from '@components/Loadings/DotSpinLoading';
 import { InProgressTag } from '@components/InProgressTag';
-import ModalTicketDetails from '@screens/Tickets/ModalTicketDetails';
+import ModalTicketDetails from '@components/ModalTicketDetails';
 
 // GLOBAL UTILS
 import { capitalizeFirstLetter } from '@utils/functions';
@@ -48,18 +48,17 @@ import type {
 
 export const MaintenancesPlan = () => {
   const { ticketStatus } = useTicketStatus({ statusName: 'all' });
-  const { buildingNanoId } = useParams() as { buildingNanoId: string };
+  const { buildingId } = useParams() as { buildingId: string };
 
   const [search] = useSearchParams();
   const syndicNanoId = search.get('syndicNanoId') ?? '';
 
-  const [maintenancesPlan, setMaintenancesPlan] = useState<IMaintenancesPlan[]>([]);
+  const [building, setBuilding] = useState<IBuilding>({ Banners: [], name: '' });
 
+  const [maintenancesPlan, setMaintenancesPlan] = useState<IMaintenancesPlan[]>([]);
   const [filteredMaintenancesPlan, setFilteredMaintenancesPlan] = useState<IMaintenancesPlan[]>([]);
 
   const [showFilter, setShowFilter] = useState<boolean>(false);
-
-  const [building, setBuilding] = useState<IBuilding>({ Banners: [], name: '' });
 
   const [ticketDetailsModal, setTicketDetailsModal] = useState<boolean>(false);
 
@@ -127,7 +126,7 @@ export const MaintenancesPlan = () => {
 
   useEffect(() => {
     requestMaintenancesPlan({
-      buildingNanoId,
+      buildingId,
       setLoading,
       setMaintenancesPlan,
       setFilteredMaintenancesPlan,
@@ -300,7 +299,7 @@ export const MaintenancesPlan = () => {
                       Number(prevFilter?.years) < currentYear
                     ) {
                       requestMaintenancesPlan({
-                        buildingNanoId,
+                        buildingId,
                         setLoading,
                         setMaintenancesPlan,
                         setFilteredMaintenancesPlan,
