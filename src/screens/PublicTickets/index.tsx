@@ -19,12 +19,12 @@ import { Button } from '@components/Buttons/Button';
 import { Select } from '@components/Inputs/Select';
 import { Input } from '@components/Inputs/Input';
 import { Pagination } from '@components/Pagination';
+import ModalTicketDetails from '@components/ModalTicketDetails';
 
 // GLOBAL UTILS
 import { catchHandler, dateFormatter } from '@utils/functions';
 
 // COMPONENTS
-import ModalTicketDetails from '@screens/Tickets/ModalTicketDetails';
 
 // STYLES
 import * as Style from './styles';

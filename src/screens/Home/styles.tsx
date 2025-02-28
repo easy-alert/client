@@ -28,13 +28,17 @@ export const ImageDiv = styled.div`
   justify-content: center;
   align-items: center;
 
-  > img {
-    width: 130px;
-    cursor: pointer;
-    transition: 0.5s;
+  padding: ${theme.size.xsm};
 
-    :hover {
-      opacity: 0.8;
+  > button {
+    img {
+      width: 130px;
+      cursor: pointer;
+      transition: 0.5s;
+
+      :hover {
+        opacity: 0.8;
+      }
     }
   }
 `;

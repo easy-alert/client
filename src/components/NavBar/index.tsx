@@ -1,30 +1,33 @@
-// LIBS
+// REACT
 import { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 
-// STYLES
-import { toast } from 'react-toastify';
-import { getTicketsByBuildingNanoId } from '@services/apis/getTicketsByBuildingNanoId';
-import { handleToastify } from '@utils/toastifyResponses';
-import * as Style from './styles';
-import { icon } from '../../assets/icons';
+// GLOBAL COMPONENTS
+import { IconButton } from '@components/Buttons/IconButton';
 
-// COMPONENTS
-import { IconButton } from '../Buttons/IconButton';
+// GLOBAL UTILS
+import { handleToastifyMessage } from '@utils/toastifyResponses';
 
-// TYPES
-import { ISidebar, SidebarContentProps } from './types';
+// GLOBAL STYLES
+import { theme } from '@styles/theme';
+
+// GLOBAL ICONS
+import { icon } from '@assets/icons';
 
 // FUNCTIONS
 import { requestCompanyLogo } from './functions';
-import { theme } from '../../styles/theme';
+
+// STYLES
+import * as Style from './styles';
+
+// TYPES
+import type { ISidebar, SidebarContentProps } from './types';
 
 export const NavBar = ({ children }: ISidebar) => {
-  const { buildingNanoId } = useParams() as { buildingNanoId: string };
+  const { buildingId } = useParams() as { buildingId: string };
+
   const [search] = useSearchParams();
   const syndicNanoId = search.get('syndicNanoId') ?? '';
-
-  const [newTickets, setNewTickets] = useState<number>(0);
 
   const [showNavbarMenu, setShowNavbarMenu] = useState<boolean>(false);
 
@@ -33,86 +36,47 @@ export const NavBar = ({ children }: ISidebar) => {
   const sidebarContent: SidebarContentProps[] = [
     {
       name: 'QRCode',
-      url: `/home/${buildingNanoId}${window.location.search}`,
+      url: `/home/${buildingId}${window.location.search}`,
       restricted: false,
     },
     {
       name: 'Chamados',
-      url: `/tickets/${buildingNanoId}${window.location.search}`,
+      url: `/tickets/${buildingId}${window.location.search}`,
       restricted: true,
     },
 
-    // {
-    //   name: 'Chamados',
-    //   url: `/public-tickets/${buildingNanoId}${window.location.search}`,
-    //   restricted: false,
-    //   restrictedForSyndic: true,
-    // },
-
     {
       name: 'Manutenções',
-      url: `/syndicarea/${buildingNanoId}${window.location.search}`,
+      url: `/syndicarea/${buildingId}${window.location.search}`,
       restricted: true,
     },
 
     {
       name: 'Checklists',
-      url: `/checklists/${buildingNanoId}${window.location.search}`,
+      url: `/checklists/${buildingId}${window.location.search}`,
       restricted: true,
     },
 
     {
       name: 'Configurações',
-      url: `/settings/${buildingNanoId}${window.location.search}`,
+      url: `/settings/${buildingId}${window.location.search}`,
       restricted: true,
     },
 
     {
       name: 'Fornecedores',
-      url: `/suppliers/${buildingNanoId}${window.location.search}`,
+      url: `/suppliers/${buildingId}${window.location.search}`,
       restricted: true,
     },
-
-    // {
-    //   name: 'Videoaulas',
-    //   url: `/videos/${buildingNanoId}${window.location.search}`,
-    //   restricted: false,
-    // },
   ];
-
-  const handleGetTickets = async () => {
-    try {
-      const response = await getTicketsByBuildingNanoId({
-        buildingNanoId,
-        filter: {
-          seen: 'false',
-          status: [],
-          places: [],
-          serviceTypes: [],
-          apartments: [],
-          startDate: '',
-          endDate: '',
-        },
-        count: true,
-      });
-
-      setNewTickets(response.ticketsCount ?? 0);
-    } catch (error: any) {
-      handleToastify(error);
-    }
-  };
 
   useEffect(() => {
     if (window.location.href.endsWith('/')) {
       window.open('https://easyalert.com.br/', '_self');
-    } else if (buildingNanoId) {
-      requestCompanyLogo({ setCompanyLogo, buildingNanoId });
+    } else if (buildingId) {
+      requestCompanyLogo({ setCompanyLogo, buildingId });
     }
   }, []);
-
-  useEffect(() => {
-    handleGetTickets();
-  }, [buildingNanoId, window.location.pathname]);
 
   return (
     <Style.Background>
@@ -146,8 +110,9 @@ export const NavBar = ({ children }: ISidebar) => {
                     }
                     onClick={() => {
                       if (element.disabled) {
-                        toast.success('Em breve', { toastId: element.url });
+                        handleToastifyMessage({ message: 'Em breve', type: 'success' });
                       }
+
                       setShowNavbarMenu(false);
                     }}
                   >
@@ -164,10 +129,6 @@ export const NavBar = ({ children }: ISidebar) => {
                 );
               })}
             </Style.MobileContent>
-          )}
-
-          {!showNavbarMenu && newTickets > 0 && (
-            <Style.NewTicketsNotificationMobile>+{newTickets}</Style.NewTicketsNotificationMobile>
           )}
         </Style.HamburguerWrapper>
 
@@ -195,7 +156,7 @@ export const NavBar = ({ children }: ISidebar) => {
                 title={element.disabled ? 'Em breve' : ''}
                 onClick={() => {
                   if (element.disabled) {
-                    toast.success('Em breve', { toastId: element.url });
+                    handleToastifyMessage({ message: 'Em breve', type: 'success' });
                   }
                 }}
               >
@@ -205,16 +166,13 @@ export const NavBar = ({ children }: ISidebar) => {
                   showRedDot={element.disabled}
                 >
                   <span>{element.name}</span>
-
-                  {element.name === 'Chamados' && newTickets > 0 && (
-                    <Style.NewTicketsNotification>+{newTickets}</Style.NewTicketsNotification>
-                  )}
                 </Style.NavbarButtonWeb>
               </Link>
             );
           })}
         </Style.WebContent>
       </Style.Navbar>
+
       <Style.AppContent>{children}</Style.AppContent>
     </Style.Background>
   );

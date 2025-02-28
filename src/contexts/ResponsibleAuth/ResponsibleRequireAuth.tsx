@@ -19,18 +19,21 @@ const schema = yup
   .required();
 
 export const ResponsibleRequireAuth = ({ children }: IRequireAuth) => {
-  const { buildingNanoId } = useParams() as { buildingNanoId: string };
+  const { buildingId } = useParams() as { buildingId: string };
+
   const [buildingName, setBuildingName] = useState('');
+
   const [loading, setLoading] = useState<boolean>(true);
   const [onQuery, setOnQuery] = useState<boolean>(false);
   const [needPassword, setNeedPassword] = useState<boolean>(true);
+
   const [search] = useSearchParams();
   const queryPassword = search.get('password') ?? '';
 
   const signIn = async (password: string) => {
     setOnQuery(true);
 
-    await Api.post('/validate-password', { password, type: 'responsible', buildingNanoId })
+    await Api.post('/validate-password', { password, type: 'responsible', buildingId })
       .then(() => {
         setNeedPassword(false);
       })
@@ -44,7 +47,7 @@ export const ResponsibleRequireAuth = ({ children }: IRequireAuth) => {
   };
 
   const checkPasswordExistence = async () => {
-    await Api.get(`/check-password-existence/${buildingNanoId}/responsible`)
+    await Api.get(`/check-password-existence/${buildingId}/responsible`)
       .then((res) => {
         setNeedPassword(res.data.needPassword);
         setBuildingName(res.data.buildingName);
