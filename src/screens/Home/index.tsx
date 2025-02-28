@@ -1,35 +1,35 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable no-nested-ternary */
 // COMPONENTS
 import { useEffect, useState } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+
+// LIBS
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
-import { Skeleton } from '../../components/Skeleton';
-import 'swiper/css';
-import 'swiper/css/pagination';
+
+// SERVICES
+import { getHomeInformation } from '@services/apis/getHomeInformation';
+
+// GLOBAL COMPONENTS
+import { Skeleton } from '@components/Skeleton';
+import { ImageComponent } from '@components/ImageComponent';
+import { ModalCreateTicket } from '@components/ModalCreateTicket';
+
+// GLOBAL ICONS
+import { icon } from '@assets/icons';
 
 // STYLES
 import * as Style from './styles';
-import { icon } from '../../assets/icons';
-
-// FUNCTIONS
-import { requestBuildingAccess, requestHomeInformations } from './functions';
 
 // TYPES
-import { IInformations } from './types';
-import { ModalCreateTicket } from '../Tickets/ModalCreateTicket';
-import { ImageComponent } from '../../components/ImageComponent';
+import type { IInformations } from './types';
+
+import 'swiper/css';
+import 'swiper/css/pagination';
 
 export const Home = () => {
-  const { buildingNanoId } = useParams() as { buildingNanoId: string };
-  const [search] = useSearchParams();
-  const syndicNanoId = search.get('syndicNanoId') ?? '';
-  console.log('🚀 ~ Home ~ buildingNanoId:', buildingNanoId);
+  const { buildingId } = useParams() as { buildingId: string };
 
   const [createTicketModal, setCreateTicketModal] = useState<boolean>(false);
-
   const [loading, setLoading] = useState<boolean>(true);
 
   const [informations, setInformations] = useState<IInformations>({
@@ -46,21 +46,27 @@ export const Home = () => {
     setCreateTicketModal(modalState);
   };
 
-  useEffect(() => {
-    requestHomeInformations({
-      buildingNanoId,
-      setLoading,
-      setInformations,
-    });
+  const handleGetHomeInformation = async () => {
+    setLoading(true);
 
-    if (!syndicNanoId) requestBuildingAccess(buildingNanoId);
+    try {
+      const responseData = await getHomeInformation({ buildingId });
+
+      setInformations(responseData);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    handleGetHomeInformation();
   }, []);
 
   return (
     <>
       {createTicketModal && (
         <ModalCreateTicket
-          buildingNanoId={buildingNanoId}
+          buildingId={buildingId}
           buildingName={informations.name}
           handleCreateTicketModal={handleCreateTicketModal}
         />
@@ -91,17 +97,17 @@ export const Home = () => {
           )}
 
           <Style.ButtonGrid>
-            {buildingNanoId !== 'z0atz4huXTq4' && (
-              <Link to={`/maintenancesplan/${buildingNanoId}${window.location.search}`}>
+            {buildingId !== '463544ab-d0a5-4c56-a312-515110f11019' && (
+              <Link to={`/maintenance-plan/${buildingId}${window.location.search}`}>
                 <button type="button">Plano de manutenção</button>
               </Link>
             )}
 
-            <Link to={`/informations/${buildingNanoId}${window.location.search}`}>
+            <Link to={`/contacts/${buildingId}${window.location.search}`}>
               <button type="button">Colaboradores</button>
             </Link>
 
-            <Link to={`/annex/${buildingNanoId}${window.location.search}`}>
+            <Link to={`/documents/${buildingId}${window.location.search}`}>
               <button type="button">Documentos</button>
             </Link>
 
@@ -133,14 +139,17 @@ export const Home = () => {
             )}
           </Style.ButtonGrid>
         </Style.Wrapper>
+
         <Style.ImageDiv>
-          <img
-            src={icon.logoTextBlack}
-            alt=""
+          <button
+            type="button"
             onClick={() => {
               window.open('https://easyalert.com.br/', '_blank');
             }}
-          />
+            style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+          >
+            <img src={icon.logoTextBlack} alt="Easy Alert Logo" />
+          </button>
         </Style.ImageDiv>
       </Style.Container>
     </>
