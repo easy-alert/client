@@ -15,7 +15,7 @@ import { applyMask } from '@utils/functions';
 import { theme } from '@styles/theme';
 
 // GLOBAL TYPES
-import type { IUserBuildingsPermission } from '@customTypes/IUserBuildingsPermission';
+import type { IUser } from '@customTypes/IUser';
 
 // COMPONENTS
 import { ContactTable, ContactTableContent } from './ContactTable';
@@ -23,20 +23,17 @@ import { ContactTable, ContactTableContent } from './ContactTable';
 // STYLES
 import * as Style from './styles';
 
-interface IBuildingInformation {
-  name: string;
-  UserBuildingsPermissions: IUserBuildingsPermission[];
+interface IBuildingContacts {
+  User: IUser;
 }
 
 export const BuildingContacts = () => {
   const { buildingId } = useParams() as { buildingId: string };
 
-  const [loading, setLoading] = useState<boolean>(true);
+  const [buildingName, setBuildingName] = useState<string>('');
+  const [buildingContacts, setBuildingContacts] = useState<IBuildingContacts[]>([]);
 
-  const [buildingInformation, setBuildingInformation] = useState<IBuildingInformation>({
-    name: '',
-    UserBuildingsPermissions: [],
-  });
+  const [loading, setLoading] = useState<boolean>(true);
 
   const handleGetBuildingContacts = async () => {
     setLoading(true);
@@ -44,7 +41,8 @@ export const BuildingContacts = () => {
     try {
       const responseData = await getBuildingContacts({ buildingId });
 
-      setBuildingInformation(responseData);
+      setBuildingContacts(responseData?.buildingContacts);
+      setBuildingName(responseData?.buildingName);
     } finally {
       setLoading(false);
     }
@@ -56,7 +54,7 @@ export const BuildingContacts = () => {
 
   return (
     <Style.Container>
-      {loading ? <Skeleton height="24px" width="248px" /> : <h2>{buildingInformation?.name}</h2>}
+      {loading ? <Skeleton height="24px" width="248px" /> : <h2>{buildingName}</h2>}
 
       <Style.Card>
         <h4>Dados dos colaboradores</h4>
@@ -85,7 +83,7 @@ export const BuildingContacts = () => {
             </ContactTable>
           )}
 
-          {!loading && buildingInformation?.UserBuildingsPermissions?.length > 0 && (
+          {!loading && buildingContacts?.length > 0 && (
             <ContactTable
               colsHeader={[
                 { label: 'Nome' },
@@ -94,7 +92,7 @@ export const BuildingContacts = () => {
                 { label: 'WhatsApp' },
               ]}
             >
-              {buildingInformation?.UserBuildingsPermissions?.map(({ User }) => (
+              {buildingContacts?.map(({ User }) => (
                 <ContactTableContent
                   key={User?.id}
                   colsBody={[
@@ -113,8 +111,8 @@ export const BuildingContacts = () => {
           )}
 
           {!loading &&
-            buildingInformation?.UserBuildingsPermissions?.length > 0 &&
-            buildingInformation?.UserBuildingsPermissions?.map(({ User }) => (
+            buildingContacts?.length > 0 &&
+            buildingContacts?.map(({ User }) => (
               <Style.MediaWrapper key={User?.id}>
                 <Style.MediaCard>
                   <Style.MediaCardRow>
@@ -135,7 +133,7 @@ export const BuildingContacts = () => {
               </Style.MediaWrapper>
             ))}
 
-          {!loading && buildingInformation?.UserBuildingsPermissions?.length === 0 && (
+          {!loading && buildingContacts?.length === 0 && (
             <h6 style={{ color: theme.color.gray4 }}>Nenhum colaborador cadastrado.</h6>
           )}
         </Style.RowWrapper>
