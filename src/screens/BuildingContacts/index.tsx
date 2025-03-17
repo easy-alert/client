@@ -83,7 +83,7 @@ export const BuildingContacts = () => {
             </ContactTable>
           )}
 
-          {!loading && buildingContacts.length > 0 && (
+          {!loading && buildingContacts?.length > 0 && (
             <ContactTable
               colsHeader={[
                 { label: 'Nome' },
@@ -92,7 +92,7 @@ export const BuildingContacts = () => {
                 { label: 'WhatsApp' },
               ]}
             >
-              {buildingContacts.map(({ User }) => (
+              {buildingContacts?.map(({ User }) => (
                 <ContactTableContent
                   key={User?.id}
                   colsBody={[
@@ -111,8 +111,8 @@ export const BuildingContacts = () => {
           )}
 
           {!loading &&
-            buildingContacts.length > 0 &&
-            buildingContacts.map(({ User }) => (
+            buildingContacts?.length > 0 &&
+            buildingContacts?.map(({ User }) => (
               <Style.MediaWrapper key={User?.id}>
                 <Style.MediaCard>
                   <Style.MediaCardRow>
@@ -133,7 +133,7 @@ export const BuildingContacts = () => {
               </Style.MediaWrapper>
             ))}
 
-          {!loading && buildingContacts.length === 0 && (
+          {!loading && buildingContacts?.length === 0 && (
             <h6 style={{ color: theme.color.gray4 }}>Nenhum colaborador cadastrado.</h6>
           )}
         </Style.RowWrapper>
