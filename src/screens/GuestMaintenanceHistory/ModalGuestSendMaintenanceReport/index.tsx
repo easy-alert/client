@@ -2,7 +2,6 @@
 // REACT
 import { useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { useLocation, useSearchParams } from 'react-router-dom';
 
 // SERVICES
 import { getMaintenanceHistoryById } from '@services/apis/getMaintenanceHistoryById';
@@ -23,7 +22,7 @@ import { ImageComponent } from '@components/ImageComponent';
 import { ListTag } from '@components/ListTag';
 
 // GLOBAL UTILS
-import { applyMask, dateFormatter } from '@utils/functions';
+import { applyMask, dateFormatter, uploadManyFiles } from '@utils/functions';
 
 // GLOBAL ICONS
 import { icon } from '@assets/icons';
@@ -50,12 +49,6 @@ export const ModalGuestSendMaintenanceReport = ({
   maintenanceHistoryId,
   userId,
 }: IModalSendMaintenanceReport) => {
-  const [query] = useSearchParams();
-  const location = useLocation();
-
-  const isGuest = location.pathname.includes('guest-maintenanceDetails-history');
-  const syndicNanoId = query.get('syndicNanoId') || (isGuest ? 'guest' : '');
-
   const [maintenanceDetails, setMaintenanceDetails] = useState<IMaintenance>({
     Building: {
       name: '',
@@ -202,6 +195,56 @@ export const ModalGuestSendMaintenanceReport = ({
   };
 
   // #endregion
+
+  useEffect(() => {
+    if (acceptedFiles.length > 0) {
+      const uploadAcceptedFiles = async () => {
+        setOnFileQuery(true);
+
+        const uploadedFiles = await uploadManyFiles(acceptedFiles);
+
+        const formattedFiles = uploadedFiles.map((file) => ({
+          name: file.originalname,
+          originalName: file.originalname,
+          url: file.Location,
+        }));
+
+        setFiles((prevState) => {
+          let newState = [...prevState];
+          newState = [...newState, ...formattedFiles];
+          return newState;
+        });
+        setOnFileQuery(false);
+      };
+
+      uploadAcceptedFiles();
+    }
+  }, [acceptedFiles]);
+
+  useEffect(() => {
+    if (acceptedImages.length > 0) {
+      const uploadAcceptedImages = async () => {
+        setOnImageQuery(true);
+
+        const uploadedImages = await uploadManyFiles(acceptedImages);
+
+        const formattedImages = uploadedImages.map((file) => ({
+          name: file.originalname,
+          originalName: file.originalname,
+          url: file.Location,
+        }));
+
+        setImages((prevState) => {
+          let newState = [...prevState];
+          newState = [...newState, ...formattedImages];
+          return newState;
+        });
+        setOnImageQuery(false);
+      };
+
+      uploadAcceptedImages();
+    }
+  }, [acceptedImages]);
 
   useEffect(() => {
     setModalLoading(true);
