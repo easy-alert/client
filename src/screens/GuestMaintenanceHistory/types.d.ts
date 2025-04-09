@@ -1,6 +1,4 @@
 import { AnnexesAndImages } from '../../types';
-import { IFilter, IFilterOptions, IKanban } from '../types';
-import { IModalAdditionalInformations } from '../../MaintenancesPlan/types';
 
 export interface IModalSendMaintenanceReport {
   userId?: string;

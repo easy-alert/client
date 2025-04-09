@@ -8,7 +8,6 @@ import { ImagePreview } from '@components/ImagePreview';
 import { Button } from '@components/Buttons/Button';
 import { TicketShareButton } from '@components/TicketShareButton';
 import { TicketShowResidentButton } from '@components/TicketShowResidentButton';
-import { Input } from '@components/Inputs/Input';
 import { IconButton } from '@components/Buttons/IconButton';
 import Typography from '@components/Typography';
 import SignaturePad from '@components/SignaturePad';
@@ -46,7 +45,6 @@ function TicketDetails({
   handleUpdateOneTicket,
   handleUploadSignature,
 }: ITicketDetails) {
-  const [collaborator, setCollaborator] = useState<string>('');
   const [openSignaturePad, setOpenSignaturePad] = useState<boolean>(false);
 
   const disableComment = ticket?.statusName !== 'awaitingToFinish' || !syndicNanoId;
