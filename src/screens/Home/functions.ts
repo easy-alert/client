@@ -1,6 +1,5 @@
 import { Api } from '../../services/api';
 import { catchHandler } from '../../utils/functions';
-import { IRequestHomeInformations } from './types';
 
 export const requestBuildingAccess = async (buildingNanoId: string) => {
   await Api.post(`/building/create-access-history`, {

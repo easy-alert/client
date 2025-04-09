@@ -1,9 +1,29 @@
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import checker from 'vite-plugin-checker';
+
 import { resolve } from 'path';
+import { defineConfig } from 'vite'
+
+import checker from 'vite-plugin-checker';
 
 export default defineConfig({
+  server: {
+    port: 3001,
+  },
+
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks:{
+          react: ['react', 'react-dom', 'react-router-dom'],
+          formik: ['formik', 'yup'],
+          axios: ['axios'],
+          styledComponents: ['styled-components'],
+        }
+      }
+    },
+  },
+
   resolve: {
     alias: {
       '@assets': resolve(__dirname, './src/assets/'),
@@ -21,7 +41,13 @@ export default defineConfig({
   plugins: [
     react(),
     checker({
-      typescript: true,
+      typescript: {
+        root: __dirname,
+        tsconfigPath: './tsconfig.json',
+      },
+      eslint: {
+        lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+      },
     }),
   ],
 });

@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { handleToastify } from '@utils/toastifyResponses';
 import { Api } from '../services/api';
-import { catchHandler } from '../utils/functions';
 
 interface IUseServiceTypes {
   buildingNanoId?: string;

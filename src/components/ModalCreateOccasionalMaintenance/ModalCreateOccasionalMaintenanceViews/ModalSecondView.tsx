@@ -51,7 +51,11 @@ const ModalSecondView = ({
   };
 
   return (
-    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={() => undefined}>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={() => undefined}
+    >
       {({ touched, errors }) => (
         <Form>
           <Style.FormContainer>
@@ -84,7 +88,10 @@ const ModalSecondView = ({
               name="element"
               value={occasionalMaintenanceData.element}
               onChange={(e) =>
-                handleOccasionalMaintenanceDataChange({ primaryKey: 'element', value: e.target.value })
+                handleOccasionalMaintenanceDataChange({
+                  primaryKey: 'element',
+                  value: e.target.value,
+                })
               }
               error={touched.element && errors.element ? errors.element : null}
             />
@@ -96,7 +103,10 @@ const ModalSecondView = ({
               value={occasionalMaintenanceData.activity}
               disabled={!!checklistActivity}
               onChange={(e) =>
-                handleOccasionalMaintenanceDataChange({ primaryKey: 'activity', value: e.target.value })
+                handleOccasionalMaintenanceDataChange({
+                  primaryKey: 'activity',
+                  value: e.target.value,
+                })
               }
               error={touched.activity && errors.activity ? errors.activity : null}
             />
@@ -106,7 +116,10 @@ const ModalSecondView = ({
               name="responsible"
               value={occasionalMaintenanceData.responsible}
               onChange={(e) =>
-                handleOccasionalMaintenanceDataChange({ primaryKey: 'responsible', value: e.target.value })
+                handleOccasionalMaintenanceDataChange({
+                  primaryKey: 'responsible',
+                  value: e.target.value,
+                })
               }
               error={touched.responsible && errors.responsible ? errors.responsible : null}
             >
@@ -125,7 +138,10 @@ const ModalSecondView = ({
               name="priorityName"
               value={occasionalMaintenanceData.priorityName}
               onChange={(e) =>
-                handleOccasionalMaintenanceDataChange({ primaryKey: 'priorityName', value: e.target.value })
+                handleOccasionalMaintenanceDataChange({
+                  primaryKey: 'priorityName',
+                  value: e.target.value,
+                })
               }
               error={touched.priorityName && errors.priorityName ? errors.priorityName : null}
             >
@@ -145,15 +161,27 @@ const ModalSecondView = ({
               name="executionDate"
               value={occasionalMaintenanceData.executionDate}
               onChange={(evt) =>
-                handleOccasionalMaintenanceDataChange({ primaryKey: 'executionDate', value: evt.target.value })
+                handleOccasionalMaintenanceDataChange({
+                  primaryKey: 'executionDate',
+                  value: evt.target.value,
+                })
               }
               error={touched.executionDate && errors.executionDate ? errors.executionDate : null}
             />
 
             <Style.ButtonContainer>
               <Button label="Criar" bgColor="transparent" textColor="actionBlue" type="submit" />
-              <Button label="Iniciar execução" bgColor="transparent" textColor="actionBlue" type="submit" />
-              <Button label="Criar finalizada" onClick={() => handleSetView(3)} disabled={disableFinishedButton} />
+              <Button
+                label="Iniciar execução"
+                bgColor="transparent"
+                textColor="actionBlue"
+                type="submit"
+              />
+              <Button
+                label="Criar finalizada"
+                onClick={() => handleSetView(3)}
+                disabled={disableFinishedButton}
+              />
             </Style.ButtonContainer>
           </Style.FormContainer>
         </Form>
