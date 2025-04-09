@@ -9,13 +9,7 @@ import { IUploader } from './utils/types';
 import * as Style from './styles';
 import { icon } from '../../../assets/icons';
 
-export const FormikImageInput = ({
-  label,
-  error,
-  defaultImage,
-  name,
-  onChange,
-}: IUploader) => {
+export const FormikImageInput = ({ label, error, defaultImage, name, onChange }: IUploader) => {
   const checkImageType = () => {
     if (defaultImage) {
       if (defaultImage instanceof File) {
@@ -47,9 +41,7 @@ export const FormikImageInput = ({
               opacity: 0,
             }}
           />
-          <Style.ErrorMessage>
-            {!!error && <p className="p3">{error}</p>}
-          </Style.ErrorMessage>
+          <Style.ErrorMessage>{!!error && <p className="p3">{error}</p>}</Style.ErrorMessage>
         </Style.ImageWrapper>
         <p className="p5">JPG ou PNG. Tamanho máximo de 5 MB.</p>
       </Style.Container>
