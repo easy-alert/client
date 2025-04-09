@@ -1,0 +1,125 @@
+name: Staging Deploy
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  staging_bucket_check:
+    name: Staging Bucket Check
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install AWS CLI
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install awscli --upgrade --user
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Check and Configure S3 Bucket
+        env:
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+        run: |
+          if ! aws s3api head-bucket --bucket $S3_BUCKET 2>/dev/null; then
+            aws s3 mb s3://$S3_BUCKET --region us-east-1
+            aws s3 website s3://$S3_BUCKET --index-document index.html --error-document index.html
+          else
+            echo "Bucket already exists and is configured."
+          fi
+
+  staging_build:
+    name: Staging Build
+    runs-on: ubuntu-latest
+    environment: staging
+    needs: staging_bucket_check
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Debug Environment Variables
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_COMPANY_URL: ${{ vars.VITE_COMPANY_URL }}
+        run: |
+          echo "VITE_API_URL: $VITE_API_URL"
+          echo "VITE_COMPANY_URL: $VITE_COMPANY_URL"
+
+      - name: Build Project
+        env:
+          VITE_API_URL: ${{ vars.VITE_API_URL }}
+          VITE_COMPANY_URL: ${{ vars.VITE_COMPANY_URL }}
+        run: npm run build
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 1
+
+  staging_deploy:
+    name: Staging Deploy
+    runs-on: ubuntu-latest
+    environment: staging
+    needs: staging_build
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Install AWS CLI
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install awscli --upgrade --user
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@ececac1a45f3b08a01d2dd070d28d111c5fe6722
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy to S3 and Invalidate CloudFront
+        env:
+          S3_BUCKET: ${{ secrets.S3_BUCKET }}
+          DISTRIBUTION_ID: ${{ secrets.DISTRIBUTION_ID }}
+        run: |
+          if [ -d "./dist" ]; then
+            aws s3 rm s3://$S3_BUCKET --recursive
+            aws s3 sync ./dist s3://$S3_BUCKET --acl public-read
+            aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths '/*'
+          else
+            echo "Directory 'dist' not found. Build might have failed."
+            exit 1
+          fi
