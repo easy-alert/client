@@ -7,6 +7,7 @@ import { usePrevious } from 'react-use';
 
 // HOOKS
 import { useTicketStatus } from '@hooks/useTicketStatus';
+import { useMaintenanceCategoriesForSelect } from '@hooks/useMaintenanceCategoriesForSelect';
 
 // COMPONENTS
 import { Button } from '@components/Buttons/Button';
@@ -49,6 +50,11 @@ import type {
 export const MaintenancesPlan = () => {
   const { ticketStatus } = useTicketStatus({ statusName: 'all' });
   const { buildingId } = useParams() as { buildingId: string };
+  const { maintenanceCategoriesForSelect } = useMaintenanceCategoriesForSelect({
+    companyId: '',
+    buildingId,
+    userId: '',
+  });
 
   const [search] = useSearchParams();
   const syndicNanoId = search.get('syndicNanoId') ?? '';
@@ -83,9 +89,10 @@ export const MaintenancesPlan = () => {
   const currentYear = new Date().getFullYear();
 
   const [filter, setFilter] = useState<IFilter>({
-    months: '',
-    status: '',
     years: String(currentYear),
+    months: '',
+    category: '',
+    status: '',
   });
 
   const [modalMaintenanceDetailsOpen, setModalMaintenanceDetailsOpen] = useState<boolean>(false);
@@ -113,6 +120,17 @@ export const MaintenancesPlan = () => {
         filteredStatus.push({
           ...maintenance,
           dates: maintenance.dates.filter((date) => date.status === filter.status),
+        });
+      });
+    }
+
+    if (filter.category !== '') {
+      filtered.forEach((maintenance) => {
+        filteredStatus.push({
+          ...maintenance,
+          dates: maintenance.dates.filter(
+            (date) => date.categoryId === filter.category || date.categoryId === filter.category,
+          ),
         });
       });
     }
@@ -264,6 +282,28 @@ export const MaintenancesPlan = () => {
                   {filterOptions.months.map((option) => (
                     <option key={option.monthNumber} value={option.monthNumber}>
                       {capitalizeFirstLetter(option.label)}
+                    </option>
+                  ))}
+                </Select>
+
+                <Select
+                  disabled={onQuery}
+                  selectPlaceholderValue={' '}
+                  label="Categoria"
+                  value={filter.category}
+                  onChange={(e) => {
+                    setFilter((prevState) => {
+                      const newState = { ...prevState };
+                      newState.category = e.target.value;
+                      return newState;
+                    });
+                  }}
+                >
+                  <option value="">Todas</option>
+
+                  {maintenanceCategoriesForSelect.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {capitalizeFirstLetter(category?.name || '')}
                     </option>
                   ))}
                 </Select>
