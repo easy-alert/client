@@ -21,6 +21,7 @@ export interface Date {
   expectedDueDate: string;
   type: string;
   inProgress: boolean;
+  categoryId?: string;
 }
 
 export interface IMaintenancesPlan {
@@ -53,9 +54,10 @@ export interface IFilterOptions {
 }
 
 export interface IFilter {
-  months: string;
-  status: 'expired' | 'pending' | 'completed' | 'overdue' | string;
   years: string;
+  months: string;
+  category: string;
+  status: 'expired' | 'pending' | 'completed' | 'overdue' | string;
 }
 
 export interface IModalAdditionalInformations {
