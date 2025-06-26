@@ -24,6 +24,7 @@ app.use(
   }),
 );
 
+
 // Serve static assets with carefully controlled caching
 app.use(
   express.static(path.join(__dirname, 'dist'), {
