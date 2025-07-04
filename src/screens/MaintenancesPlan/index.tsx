@@ -28,6 +28,7 @@ import { theme } from '@styles/theme';
 import { icon } from '@assets/icons';
 
 // COMPONENTS
+import { MAINTENANCE_TYPE } from '@customTypes/TMaintenanceType';
 import { ModalMaintenanceDetails } from './ModalMaintenanceDetails';
 
 // UTILS
@@ -93,6 +94,7 @@ export const MaintenancesPlan = () => {
     months: '',
     category: '',
     status: '',
+    type: '',
   });
 
   const [modalMaintenanceDetailsOpen, setModalMaintenanceDetailsOpen] = useState<boolean>(false);
@@ -131,6 +133,15 @@ export const MaintenancesPlan = () => {
           dates: maintenance.dates.filter(
             (date) => date.categoryId === filter.category || date.categoryId === filter.category,
           ),
+        });
+      });
+    }
+
+    if (filter.type !== '') {
+      filtered.forEach((maintenance) => {
+        filteredStatus.push({
+          ...maintenance,
+          dates: maintenance.dates.filter((date) => date.type === filter.type),
         });
       });
     }
@@ -325,6 +336,29 @@ export const MaintenancesPlan = () => {
                   {filterOptions.status.map((option) => (
                     <option key={String(option.name)} value={String(option.name)}>
                       {capitalizeFirstLetter(option.label)}
+                    </option>
+                  ))}
+                </Select>
+
+                <Select
+                  id="maintenance-type-select"
+                  label="Tipo"
+                  selectPlaceholderValue={' '}
+                  value={filter.type}
+                  disabled={onQuery}
+                  onChange={(e) => {
+                    setFilter((prevState) => {
+                      const newState = { ...prevState };
+                      newState.type = e.target.value;
+                      return newState;
+                    });
+                  }}
+                >
+                  <option value="">Todos</option>
+
+                  {MAINTENANCE_TYPE.map((maintenanceType) => (
+                    <option key={maintenanceType.value} value={maintenanceType.value}>
+                      {capitalizeFirstLetter(maintenanceType.label)}
                     </option>
                   ))}
                 </Select>

@@ -64,7 +64,7 @@ export const CardHeader = styled.div`
 
 export const FilterWrapper = styled.div`
   display: grid;
-  grid-template-columns: 0.7fr 1fr 2fr 2fr auto;
+  grid-template-columns: 0.7fr 1fr 2fr 2fr 1fr auto;
   align-items: flex-end;
   gap: ${theme.size.xsm};
 
