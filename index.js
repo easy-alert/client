@@ -15,7 +15,7 @@ app.set('trust proxy', 1);
 // Compress responses
 app.use(compression());
 
-// Rate limiter (your existing config)
+// Rate limiter
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000,
