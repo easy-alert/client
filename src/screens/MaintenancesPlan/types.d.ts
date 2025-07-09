@@ -58,6 +58,7 @@ export interface IFilter {
   months: string;
   category: string;
   status: 'expired' | 'pending' | 'completed' | 'overdue' | string;
+  type: 'common' | 'occasional' | string;
 }
 
 export interface IModalAdditionalInformations {
