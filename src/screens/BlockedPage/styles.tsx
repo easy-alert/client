@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  background-color: #ffffff;
+  background-color: ${({ theme }) => theme.color.white};
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -29,13 +29,13 @@ export const LogoIcon = styled.img`
 `;
 
 export const TextContainer = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: ${({ theme }) => theme.size.md};
 `;
 
 export const MainText = styled.p`
   font-size: 20px;
   font-weight: 600;
-  color: #b91c1c;
+  color: ${({ theme }) => theme.color.primary};
   line-height: 1.4;
 
   @media (max-width: 768px) {
@@ -49,15 +49,15 @@ export const MainText = styled.p`
 `;
 
 export const ButtonContainer = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: ${({ theme }) => theme.size.md};
 `;
 
 export const ActionButton = styled.button`
-  background-color: #b91c1c;
-  color: #ffffff;
-  border: none;
+  background-color: ${({ theme }) => theme.color.primary};
+  color: ${({ theme }) => theme.color.white};
+  border: 2px solid transparent;
   border-radius: 8px;
-  padding: 12px 24px;
+  padding: ${({ theme }) => `${theme.size.sm} ${theme.size.lg}`};
   font-size: 16px;
   font-weight: 700;
   text-transform: uppercase;
@@ -65,17 +65,12 @@ export const ActionButton = styled.button`
   transition: all 0.3s ease;
   letter-spacing: 0.5px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
 
   &:hover {
-    background-color: #ffffff;
-    color: #b91c1c;
-    border: 2px solid #b91c1c;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-  }
-
-  &:active {
-    transform: translateY(0);
+    background-color: ${({ theme }) => theme.color.white};
+    color: ${({ theme }) => theme.color.primary};
+    border: 2px solid ${({ theme }) => theme.color.primary};
   }
 
   @media (max-width: 768px) {
@@ -96,7 +91,7 @@ export const PersonImage = styled.img`
 `;
 
 export const ImageContainer = styled.div`
-  margin-top: 12px;
-  max-width: 220px;
+  margin-top: ${({ theme }) => theme.size.sm};
+  max-width: 210px;
   width: 100%;
 `;

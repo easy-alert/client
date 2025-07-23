@@ -1,6 +1,6 @@
 // REACT
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 
 // LIBS
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -17,9 +17,6 @@ import { ModalCreateTicket } from '@components/ModalCreateTicket';
 // GLOBAL ASSETS
 import { icon } from '@assets/icons';
 
-// SCREENS
-import { IsBlockedUser } from '@screens/IsBlockedUser';
-
 // STYLES
 import * as Style from './styles';
 
@@ -30,11 +27,12 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 
 export const Home = () => {
+  const navigate = useNavigate();
+
   const { buildingId } = useParams() as { buildingId: string };
 
   const [createTicketModal, setCreateTicketModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const [userBlocked, setUserBlocked] = useState(false);
 
   const [informations, setInformations] = useState<IInformations>({
     Banners: [],
@@ -54,10 +52,11 @@ export const Home = () => {
     setLoading(true);
     try {
       const responseData = await getHomeInformation({ buildingId });
-      setInformations(responseData);
       if (responseData?.isBlocked || responseData?.Company?.isBlocked) {
-        setUserBlocked(true);
+        navigate('/blocked');
+        return;
       }
+      setInformations(responseData);
     } finally {
       setLoading(false);
     }
@@ -66,10 +65,6 @@ export const Home = () => {
   useEffect(() => {
     handleGetHomeInformation();
   }, []);
-
-  if (userBlocked) {
-    return <IsBlockedUser />;
-  }
 
   return (
     <>
