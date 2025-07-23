@@ -10,6 +10,7 @@ import { Videos } from '@screens/Videos';
 import { ResidentRequireAuth } from '@contexts/ResidentAuth/ResidentRequireAuth';
 import { GuestMaintenanceHistory } from '@screens/GuestMaintenanceHistory';
 import { GuestTicket } from '@screens/GuestTicket';
+import { BlockedPage } from '@screens/BlockedPage';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -57,6 +58,7 @@ const AppRoutes = () => (
           }
         >
           <Route path="/home/:buildingId" element={<Home />} />
+          <Route path="/blocked" element={<BlockedPage />} />
           <Route path="/maintenance-plan/:buildingId" element={<MaintenancesPlan />} />
           <Route path="/contacts/:buildingId" element={<BuildingContacts />} />
           <Route path="/documents/:buildingId" element={<Annexes />} />
