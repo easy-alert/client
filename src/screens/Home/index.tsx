@@ -13,6 +13,7 @@ import { getHomeInformation } from '@services/apis/getHomeInformation';
 import { Skeleton } from '@components/Skeleton';
 import { ImageComponent } from '@components/ImageComponent';
 import { ModalCreateTicket } from '@components/ModalCreateTicket';
+import { IsBlockedUser } from '@components/IsBlockedUser';
 
 // GLOBAL ICONS
 import { icon } from '@assets/icons';
@@ -31,6 +32,7 @@ export const Home = () => {
 
   const [createTicketModal, setCreateTicketModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [userBlocked, setUserBlocked] = useState(false);
 
   const [informations, setInformations] = useState<IInformations>({
     Banners: [],
@@ -48,11 +50,12 @@ export const Home = () => {
 
   const handleGetHomeInformation = async () => {
     setLoading(true);
-
     try {
       const responseData = await getHomeInformation({ buildingId });
-
       setInformations(responseData);
+      if (responseData?.isBlocked || responseData?.Company?.isBlocked) {
+        setUserBlocked(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -61,6 +64,10 @@ export const Home = () => {
   useEffect(() => {
     handleGetHomeInformation();
   }, []);
+
+  if (userBlocked) {
+    return <IsBlockedUser />;
+  }
 
   return (
     <>
