@@ -76,8 +76,11 @@ import qrCode from './qrCode.svg';
 import qrCodeChecked from './qrCodeChecked.svg';
 import signing from './signing.svg';
 import personPlaceholder from './personPlaceholder.svg';
+import logoBlack from './logoBlack.png';
+import persona from './persona.png';
 
 export const icon = {
+  persona,
   activityNotification,
   uploadLine,
   upload,
@@ -100,6 +103,7 @@ export const icon = {
   trash,
   editWithBg,
   block,
+  logoBlack,
   rightArrow,
   search,
   imageBackplate,
