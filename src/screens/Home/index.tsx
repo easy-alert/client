@@ -1,4 +1,4 @@
-// COMPONENTS
+// REACT
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
@@ -13,10 +13,12 @@ import { getHomeInformation } from '@services/apis/getHomeInformation';
 import { Skeleton } from '@components/Skeleton';
 import { ImageComponent } from '@components/ImageComponent';
 import { ModalCreateTicket } from '@components/ModalCreateTicket';
-import { IsBlockedUser } from '@components/IsBlockedUser';
 
-// GLOBAL ICONS
+// GLOBAL ASSETS
 import { icon } from '@assets/icons';
+
+// SCREENS
+import { IsBlockedUser } from '@screens/IsBlockedUser';
 
 // STYLES
 import * as Style from './styles';
