@@ -1,20 +1,23 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
+  height: 100vh;
   background-color: ${({ theme }) => theme.color.white};
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 `;
 
 export const Content = styled.div`
+  max-width: 600px;
+  width: 100%;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  max-width: 600px;
-  width: 100%;
 `;
 
 export const LogoIcon = styled.img`
@@ -29,6 +32,11 @@ export const LogoIcon = styled.img`
 `;
 
 export const TextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  gap: ${({ theme }) => theme.size.md};
+
   margin-bottom: ${({ theme }) => theme.size.md};
 `;
 

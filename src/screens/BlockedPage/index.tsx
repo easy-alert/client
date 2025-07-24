@@ -4,39 +4,50 @@ import { icon } from '@assets/icons';
 // STYLES
 import * as Style from './styles';
 
-export const BlockedPage = () => (
-  <Style.Container>
-    <Style.Content>
-      <Style.LogoIcon src={icon.logoBlack} />
+export const BlockedPage = () => {
+  const handleSendWhatApp = async () => {
+    try {
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
 
-      <Style.TextContainer>
-        <Style.MainText>
-          A Easy Alert é um sistema que ajuda a cuidar das manutenções no prédio.
-        </Style.MainText>
+      const phone = '5548991537724';
+      const message = 'Olá, vi o QR Code e quero saber mais sobre a Easy Alert';
 
-        <Style.MainText>
-          Ajudamos síndicos e construtoras a cuidarem melhor dos imóveis, evitando problemas e
-          gastos desnecessários.
-        </Style.MainText>
-      </Style.TextContainer>
+      const whatsappDeepLink = `whatsapp://send?phone=${phone}&text=${encodeURIComponent(message)}`;
+      const whatsappUri = `https://web.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+      const whatsappUrl = isMobile ? whatsappDeepLink : whatsappUri;
 
-      <Style.ButtonContainer>
-        <Style.ActionButton
-          type="button"
-          onClick={() => {
-            window.open(
-              'https://api.whatsapp.com/send?phone=5548991537724&text=Ol%C3%A1%2C%20vi%20o%20QR%20Code%20e%20quero%20saber%20mais%20sobre%20a%20Easy%20Alert',
-              '_blank',
-            );
-          }}
-        >
-          CLIQUE AQUI PARA SABER MAIS
-        </Style.ActionButton>
-      </Style.ButtonContainer>
+      window.open(whatsappUrl, '_blank');
+    } catch (err) {
+      console.error('Erro ao compartilhar no WhatsApp:', err);
+    }
+  };
 
-      <Style.ImageContainer>
-        <Style.PersonImage src={icon.persona} />
-      </Style.ImageContainer>
-    </Style.Content>
-  </Style.Container>
-);
+  return (
+    <Style.Container>
+      <Style.Content>
+        <Style.LogoIcon src={icon.logoBlack} />
+
+        <Style.TextContainer>
+          <Style.MainText>
+            A Easy Alert é um sistema que ajuda a cuidar das manutenções no prédio.
+          </Style.MainText>
+
+          <Style.MainText>
+            Ajudamos síndicos e construtoras a cuidarem melhor dos imóveis, evitando problemas e
+            gastos desnecessários.
+          </Style.MainText>
+        </Style.TextContainer>
+
+        <Style.ButtonContainer>
+          <Style.ActionButton type="button" onClick={handleSendWhatApp}>
+            CLIQUE AQUI PARA SABER MAIS
+          </Style.ActionButton>
+        </Style.ButtonContainer>
+
+        <Style.ImageContainer>
+          <Style.PersonImage src={icon.persona} />
+        </Style.ImageContainer>
+      </Style.Content>
+    </Style.Container>
+  );
+};
