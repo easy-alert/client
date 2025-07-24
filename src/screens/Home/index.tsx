@@ -52,10 +52,12 @@ export const Home = () => {
     setLoading(true);
     try {
       const responseData = await getHomeInformation({ buildingId });
+
       if (responseData?.isBlocked || responseData?.Company?.isBlocked) {
         navigate('/blocked');
         return;
       }
+
       setInformations(responseData);
     } finally {
       setLoading(false);
