@@ -10,6 +10,7 @@ import { Videos } from '@screens/Videos';
 import { ResidentRequireAuth } from '@contexts/ResidentAuth/ResidentRequireAuth';
 import { GuestMaintenanceHistory } from '@screens/GuestMaintenanceHistory';
 import { GuestTicket } from '@screens/GuestTicket';
+import { BlockedPage } from '@screens/BlockedPage';
 
 const AppRoutes = () => (
   <BrowserRouter>
@@ -40,6 +41,8 @@ const AppRoutes = () => (
           </NavBar>
         }
       />
+
+      <Route path="/blocked" element={<BlockedPage />} />
 
       <Route
         path="/"

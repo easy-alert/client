@@ -1,6 +1,6 @@
-// COMPONENTS
+// REACT
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 
 // LIBS
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -14,7 +14,7 @@ import { Skeleton } from '@components/Skeleton';
 import { ImageComponent } from '@components/ImageComponent';
 import { ModalCreateTicket } from '@components/ModalCreateTicket';
 
-// GLOBAL ICONS
+// GLOBAL ASSETS
 import { icon } from '@assets/icons';
 
 // STYLES
@@ -27,6 +27,8 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 
 export const Home = () => {
+  const navigate = useNavigate();
+
   const { buildingId } = useParams() as { buildingId: string };
 
   const [createTicketModal, setCreateTicketModal] = useState<boolean>(false);
@@ -48,9 +50,13 @@ export const Home = () => {
 
   const handleGetHomeInformation = async () => {
     setLoading(true);
-
     try {
       const responseData = await getHomeInformation({ buildingId });
+
+      if (responseData?.isBlocked || responseData?.Company?.isBlocked) {
+        navigate('/blocked');
+        return;
+      }
 
       setInformations(responseData);
     } finally {
