@@ -42,6 +42,8 @@ const AppRoutes = () => (
         }
       />
 
+      <Route path="/blocked" element={<BlockedPage />} />
+
       <Route
         path="/"
         element={
@@ -58,7 +60,6 @@ const AppRoutes = () => (
           }
         >
           <Route path="/home/:buildingId" element={<Home />} />
-          <Route path="/blocked" element={<BlockedPage />} />
           <Route path="/maintenance-plan/:buildingId" element={<MaintenancesPlan />} />
           <Route path="/contacts/:buildingId" element={<BuildingContacts />} />
           <Route path="/documents/:buildingId" element={<Annexes />} />
