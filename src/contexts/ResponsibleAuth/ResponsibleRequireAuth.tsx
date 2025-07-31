@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Form, Formik } from 'formik';
 import * as yup from 'yup';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Api } from '../../services/api';
 
 import { DotSpinLoading } from '../../components/Loadings/DotSpinLoading';
@@ -20,6 +20,7 @@ const schema = yup
 
 export const ResponsibleRequireAuth = ({ children }: IRequireAuth) => {
   const { buildingId } = useParams() as { buildingId: string };
+  const navigate = useNavigate();
 
   const [buildingName, setBuildingName] = useState('');
 
@@ -49,6 +50,11 @@ export const ResponsibleRequireAuth = ({ children }: IRequireAuth) => {
   const checkPasswordExistence = async () => {
     await Api.get(`/check-password-existence/${buildingId}/responsible`)
       .then((res) => {
+        if (res?.data?.buildingIsBlocked || res?.data?.companyIsBlocked) {
+          navigate('/blocked', { replace: true });
+          return;
+        }
+
         setNeedPassword(res.data.needPassword);
         setBuildingName(res.data.buildingName);
 

@@ -15,6 +15,7 @@ export interface IInformations {
   };
 
   name: string;
+  isBlocked?: boolean;
 }
 
 export interface IRequestHomeInformations {
