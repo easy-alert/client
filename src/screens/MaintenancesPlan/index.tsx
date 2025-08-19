@@ -1,5 +1,5 @@
 // REACT
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 // LIBS
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -100,6 +100,18 @@ export const MaintenancesPlan = () => {
   const [modalMaintenanceDetailsOpen, setModalMaintenanceDetailsOpen] = useState<boolean>(false);
 
   const prevFilter = usePrevious(filter);
+
+  const getMonthsToShow = useMemo(() => {
+    if (filteredMaintenancesPlan.length === 0) return [];
+
+    const firstMonthWithMaintenanceIdx = filteredMaintenancesPlan.findIndex(
+      (month) => month.dates && month.dates.length > 0,
+    );
+
+    return firstMonthWithMaintenanceIdx === -1
+      ? filteredMaintenancesPlan
+      : filteredMaintenancesPlan.slice(firstMonthWithMaintenanceIdx);
+  }, [filteredMaintenancesPlan]);
 
   const filterFunction = () => {
     let filtered: IMaintenancesPlan[] = [];
@@ -403,93 +415,77 @@ export const MaintenancesPlan = () => {
 
             {filteredMaintenancesPlan.length > 0 &&
               !onQuery &&
-              (() => {
-                const firstMonthWithMaintenanceIdx = filteredMaintenancesPlan.findIndex(
-                  (month) => month.dates && month.dates.length > 0,
-                );
+              getMonthsToShow.map((month) => (
+                <Style.MonthSection key={month.name}>
+                  <h5>{month.name}</h5>
 
-                const monthsToShow =
-                  firstMonthWithMaintenanceIdx === -1
-                    ? filteredMaintenancesPlan
-                    : filteredMaintenancesPlan.slice(firstMonthWithMaintenanceIdx);
-                return monthsToShow.map((month) => (
-                  <Style.MonthSection key={month.name}>
-                    <h5>{month.name}</h5>
+                  {month.dates.length > 0 ? (
+                    month.dates.map((maintenance) => (
+                      <Style.DayWrapper
+                        key={maintenance.id + maintenance.dateInfos.dayNumber}
+                        onClick={() => {
+                          if (maintenance.type === 'ticket') {
+                            setModalAdditionalInformations({
+                              id: maintenance.id,
+                              expectedNotificationDate: '',
+                              isFuture: false,
+                              expectedDueDate: '',
+                            });
 
-                    {month.dates.length > 0 ? (
-                      month.dates.map((maintenance) => (
-                        <Style.DayWrapper
-                          key={maintenance.id + maintenance.dateInfos.dayNumber}
-                          onClick={() => {
-                            if (maintenance.type === 'ticket') {
-                              setModalAdditionalInformations({
-                                id: maintenance.id,
-                                expectedNotificationDate: '',
-                                isFuture: false,
-                                expectedDueDate: '',
-                              });
-
-                              setTicketDetailsModal(true);
-                            } else {
-                              setModalAdditionalInformations({
-                                id: maintenance.id,
-                                expectedNotificationDate:
-                                  maintenance.expectedNotificationDate ?? null,
-                                isFuture: maintenance.isFuture,
-                                expectedDueDate: maintenance.expectedDueDate ?? null,
-                              });
-                              setModalMaintenanceDetailsOpen(true);
-                            }
-                          }}
+                            setTicketDetailsModal(true);
+                          } else {
+                            setModalAdditionalInformations({
+                              id: maintenance.id,
+                              expectedNotificationDate:
+                                maintenance.expectedNotificationDate ?? null,
+                              isFuture: maintenance.isFuture,
+                              expectedDueDate: maintenance.expectedDueDate ?? null,
+                            });
+                            setModalMaintenanceDetailsOpen(true);
+                          }
+                        }}
+                      >
+                        <Style.DayInfo>
+                          <p className="p3">{maintenance.dateInfos.dayNumber}</p>
+                          <p className="p3">{maintenance.dateInfos.smName}</p>
+                        </Style.DayInfo>
+                        <Style.Maintenance
+                          status={maintenance.status}
+                          bgColor={maintenance?.statusBgColor}
                         >
-                          <Style.DayInfo>
-                            <p className="p3">{maintenance.dateInfos.dayNumber}</p>
-                            <p className="p3">{maintenance.dateInfos.smName}</p>
-                          </Style.DayInfo>
-                          <Style.Maintenance
-                            status={maintenance.status}
-                            bgColor={maintenance?.statusBgColor}
-                          >
-                            <Style.MaintenanceTags>
-                              {maintenance.status === 'overdue' && <EventTag status="completed" />}
+                          <Style.MaintenanceTags>
+                            {maintenance.status === 'overdue' && <EventTag status="completed" />}
 
-                              <EventTag
-                                status={maintenance.statusLabel || maintenance.status}
-                                color={maintenance?.statusColor}
-                                bgColor={maintenance?.statusBgColor}
-                              />
+                            <EventTag
+                              status={maintenance.statusLabel || maintenance.status}
+                              color={maintenance?.statusColor}
+                              bgColor={maintenance?.statusBgColor}
+                            />
 
-                              <EventTag status={maintenance.type} />
+                            <EventTag status={maintenance.type} />
 
-                              {(maintenance.status === 'expired' ||
-                                maintenance.status === 'pending') &&
-                                maintenance.inProgress &&
-                                !maintenance.isFuture && <InProgressTag />}
-                            </Style.MaintenanceTags>
+                            {(maintenance.status === 'expired' ||
+                              maintenance.status === 'pending') &&
+                              maintenance.inProgress &&
+                              !maintenance.isFuture && <InProgressTag />}
+                          </Style.MaintenanceTags>
 
-                            <h6>{maintenance.element}</h6>
+                          <h6>{maintenance.element}</h6>
 
-                            <p className="p2">{maintenance.activity}</p>
-                          </Style.Maintenance>
-                        </Style.DayWrapper>
-                      ))
-                    ) : (
-                      <Style.NoDataDayWrapper>
-                        <Style.DayInfo />
-                        <Style.NoMaintenanceCard>
-                          <h6>Sem manutenções</h6>
-                        </Style.NoMaintenanceCard>
-                      </Style.NoDataDayWrapper>
-                    )}
-                  </Style.MonthSection>
-                ));
-              })()}
-
-            {filteredMaintenancesPlan.length === 0 && !onQuery && (
-              <Style.NoDataContainer>
-                <h4>Nenhuma manutenção encontrada.</h4>
-              </Style.NoDataContainer>
-            )}
+                          <p className="p2">{maintenance.activity}</p>
+                        </Style.Maintenance>
+                      </Style.DayWrapper>
+                    ))
+                  ) : (
+                    <Style.NoDataDayWrapper>
+                      <Style.DayInfo />
+                      <Style.NoMaintenanceCard>
+                        <h6>Sem manutenções</h6>
+                      </Style.NoMaintenanceCard>
+                    </Style.NoDataDayWrapper>
+                  )}
+                </Style.MonthSection>
+              ))}
           </Style.CalendarWrapper>
         </Style.Card>
       </Style.Container>
