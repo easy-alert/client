@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 
+import { ResidentRequireAuth } from '@contexts/ResidentAuth/ResidentRequireAuth';
+
 import { NavBar } from '@components/NavBar';
 
 import { Home } from '@screens/Home';
@@ -7,7 +9,6 @@ import { MaintenancesPlan } from '@screens/MaintenancesPlan';
 import { BuildingContacts } from '@screens/BuildingContacts';
 import { Annexes } from '@screens/Annexes';
 import { Videos } from '@screens/Videos';
-import { ResidentRequireAuth } from '@contexts/ResidentAuth/ResidentRequireAuth';
 import { GuestMaintenanceHistory } from '@screens/GuestMaintenanceHistory';
 import { GuestTicket } from '@screens/GuestTicket';
 import { BlockedPage } from '@screens/BlockedPage';
