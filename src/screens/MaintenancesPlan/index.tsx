@@ -1,5 +1,5 @@
 // REACT
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 // LIBS
 import { useParams, useSearchParams } from 'react-router-dom';
@@ -100,6 +100,18 @@ export const MaintenancesPlan = () => {
   const [modalMaintenanceDetailsOpen, setModalMaintenanceDetailsOpen] = useState<boolean>(false);
 
   const prevFilter = usePrevious(filter);
+
+  const getMonthsToShow = useMemo(() => {
+    if (filteredMaintenancesPlan.length === 0) return [];
+
+    const firstMonthWithMaintenanceIdx = filteredMaintenancesPlan.findIndex(
+      (month) => month.dates && month.dates.length > 0,
+    );
+
+    return firstMonthWithMaintenanceIdx === -1
+      ? filteredMaintenancesPlan
+      : filteredMaintenancesPlan.slice(firstMonthWithMaintenanceIdx);
+  }, [filteredMaintenancesPlan]);
 
   const filterFunction = () => {
     let filtered: IMaintenancesPlan[] = [];
@@ -403,7 +415,7 @@ export const MaintenancesPlan = () => {
 
             {filteredMaintenancesPlan.length > 0 &&
               !onQuery &&
-              filteredMaintenancesPlan.map((month) => (
+              getMonthsToShow.map((month) => (
                 <Style.MonthSection key={month.name}>
                   <h5>{month.name}</h5>
 
@@ -474,12 +486,6 @@ export const MaintenancesPlan = () => {
                   )}
                 </Style.MonthSection>
               ))}
-
-            {filteredMaintenancesPlan.length === 0 && !onQuery && (
-              <Style.NoDataContainer>
-                <h4>Nenhuma manutenção encontrada.</h4>
-              </Style.NoDataContainer>
-            )}
           </Style.CalendarWrapper>
         </Style.Card>
       </Style.Container>

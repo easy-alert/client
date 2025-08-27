@@ -19,7 +19,6 @@ export interface IBuilding {
   guestCanCompleteMaintenance?: boolean;
 
   residentPassword?: string;
-  syndicPassword?: string;
 
   nextMaintenanceCreationBasis?: string;
 
