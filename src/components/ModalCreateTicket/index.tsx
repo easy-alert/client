@@ -284,7 +284,7 @@ export const ModalCreateTicket = ({
               />
 
               <Style.Row>
-                <h6>Anexos *</h6>
+                <h6>Anexos</h6>
                 <Style.FileAndImageRow>
                   <DragAndDropFiles
                     disabled={onImageQuery}
