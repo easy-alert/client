@@ -30,6 +30,7 @@ import * as Style from '../styles';
 
 interface ITicketDetails {
   ticket: ITicket;
+  fieldsConfig?: Record<string, { hidden: boolean; required: boolean }>;
   syndicNanoId?: string;
   signatureLoading: boolean;
   handleSetView: (viewState: 'details' | 'dismiss') => void;
@@ -39,6 +40,7 @@ interface ITicketDetails {
 
 function TicketDetails({
   ticket,
+  fieldsConfig,
   syndicNanoId,
   signatureLoading,
   handleSetView,
@@ -49,6 +51,10 @@ function TicketDetails({
 
   const disableComment = ticket?.statusName !== 'awaitingToFinish' || !syndicNanoId;
 
+  const cfg = fieldsConfig || {};
+  const isHidden = (key: string) => !!(cfg as any)[key]?.hidden;
+  const withPlaceholder = (val?: string | null) => (val && val !== '' ? val : 'Não definido');
+
   const ticketDetailsRows = [
     {
       label: 'Edificação',
@@ -56,23 +62,28 @@ function TicketDetails({
     },
     {
       label: 'Apartamento do morador',
-      value: ticket?.residentApartment,
+      value: withPlaceholder(ticket?.residentApartment || ''),
+      field: 'residentApartment',
     },
     {
       label: 'Nome do morador',
-      value: ticket?.residentName,
+      value: withPlaceholder(ticket?.residentName || ''),
+      field: 'residentName',
     },
     {
       label: 'Telefone do morador',
-      value: applyMask({ value: ticket?.residentPhone || '', mask: 'TEL' }).value,
+      value: withPlaceholder(applyMask({ value: ticket?.residentPhone || '', mask: 'TEL' }).value),
+      field: 'residentPhone',
     },
     {
       label: 'E-mail do morador',
-      value: ticket?.residentEmail,
+      value: withPlaceholder(ticket?.residentEmail || ''),
+      field: 'residentEmail',
     },
     {
       label: 'CPF do morador',
-      value: applyMask({ value: ticket?.residentCPF || '', mask: 'CPF' }).value,
+      value: withPlaceholder(applyMask({ value: ticket?.residentCPF || '', mask: 'CPF' }).value),
+      field: 'residentCPF',
     },
     {
       label: 'Local da ocorrência',
@@ -120,8 +131,14 @@ function TicketDetails({
       )}
 
       <Style.TicketDetailsColumnContainer>
-        {ticketDetailsRows.map(({ label, value, place, types }) => {
+        {ticketDetailsRows
+          .filter(({ field }) => {
+            if (!field) return true;
+            return !isHidden(field);
+          })
+          .map(({ label, value, place, types }) => {
           if (label === 'Local da ocorrência') {
+            if (isHidden('placeId')) return null;
             return (
               <Style.TicketDetailsColumnContent key={label}>
                 <Style.TicketDetailsRowLabel>{label}</Style.TicketDetailsRowLabel>
@@ -131,6 +148,7 @@ function TicketDetails({
           }
 
           if (label === 'Tipo de assistência') {
+            if (isHidden('types')) return null;
             return (
               <Style.TicketDetailsColumnContent key={label}>
                 <Style.TicketDetailsRowLabel>{label}</Style.TicketDetailsRowLabel>
@@ -159,10 +177,12 @@ function TicketDetails({
         })}
       </Style.TicketDetailsColumnContainer>
 
+      {!isHidden('description') && (
       <Style.TicketDetailsDescriptionContainer>
         <Style.TicketDetailsRowLabel>Descrição</Style.TicketDetailsRowLabel>
         <Style.TicketDetailsRowValue>{ticket.description}</Style.TicketDetailsRowValue>
       </Style.TicketDetailsDescriptionContainer>
+      )}
 
       <Style.TicketDetailsImagesContainer>
         <Style.TicketDetailsRowLabel>Imagens</Style.TicketDetailsRowLabel>

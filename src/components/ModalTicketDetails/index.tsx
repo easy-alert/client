@@ -40,6 +40,7 @@ function ModalTicketDetails({
 }: IModalTicketDetails) {
   const [ticket, setTicket] = useState<ITicket>();
   const [dismissReasons, setDismissReasons] = useState<ITicketDismissReason[]>([]);
+  const [fieldsConfig, setFieldsConfig] = useState<Record<string, { hidden: boolean; required: boolean }>>();
 
   const [view, setView] = useState<IViewState>('details');
 
@@ -54,9 +55,9 @@ function ModalTicketDetails({
     setLoading(true);
 
     try {
-      const ticketData = await getTicketById(ticketId);
-
-      setTicket(ticketData);
+      const data: any = await getTicketById(ticketId);
+      setTicket(data.ticket ?? data);
+      setFieldsConfig(data.fieldsConfig);
     } catch (error: any) {
       handleToastify(error);
     } finally {
@@ -155,6 +156,7 @@ function ModalTicketDetails({
           {view === 'details' && (
             <TicketDetails
               ticket={ticket}
+              fieldsConfig={fieldsConfig}
               syndicNanoId={syndicNanoId}
               signatureLoading={signatureLoading}
               handleSetView={handleSetView}
