@@ -33,6 +33,7 @@ import { IBuildingApartment } from '@customTypes/IBuildingApartments';
 import { applyMask, catchHandler, isImage, unMask, uploadManyFiles } from '@utils/functions';
 
 // STYLES
+import { TicketFormConfig, useTicketFormConfigApi } from '@hooks/useTicketFormConfigApi';
 import * as Style from './styles';
 
 interface IModalCreateTicket {
@@ -47,29 +48,41 @@ interface IAuxiliaryData {
   label: string;
 }
 
-const schema = yup
-  .object({
-    buildingId: yup.string().required('Campo obrigatório.'),
-    residentName: yup.string().required('Campo obrigatório.'),
-    residentPhone: yup.string().required('Campo obrigatório.'),
-    residentApartment: yup.string().required('Campo obrigatório.'),
-    residentEmail: yup.string().email('E-mail inválido.').required('Campo obrigatório.'),
-    residentCPF: yup.string().required('Campo obrigatório.'),
-    description: yup.string().required('Campo obrigatório.'),
-    placeId: yup.string().required('Campo obrigatório.'),
-    types: yup
-      .array()
-      .of(
-        yup.object({
-          serviceTypeId: yup.string().required('Campo obrigatório.'),
-        }),
-      )
-      .min(1, 'Campo obrigatório.')
-      .required('Campo obrigatório.'),
-  })
-  .required();
+const defaultConfig: TicketFormConfig = {
+  residentName: { hidden: false, required: true },
+  residentPhone: { hidden: false, required: true },
+  residentApartment: { hidden: false, required: true },
+  residentEmail: { hidden: false, required: true },
+  residentCPF: { hidden: false, required: true },
+  description: { hidden: false, required: true },
+  placeId: { hidden: false, required: true },
+  types: { hidden: false, required: true },
+  attachments: { hidden: false, required: false },
+};
 
-type TSchema = yup.InferType<typeof schema>;
+function buildSchema(cfg: TicketFormConfig) {
+  const s: any = {
+    buildingId: yup.string().required('Campo obrigatório.'),
+  };
+
+  const req = (x: boolean) => (x ? yup.string().required('Campo obrigatório.') : yup.string().optional());
+
+  if (!cfg.residentName.hidden) s.residentName = req(cfg.residentName.required);
+  if (!cfg.residentPhone.hidden) s.residentPhone = req(cfg.residentPhone.required);
+  if (!cfg.residentApartment.hidden) s.residentApartment = req(cfg.residentApartment.required);
+  if (!cfg.residentEmail.hidden) s.residentEmail = cfg.residentEmail.required
+    ? yup.string().email('E-mail inválido.').required('Campo obrigatório.')
+    : yup.string().email('E-mail inválido.').optional();
+  if (!cfg.residentCPF.hidden) s.residentCPF = req(cfg.residentCPF.required);
+  if (!cfg.description.hidden) s.description = req(cfg.description.required);
+  if (!cfg.placeId.hidden) s.placeId = req(cfg.placeId.required);
+  if (!cfg.types.hidden)
+    s.types = cfg.types.required
+      ? yup.array().of(yup.object({ serviceTypeId: yup.string().required('Campo obrigatório.') })).min(1, 'Campo obrigatório.').required('Campo obrigatório.')
+      : yup.array().of(yup.object({ serviceTypeId: yup.string().optional() })).optional();
+
+  return yup.object(s).required();
+}
 
 export const ModalCreateTicket = ({
   buildingId,
@@ -85,6 +98,8 @@ export const ModalCreateTicket = ({
   const [onImageQuery, setOnImageQuery] = useState<boolean>(false);
   const [imagesToUploadCount, setImagesToUploadCount] = useState<number>(0);
   const [images, setImages] = useState<{ url: string; name: string }[]>([]);
+  const [formConfig, setFormConfig] = useState<TicketFormConfig>(defaultConfig);
+  const { loadConfig } = useTicketFormConfigApi();
 
   const getAuxiliaryData = async () => {
     await Api.get(`/tickets/extras/auxiliary-data`)
@@ -107,8 +122,22 @@ export const ModalCreateTicket = ({
     }
   };
 
-  const submitForm = async (values: TSchema) => {
+  useEffect(() => {
+    loadConfig()
+      .then((data) => setFormConfig({ ...defaultConfig, ...data }))
+      .catch(() => setFormConfig(defaultConfig));
+  }, []);
+
+  const submitForm = async (values: any) => {
     setOnQuery(false);
+
+    const schema = buildSchema(formConfig);
+    try {
+      await schema.validate(values, { abortEarly: false });
+    } catch (err) {
+      setOnQuery(false);
+      return;
+    }
 
     await Api.post(`/tickets`, {
       ...values,
@@ -153,7 +182,7 @@ export const ModalCreateTicket = ({
             placeId: '',
             types: [],
           }}
-          validationSchema={schema}
+          validationSchema={buildSchema(formConfig)}
           onSubmit={submitForm}
         >
           {({ errors, touched, values, setFieldValue }) => (
