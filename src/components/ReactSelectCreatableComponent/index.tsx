@@ -1,7 +1,7 @@
 import Select from 'react-select/creatable';
-import { IReactSelectCreatableComponent } from './types';
-import * as Style from './styles';
 import { theme } from '../../styles/theme';
+import * as Style from './styles';
+import { IReactSelectCreatableComponent } from './types';
 
 const customStyles = {
   control: (baseStyles: any, state: any) => ({
@@ -37,10 +37,12 @@ export const ReactSelectCreatableComponent = ({
   id,
   name,
   onChange,
+  onCreateOption,
   options,
   placeholder,
   isClearable = false,
   isMulti = false,
+  isLoading,
   value,
   isOptionDisabled,
   newCustomStyle,
@@ -64,6 +66,8 @@ export const ReactSelectCreatableComponent = ({
       maxMenuHeight={maxMenuHeight}
       options={options}
       onChange={onChange}
+      onCreateOption={onCreateOption}
+      isLoading={isLoading}
       isOptionDisabled={isOptionDisabled}
       formatCreateLabel={(data) => `Criar "${data}"`}
     />
