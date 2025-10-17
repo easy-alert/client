@@ -18,6 +18,7 @@ export const BlockedPage = () => {
 
       window.open(whatsappUrl, '_blank');
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('Erro ao compartilhar no WhatsApp:', err);
     }
   };

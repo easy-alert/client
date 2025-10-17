@@ -118,12 +118,12 @@ export const ModalCreateTicket = ({
 
   const getAuxiliaryData = async () => {
     try {
-      const [places, types] = await Promise.all([
+      const [placeOptions, typesOptions] = await Promise.all([
         ticketOptionsService.listPlaces(),
         ticketOptionsService.listServiceTypes(),
       ]);
-      setPlaces(places);
-      setTypes(types.map((x) => ({ id: x.id, label: x.singularLabel, companyId: x.companyId })));
+      setPlaces(placeOptions);
+      setTypes(typesOptions.map((x) => ({ id: x.id, label: x.singularLabel, companyId: x.companyId })));
     } catch (err) {
       catchHandler(err);
     }
