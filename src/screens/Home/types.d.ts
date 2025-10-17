@@ -9,6 +9,7 @@ export interface IInformations {
   }[];
 
   Company: {
+    id: string;
     canAccessTickets: boolean;
     ticketType: TTranslateTicketType;
     ticketInfo: string | null;

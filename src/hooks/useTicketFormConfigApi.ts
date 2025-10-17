@@ -12,9 +12,9 @@ export type TicketFormConfig = {
   attachments: { hidden: boolean; required: boolean };
 };
 
-export function useTicketFormConfigApi() {
+export function useTicketFormConfigApi(companyId: string) {
   const loadConfig = async (): Promise<Partial<TicketFormConfig>> => {
-    const response = await Api.get<Partial<TicketFormConfig>>('/ticket-form-config');
+    const response = await Api.get<Partial<TicketFormConfig>>('/ticket-form-config', { params: { companyId } });
     return response.data;
   };
 

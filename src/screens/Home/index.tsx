@@ -38,6 +38,7 @@ export const Home = () => {
     Banners: [],
     name: '',
     Company: {
+      id: '',
       canAccessTickets: false,
       ticketInfo: '',
       ticketType: 'platform',
@@ -72,6 +73,7 @@ export const Home = () => {
     <>
       {createTicketModal && (
         <ModalCreateTicket
+          companyId={informations.Company.id}
           buildingId={buildingId}
           buildingName={informations.name}
           handleCreateTicketModal={handleCreateTicketModal}
