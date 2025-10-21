@@ -27,6 +27,7 @@ import type { ITicket } from '@customTypes/ITicket';
 
 // STYLES
 import * as Style from '../styles';
+import { TicketChecklist } from './TicketChecklist';
 
 interface ITicketDetails {
   ticket: ITicket;
@@ -200,6 +201,13 @@ function TicketDetails({
           ))}
         </Style.TicketDetailsImagesContent>
       </Style.TicketDetailsImagesContainer>
+
+      {ticket.checklistItems && ticket.checklistItems.length > 0 && (
+        <>
+          <Style.TicketDetailsRowLabel>Checklist</Style.TicketDetailsRowLabel>
+          <TicketChecklist items={ticket.checklistItems} />
+        </>
+      )}
 
       <TicketHistoryActivities ticketId={ticket.id} disableComment={disableComment} />
 

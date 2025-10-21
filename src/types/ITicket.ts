@@ -1,5 +1,6 @@
 import type { IBuilding } from './IBuilding';
 import type { IBuildingNotificationConfiguration } from './IBuildingNotificationConfiguration';
+import { ITicketChecklistItem } from './ITicketChecklistItem';
 import type { ITicketDismissReason } from './ITicketDismissReason';
 
 type ITicketStatusNames = 'open' | 'awaitingToFinish' | 'finished' | 'dismissed';
@@ -68,6 +69,8 @@ export interface ITicket {
 
   createdAt?: string;
   updatedAt?: string;
+
+  checklistItems?: ITicketChecklistItem[];
 
   images?: ITicketImage[];
   status?: ITicketStatus;
